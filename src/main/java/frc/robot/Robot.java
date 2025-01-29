@@ -13,6 +13,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,6 +29,7 @@ import edu.wpi.first.wpilibj.XboxController;
 public class Robot extends TimedRobot {
 boolean zeroMode = false;
 XboxController controller = new XboxController(0);
+Dashboard dashboard = new Dashboard();
 
 AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
@@ -43,7 +48,11 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  public Robot() {}
+  
+     
+  public Robot() {
+  
+  }
 
   @Override
   public void robotPeriodic() {}
@@ -66,7 +75,7 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
     +", " + rightBack.getRotation()
     +", " + leftBack.getRotation());
   return;
-}
+} dashboard.updateDashboard();
     if (controller.getYButton()){
       gyro.reset();
     }  
