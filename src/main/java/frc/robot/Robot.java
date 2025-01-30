@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 /**
@@ -42,6 +43,7 @@ Translation2d frontRight = new Translation2d(0.3032125, -0.314325);
 Translation2d frontLeft = new Translation2d(0.3032125, 0.314325); 
 Translation2d backRight = new Translation2d(-0.3032125, -0.314325); 
 Translation2d backLeft = new Translation2d(-0.3032125, 0.314325); 
+ private final Timer m_timer = new Timer();
 
 SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
   /**
@@ -58,10 +60,44 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
   public void robotPeriodic() {}
 
   @Override
-  public void autonomousInit() {}
+
+  public void autonomousInit() {
+
+    m_timer.restart();
+
+  }
+
+
+  /** This function is called periodically during autonomous. */
 
   @Override
-  public void autonomousPeriodic() {}
+
+  public void autonomousPeriodic() {
+
+    // Drive for 2 seconds
+
+    if (m_timer.get() < 2.0) {
+    rightFront.turny(0);
+    rightFront.movey(-0.1);
+    leftFront.turny(0);
+    leftFront.movey(-0.1);
+    rightBack.turny(0);
+    rightBack.movey(-0.1);
+    leftBack.turny(0);
+    leftBack.movey(-0.1);
+   } else {
+
+      rightFront.turny(0);
+      rightFront.movey(0);
+      leftFront.turny(0);
+      leftFront.movey(0);
+      rightBack.turny(0);
+      rightBack.movey(0);
+      leftBack.turny(0);
+      leftBack.movey(0);
+    }
+
+  }
 
   @Override
   public void teleopInit() {}
