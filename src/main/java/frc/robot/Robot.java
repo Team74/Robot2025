@@ -73,10 +73,19 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
   @Override
 
   public void autonomousPeriodic() {
-
+    public void run(){
+      switch (currentState) {
+        case :
+          
+          break;
+      
+        default:
+          break;
+      }
+    }
     // Drive for 2 seconds
 
-    if (m_timer.get() < 2.0) {
+    /*if (m_timer.get() < 2.0) {
     rightFront.turny(0);
     rightFront.movey(-0.1);
     leftFront.turny(0);
@@ -97,7 +106,7 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
       leftBack.movey(0);
     }
 
-  }
+  }*/
 
   @Override
   public void teleopInit() {}
