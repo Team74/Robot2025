@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -67,22 +68,51 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
 
   }
 
+String currentState = "starting";
+int time;
+  /** This function is called periodically during autonomous. /* */
 
-  /** This function is called periodically during autonomous. */
-
-  @Override
-
-  public void autonomousPeriodic() {
     public void run(){
       switch (currentState) {
-        case :
-          
+        case "starting":
+        rightFront.turny(0);
+        rightFront.movey(0);
+        leftFront.turny(0);
+        leftFront.movey(0);
+        rightBack.turny(0);
+        rightBack.movey(0);
+        leftBack.turny(0);
+        leftBack.movey(0);
+        time = 0;
+        currentState = "driving";
           break;
-      
-        default:
+
+        case "driving":
+        rightFront.turny(0);
+        leftFront.turny (0);
+        rightBack.turny(0);
+        leftBack.turny(0);
+        rightFront.movey(-0.4);
+        leftFront.movey(-0.4);
+        rightBack.movey(-0.4);
+        leftBack.movey(-0.4);
+        if(time > 20){
+        rightFront.movey(0);
+        leftFront.movey(0);
+        rightBack.movey(0);
+        leftBack.movey(0);
+        }
+        //currentState = "Rotating";
           break;
+
+        /*case "Rotating":
+        rightFront.turny(90);/* */
+        
       }
     }
+  @Override
+
+  public void autonomousPeriodic () 
     // Drive for 2 seconds
 
     /*if (m_timer.get() < 2.0) {
