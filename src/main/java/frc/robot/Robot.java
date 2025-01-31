@@ -34,18 +34,19 @@ Dashboard dashboard = new Dashboard();
 
 AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
-SwerveModule rightFront = new SwerveModule(1,46.2564,33,4,zeroMode);
-SwerveModule leftFront = new SwerveModule(0,-111.6671,14,6,zeroMode);
-SwerveModule rightBack = new SwerveModule(2,-115.9537,19,16,zeroMode);
-SwerveModule leftBack = new SwerveModule(3,-92.6886,10,11,zeroMode);
+SwerveModule rightFront = new SwerveModule(1,48.6278,33,4,zeroMode);
+SwerveModule leftFront = new SwerveModule(0,-112.6435,14,6,zeroMode);
+SwerveModule rightBack = new SwerveModule(2,-105.9345,19,16,zeroMode);
+SwerveModule leftBack = new SwerveModule(3,-91.9409,10,11,zeroMode);
 
-Translation2d frontRight = new Translation2d(0.3032125, -0.314325); 
-Translation2d frontLeft = new Translation2d(0.3032125, 0.314325); 
-Translation2d backRight = new Translation2d(-0.3032125, -0.314325); 
-Translation2d backLeft = new Translation2d(-0.3032125, 0.314325); 
+Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
+Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
+Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
+Translation2d backLeft = new Translation2d(-0.33655, 0.33655); 
 private final Timer timerAuton = new Timer();
 SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-  /**
+int time = 0;  
+/**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
@@ -62,13 +63,15 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
   public void autonomousInit() {
   timerAuton.restart();
   gyro.reset();
-
+  time = 0;
 
   }
 
   @Override
   public void autonomousPeriodic() {
-    double speedX = 0.0;
+    autonState(time);
+    time++;
+   /* double speedX = 0.0;
     double speedY = -0.1;
 /*neg Y is forward
  * neg X is left
@@ -94,7 +97,7 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
     speedX = 0.0;
     speedY = 0.0;
 }*/
-ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
+/*ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
 SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
 moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -104,13 +107,59 @@ moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
 
 rightFront.turny(moduleStates[0].angle.getDegrees());
 rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
-leftFront.turny(moduleStates[1].angle.getDegrees());
+leftFront.turny(mod
+  time = 0;leStates[1].angle.getDegrees());
 leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
 rightBack.turny(moduleStates[2].angle.getDegrees());
 rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
-leftBack.turny(moduleStates[3].angle.getDegrees());
-leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
+leftBack.turny(moduleStates[3].angtime++;le.getDegrees());
+leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
   }
+
+String currentState = "Start";
+ 
+ public void autonState(int time) {
+  switch (currentState){
+ case "Start":
+rightFront.turny(0);
+leftFront.turny(0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(0);
+leftFront.movey(0);
+rightBack.movey(0);
+leftBack.movey(0);
+gyro.reset();
+time = 0;
+currentState = "Thing";
+break;
+
+case "Thing":
+rightFront.turny(0);
+leftFront.turny( 0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(-0.1);
+leftFront.movey(-0.1);
+rightBack.movey(-0.1);
+leftBack.movey(-0.1);
+if (time > 50) {
+rightFront.turny(0);
+leftFront.turny(0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(0);
+leftFront.movey(0);
+rightBack.movey(0);
+leftBack.movey(0);
+time = 0;
+}
+break;
+
+
+}
+ 
+}
 
   @Override
   public void teleopInit() {}
@@ -129,9 +178,7 @@ leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
     if (controller.getYButton()){
       gyro.reset();
     }  
-    if (controller.getXButton()){
-      System.out.println(controller.getLeftY());
-    }  
+      
     ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
