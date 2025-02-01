@@ -29,6 +29,9 @@ import edu.wpi.first.wpilibj.XboxController;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = (1 > 2);
+  //reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor();
+
+  boolean zeroMode = false;
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard();
 
@@ -90,7 +93,45 @@ public class Robot extends TimedRobot {
   } else if (timerAuton.get() < 6 && timerAuton.get() > 4) {
     speedX = 0.0;
     speedY = 0.1; 
-  } else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
+  }String currentState = "Start";
+ 
+public void autonState(int time) {
+  switch (currentState){
+    case "Start":
+      rightFront.turny(0);
+      leftFront.turny(0);
+      rightBack.turny(0);
+      leftBack.turny(0);
+      rightFront.movey(0);
+      leftFront.movey(0);
+      rightBack.movey(0);
+      leftBack.movey(0);
+      gyro.reset();
+      time = 0;
+      currentState = "driving";
+      break;
+
+case "driving":
+rightFront.turny(0);
+leftFront.turny( 0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(-0.1);
+leftFront.movey(-0.1);
+rightBack.movey(-0.1);
+leftBack.movey(-0.1);
+if (time > 50) {
+rightFront.turny(0);
+leftFront.turny(0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(0);
+leftFront.movey(0);
+rightBack.movey(0);
+leftBack.movey(0);
+time = 0;
+}
+break; else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
     speedX = -0.1;
     speedY = 0.0;
   } else if (timerAuton.get() > 8) {
@@ -143,28 +184,27 @@ leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
         currentState = "Thing";
         break;
 
-      case "Thing":
-        rightFront.turny(0);
-        leftFront.turny( 0);
-        rightBack.turny(0);
-        leftBack.turny(0);
-        rightFront.movey(0.1);
-        leftFront.movey(0.1);
-        rightBack.movey(0.1);
-        leftBack.movey(0.1);
-        if (time > 50) {
-          rightFront.turny(0);
-          leftFront.turny(0);
-          rightBack.turny(0);
-          leftBack.turny(0);
-          rightFront.movey(0);
-          leftFront.movey(0);
-          rightBack.movey(0);
-          leftBack.movey(0);
-          time = 0;
-          currentState = "turn1";
-        }
-      break;
+case "Thing":
+rightFront.turny(0);
+leftFront.turny( 0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(-0.1);
+leftFront.movey(-0.1);
+rightBack.movey(-0.1);
+leftBack.movey(-0.1);
+if (time > 50) {
+rightFront.turny(0);
+leftFront.turny(0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(0);
+leftFront.movey(0);
+rightBack.movey(0);
+leftBack.movey(0);
+time = 0;
+}
+break;
 
       case "turn1":
         time = 0;
@@ -213,10 +253,11 @@ leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
     ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
-    moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
-    moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
-    moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
-    moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
+  moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
+  moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
+  moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
+  moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
+  dashboard.updateDashboardSwerveModules(moduleStates, leftFront, rightFront, leftBack, rightBack); 
 
     rightFront.turny(moduleStates[0].angle.getDegrees());
     rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
