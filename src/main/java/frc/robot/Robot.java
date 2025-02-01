@@ -67,8 +67,8 @@ public class Robot extends TimedRobot {
 
   }
 
-  @Override
-  public void autonomousPeriodic() {
+  //@Override
+  public void autonomousPeriodic1() {
     autonState(time);
     time++;
    /* double speedX = 0.0;
@@ -134,31 +134,61 @@ public void autonState(int time) {
       currentState = "Thing";
       break;
 
-    case "Thing":
-      rightFront.turny(0);
-      leftFront.turny( 0);
-      rightBack.turny(0);
-      leftBack.turny(0);
-      rightFront.movey(-0.1);
-      leftFront.movey(-0.1);
-      rightBack.movey(-0.1);
-      leftBack.movey(-0.1);
-      if (time > 50) {
-        rightFront.turny(0);
-        leftFront.turny(0);
-        rightBack.turny(0);
-        leftBack.turny(0);
-        rightFront.movey(0);
-        leftFront.movey(0);
-        rightBack.movey(0);
-        leftBack.movey(0);
-        time = 0;
-      }
-      break;
-  }
- 
+case "Thing":
+rightFront.turny(0);
+leftFront.turny( 0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(-0.1);
+leftFront.movey(-0.1);
+rightBack.movey(-0.1);
+leftBack.movey(-0.1);
+if (time > 50) {
+rightFront.turny(0);
+leftFront.turny(0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(0);
+leftFront.movey(0);
+rightBack.movey(0);
+leftBack.movey(0);
+time = 0;
 }
+break;
 
+        /*case "Rotating":
+        rightFront.turny(90);/* */
+        
+      }
+    }
+  @Override
+
+  public void autonomousPeriodic (){ 
+    // Drive for 2 seconds
+
+    /*if (m_timer.get() < 2.0) {
+    rightFront.turny(0);
+    rightFront.movey(-0.1);
+    leftFront.turny(0);
+    leftFront.movey(-0.1);
+    rightBack.turny(0);
+    rightBack.movey(-0.1);
+    leftBack.turny(0);
+    leftBack.movey(-0.1);
+   } else {
+
+      rightFront.turny(0);
+      rightFront.movey(0);
+      leftFront.turny(0);
+      leftFront.movey(0);
+      rightBack.turny(0);
+      rightBack.movey(0);
+      leftBack.turny(0);
+      leftBack.movey(0);
+    }
+
+  }*/
+  }
   @Override
   public void teleopInit() {}
 
