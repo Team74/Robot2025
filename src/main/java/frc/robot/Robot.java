@@ -131,10 +131,10 @@ public void autonState(int time) {
       leftBack.movey(0);
       gyro.reset();
       time = 0;
-      currentState = "Thing";
+      currentState = "driving";
       break;
 
-case "Thing":
+case "driving":
 rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
