@@ -57,8 +57,7 @@ public class reeftoplayertoprocessor extends TimedRobot {
   }
  public void willsAutonMethod () {
         String currentState = "Start"; 
-        //willsClass.willsAutonMethod();
-        //Will's case code
+
         switch (currentState){
             case "Start":
         rightFront.turny(0);

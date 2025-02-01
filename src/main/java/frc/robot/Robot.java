@@ -156,13 +156,13 @@ leftBack.turny(moduleStates[3].angtime++;le.getDegrees());
 leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
   }
 
-String currentState = "Start";
+//String currentState = "Start";
  
 public void autonState(int time) {
   //willsClass.willsAutonMethod();
 //Will's case code
-  switch (currentState){
-    case "Start":
+  //switch (currentState){
+    /*case "Start":
       rightFront.turny(0);
       leftFront.turny(0);
       rightBack.turny(0);
@@ -196,13 +196,13 @@ rightBack.movey(0);
 leftBack.movey(0);
 time = 0;
 }
-break;
+break;/* */
 
         /*case "Rotating":
         rightFront.turny(90);/* */
         
       }
-    }
+    
     //code ends here
   
   @Override
