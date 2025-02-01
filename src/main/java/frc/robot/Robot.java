@@ -37,8 +37,7 @@ Dashboard dashboard = new Dashboard();
 AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
 SwerveModule rightFront = new SwerveModule(1,46.7,33,4,zeroMode);
-SwerveModule leftFront = new SwerveModule(0,-113.5,14,6,zeroMode);
-SwerveModule leftFrontdashboard = new SwerveModule(0,-113.5,13,44,zeroMode);
+SwerveModule leftFront  = new SwerveModule(0,-113.5,13,44,zeroMode);
 SwerveModule rightBack = new SwerveModule(2,-120.8,19,16,zeroMode);
 SwerveModule leftBack = new SwerveModule(3,-90.2,10,11,zeroMode);
 
@@ -114,7 +113,7 @@ int time;
     }
   @Override
 
-  public void autonomousPeriodic () 
+  public void autonomousPeriodic (){
     // Drive for 2 seconds
 
     /*if (m_timer.get() < 2.0) {
@@ -136,9 +135,8 @@ int time;
       rightBack.movey(0);
       leftBack.turny(0);
       leftBack.movey(0);
-    }
-
-  }*/
+    }*/
+  }
 
   @Override
   public void teleopInit() {}
