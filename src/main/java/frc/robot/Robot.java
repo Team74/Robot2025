@@ -156,8 +156,8 @@ time = 0;
 }
 break;
 
-        case "Rotating":
-        rightFront.turny(90);
+        /*case "Rotating":
+        rightFront.turny(90);/* */
         
       }
     }
