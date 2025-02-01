@@ -20,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -35,6 +36,7 @@ AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
 SwerveModule rightFront = new SwerveModule(1,46.7,33,4,zeroMode);
 SwerveModule leftFront = new SwerveModule(0,-113.5,14,6,zeroMode);
+SwerveModule leftFrontdashboard = new SwerveModule(0,-113.5,13,44,zeroMode);
 SwerveModule rightBack = new SwerveModule(2,-120.8,19,16,zeroMode);
 SwerveModule leftBack = new SwerveModule(3,-90.2,10,11,zeroMode);
 
@@ -75,7 +77,7 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
     +", " + rightBack.getRotation()
     +", " + leftBack.getRotation());
   return;
-} dashboard.updateDashboard();
+} 
     if (controller.getYButton()){
       gyro.reset();
     }  
@@ -96,9 +98,14 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
     rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
     leftBack.turny(moduleStates[3].angle.getDegrees());
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
-//thingy
-  
+    
+    dashboard.updateDashboard();
+    dashboard.updateDashboardSwerveModules(moduleStates);
+    dashboard.updateDashboardGyro(gyro);
+    //dashboard.updateDashboardAutonChooser(SendableChooser);
   }
+
+
 
   @Override
   public void disabledInit() {}
@@ -118,5 +125,3 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
   @Override
   public void simulationPeriodic() {}
 }
-//Nitya
-//hello people
