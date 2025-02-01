@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj.XboxController;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
+  reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor();
+
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard();
@@ -87,7 +89,45 @@ public class Robot extends TimedRobot {
   } else if (timerAuton.get() < 6 && timerAuton.get() > 4) {
     speedX = 0.0;
     speedY = 0.1; 
-  } else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
+  }String currentState = "Start";
+ 
+public void autonState(int time) {
+  switch (currentState){
+    case "Start":
+      rightFront.turny(0);
+      leftFront.turny(0);
+      rightBack.turny(0);
+      leftBack.turny(0);
+      rightFront.movey(0);
+      leftFront.movey(0);
+      rightBack.movey(0);
+      leftBack.movey(0);
+      gyro.reset();
+      time = 0;
+      currentState = "driving";
+      break;
+
+case "driving":
+rightFront.turny(0);
+leftFront.turny( 0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(-0.1);
+leftFront.movey(-0.1);
+rightBack.movey(-0.1);
+leftBack.movey(-0.1);
+if (time > 50) {
+rightFront.turny(0);
+leftFront.turny(0);
+rightBack.turny(0);
+leftBack.turny(0);
+rightFront.movey(0);
+leftFront.movey(0);
+rightBack.movey(0);
+leftBack.movey(0);
+time = 0;
+}
+break; else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
     speedX = -0.1;
     speedY = 0.0;
   } else if (timerAuton.get() > 8) {
@@ -119,6 +159,8 @@ leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
 String currentState = "Start";
  
 public void autonState(int time) {
+  willsClass.willsAutonMethod();
+//Will's case code
   switch (currentState){
     case "Start":
       rightFront.turny(0);
@@ -161,6 +203,7 @@ break;
         
       }
     }
+    //code ends here
   @Override
 
   public void autonomousPeriodic (){ 
