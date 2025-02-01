@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.XboxController;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor();
+  //reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor();
 
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   SwerveModule rightFront = new SwerveModule(1,48.6278,33,4,zeroMode);
-  SwerveModule leftFront = new SwerveModule(0,-112.6435,13,44,zeroMode);
+  SwerveModule leftFront = new SwerveModule(0,-112.6435,14,6,zeroMode);
   SwerveModule rightBack = new SwerveModule(2,-105.9345,19,16,zeroMode);
   SwerveModule leftBack = new SwerveModule(3,-91.9409,10,11,zeroMode);
 
@@ -69,8 +69,8 @@ public class Robot extends TimedRobot {
 
   }
 
-  //@Override
-  public void autonomousPeriodic1() {
+  @Override
+  public void autonomousPeriodic() {
     autonState(time);
     time++;
    /* double speedX = 0.0;
@@ -159,7 +159,7 @@ leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
 String currentState = "Start";
  
 public void autonState(int time) {
-  willsClass.willsAutonMethod();
+  //willsClass.willsAutonMethod();
 //Will's case code
   switch (currentState){
     case "Start":
@@ -204,34 +204,7 @@ break;
       }
     }
     //code ends here
-  @Override
-
-  public void autonomousPeriodic (){ 
-    // Drive for 2 seconds
-
-    /*if (m_timer.get() < 2.0) {
-    rightFront.turny(0);
-    rightFront.movey(-0.1);
-    leftFront.turny(0);
-    leftFront.movey(-0.1);
-    rightBack.turny(0);
-    rightBack.movey(-0.1);
-    leftBack.turny(0);
-    leftBack.movey(-0.1);
-   } else {
-
-      rightFront.turny(0);
-      rightFront.movey(0);
-      leftFront.turny(0);
-      leftFront.movey(0);
-      rightBack.turny(0);
-      rightBack.movey(0);
-      leftBack.turny(0);
-      leftBack.movey(0);
-    }
-
-  }*/
-  }
+  
   @Override
   public void teleopInit() {}
 
