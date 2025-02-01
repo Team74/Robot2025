@@ -57,7 +57,7 @@ public class SwerveModule {
         turningMotor.set(targetSpeed);
     }
     void movey(double targetSpeed){
-        targetSpeed = MathUtil.clamp(targetSpeed, -0.3, 0.3);
+        targetSpeed = MathUtil.clamp(targetSpeed, -1.0, 1.0);
         driveMotor.set(targetSpeed*-1);
     }
     void driveMotors (

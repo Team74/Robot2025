@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   SwerveModule rightFront = new SwerveModule(1,48.6278,33,4,zeroMode);
-  SwerveModule leftFront = new SwerveModule(0,-112.6435,14,6,zeroMode);
+  SwerveModule leftFront = new SwerveModule(0,-112.6435,13,44,zeroMode);
   SwerveModule rightBack = new SwerveModule(2,-105.9345,19,16,zeroMode);
   SwerveModule leftBack = new SwerveModule(3,-91.9409,10,11,zeroMode);
 
@@ -185,6 +185,7 @@ public void autonState(int time) {
   moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
   moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
   moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
+  dashboard.updateDashboardSwerveModules(moduleStates, leftFront, rightFront, leftBack, rightBack); 
 
   rightFront.turny(moduleStates[0].angle.getDegrees());
   rightFront.movey(moduleStates[0].speedMetersPerSecond/2);

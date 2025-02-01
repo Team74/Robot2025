@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Dashboard {
+    DoublePublisher LFdriveSpeed, RFdriveSpeed, LBdriveSpeed, RBdriveSpeed;
     DoublePublisher xPub;
     DoublePublisher Encoder1,Encoder2,Encoder3,Encoder4,Gyro;
     SendableChooser<String> autoncode1;
@@ -34,6 +35,10 @@ public class Dashboard {
         
         Gyro = table.getDoubleTopic("Gyro").publish();
 
+        LFdriveSpeed = table.getDoubleTopic("LF Speed").publish();
+        RFdriveSpeed = table.getDoubleTopic("RF Speed").publish();
+        LBdriveSpeed = table.getDoubleTopic("LB Speed").publish();
+        RBdriveSpeed = table.getDoubleTopic("RB Speed").publish();
         ySub = table.getDoubleTopic("y").subscribe(0.0);
         table.getDoubleTopic("y").publish(); 
     }
@@ -42,16 +47,24 @@ public class Dashboard {
      //   System.out.println(ySub.get();
 
     }
-    void updateDashboardSwerveModules(SwerveModuleState[] moduleStates){
+    void updateDashboardSwerveModules(SwerveModuleState[] moduleStates, SwerveModule leftFront, SwerveModule rightFront, SwerveModule leftBack, SwerveModule rightBack){
         Encoder1.set(moduleStates[0].angle.getDegrees());
         Encoder2.set(moduleStates[1].angle.getDegrees());
         Encoder3.set(moduleStates[2].angle.getDegrees());
         Encoder4.set(moduleStates[3].angle.getDegrees());
             System.out.println(moduleStates[1].angle.getDegrees());
-    }
+
+        double LFSpeed = leftFront.driveMotor.getEncoder().getVelocity(); 
+        LFdriveSpeed.set(LFSpeed*-1);
+        double RFSpeed = rightFront.driveMotor.getEncoder().getVelocity(); 
+        RFdriveSpeed.set(RFSpeed*-1);
+        double LBSpeed = leftBack.driveMotor.getEncoder().getVelocity(); 
+        LBdriveSpeed.set(LBSpeed*-1);
+        double RBSpeed = rightBack.driveMotor.getEncoder().getVelocity(); 
+        RBdriveSpeed.set(RBSpeed*-1);
+    }       
     void updateDashboardGyro(AHRS gyro){
         Gyro.set(gyro.getAngle());
             System.out.println(gyro.getAngle());
     }
-
 }
