@@ -34,10 +34,10 @@ public class reeftoplayertoprocessor extends TimedRobot {
 
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
-  SwerveModule rightFront = new SwerveModule(1,48.6278,33,4,zeroMode);
-  SwerveModule leftFront = new SwerveModule(0,-112.6435,14,6,zeroMode);
-  SwerveModule rightBack = new SwerveModule(2,-105.9345,19,16,zeroMode);
-  SwerveModule leftBack = new SwerveModule(3,-91.9409,10,11,zeroMode);
+  SwerveModule rightFront;// = new SwerveModule(1,48.6278,33,4,zeroMode);
+  SwerveModule leftFront;// = new SwerveModule(0,-112.6435,14,6,zeroMode);
+  SwerveModule rightBack;// = new SwerveModule(2,-105.9345,19,16,zeroMode);
+  SwerveModule leftBack;// = new SwerveModule(3,-91.9409,10,11,zeroMode);
 
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
@@ -52,8 +52,12 @@ public class reeftoplayertoprocessor extends TimedRobot {
    */
   
      
-  public reeftoplayertoprocessor() {
-    
+  public reeftoplayertoprocessor(SwerveModule _rightFront, SwerveModule _leftFront, SwerveModule _rightBack , SwerveModule _leftBack) {
+    rightFront = _rightFront;
+    leftFront = _leftFront;
+    rightBack = _rightBack;
+    leftBack = _leftBack;
+
   }
  public void willsAutonMethod () {
         String currentState = "Start"; 
@@ -78,10 +82,10 @@ public class reeftoplayertoprocessor extends TimedRobot {
         leftFront.turny( 0);
         rightBack.turny(0);
         leftBack.turny(0);
-        rightFront.movey(-0.1);
-        leftFront.movey(-0.1);
-        rightBack.movey(-0.1);
-        leftBack.movey(-0.1);
+        rightFront.movey(-0.3);
+        leftFront.movey(-0.3);
+        rightBack.movey(-0.3);
+        leftBack.movey(-0.3);
         if (time > 50) {
             rightFront.turny(0);
             leftFront.turny(0);

@@ -28,8 +28,12 @@ import edu.wpi.first.wpilibj.XboxController;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
+<<<<<<< HEAD
   boolean zeroMode = (1 > 2);
   //reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor();
+=======
+  
+>>>>>>> bffd7ae (auton issues fixes)
 
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
@@ -41,7 +45,11 @@ public class Robot extends TimedRobot {
   SwerveModule leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode);
   SwerveModule rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode);
   SwerveModule leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode);
+<<<<<<< HEAD
 
+=======
+  reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
+>>>>>>> bffd7ae (auton issues fixes)
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
   Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
@@ -56,7 +64,6 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
-    
   }
 
   @Override
@@ -165,6 +172,7 @@ rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
 leftBack.turny(moduleStates[3].angtime++;le.getDegrees());
 leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
   }
+<<<<<<< HEAD
   String currentState = "Start";
   
  
@@ -183,13 +191,35 @@ leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
         time = 0;
         currentState = "Thing";
         break;
+=======
+
+String currentState = "Start";
+ 
+public void autonState(int time) {
+  //willsClass.willsAutonMethod();
+ //Will's case code
+  switch (currentState) { 
+    case "Start":
+      rightFront.turny(0);
+      leftFront.turny(0);
+      rightBack.turny(0);
+      leftBack.turny(0);
+      rightFront.movey(0);
+      leftFront.movey(0);
+      rightBack.movey(0);
+      leftBack.movey(0);
+      gyro.reset();
+      time = 0;
+      currentState = "driving";
+      break;
+>>>>>>> bffd7ae (auton issues fixes)
 
 case "Thing":
 rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
 leftBack.turny(0);
-rightFront.movey(-0.1);
+rightFront.movey(-0.4);
 leftFront.movey(-0.1);
 rightBack.movey(-0.1);
 leftBack.movey(-0.1);
@@ -204,7 +234,12 @@ rightBack.movey(0);
 leftBack.movey(0);
 time = 0;
 }
+<<<<<<< HEAD
 break;
+=======
+break; 
+}
+>>>>>>> bffd7ae (auton issues fixes)
 
       case "turn1":
         time = 0;
