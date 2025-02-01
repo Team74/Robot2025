@@ -55,47 +55,46 @@ public class reeftoplayertoprocessor extends TimedRobot {
   public reeftoplayertoprocessor() {
     
   }
-  public void willsAutonMethod () {
-    String currentState = "Start"; 
-      //willsClass.willsAutonMethod();
-    //Will's case code
-      switch (currentState){
-        case "Start":
-          rightFront.turny(0);
-          leftFront.turny(0);
-          rightBack.turny(0);
-          leftBack.turny(0);
-          rightFront.movey(0);
-          leftFront.movey(0);
-          rightBack.movey(0);
-          leftBack.movey(0);
-          gyro.reset();
-          time = 0;
-          currentState = "driving";
-          break;
-    
-    case "driving":
-    rightFront.turny(0);
-    leftFront.turny( 0);
-    rightBack.turny(0);
-    leftBack.turny(0);
-    rightFront.movey(-0.1);
-    leftFront.movey(-0.1);
-    rightBack.movey(-0.1);
-    leftBack.movey(-0.1);
-    if (time > 50) {
-    rightFront.turny(0);
-    leftFront.turny(0);
-    rightBack.turny(0);
-    leftBack.turny(0);
-    rightFront.movey(0);
-    leftFront.movey(0);
-    rightBack.movey(0);
-    leftBack.movey(0);
-    time = 0;
+ public void willsAutonMethod () {
+        String currentState = "Start"; 
+        //willsClass.willsAutonMethod();
+        //Will's case code
+        switch (currentState){
+            case "Start":
+        rightFront.turny(0);
+        leftFront.turny(0);
+        rightBack.turny(0);
+        leftBack.turny(0);
+        rightFront.movey(0);
+        leftFront.movey(0);
+        rightBack.movey(0);
+        leftBack.movey(0);
+        gyro.reset();
+        time = 0;
+        currentState = "driving";
+        break;
+            
+        case "driving":
+        rightFront.turny(0);
+        leftFront.turny( 0);
+        rightBack.turny(0);
+        leftBack.turny(0);
+        rightFront.movey(-0.1);
+        leftFront.movey(-0.1);
+        rightBack.movey(-0.1);
+        leftBack.movey(-0.1);
+        if (time > 50) {
+            rightFront.turny(0);
+            leftFront.turny(0);
+            rightBack.turny(0);
+            leftBack.turny(0);            
+            rightFront.movey(0);
+            leftFront.movey(0);
+            rightBack.movey(0);
+            leftBack.movey(0);
+            time = 0;
+            break;
+        }
     }
-    break;
-    
-}
   } 
 }
