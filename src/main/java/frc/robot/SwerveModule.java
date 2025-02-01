@@ -60,6 +60,20 @@ public class SwerveModule {
         targetSpeed = MathUtil.clamp(targetSpeed, -0.3, 0.3);
         driveMotor.set(targetSpeed*-1);
     }
+    void driveMotors (
+    SwerveModule rightFrontMot, double rightFrontSpd,
+    SwerveModule leftFrontMot, double leftFrontSpd, 
+    SwerveModule rightBackMot, double rightBackSpd, 
+    SwerveModule leftBackMot, double leftBackSpd){
+        rightFrontMot.movey(rightFrontSpd);
+        leftFrontMot.movey(leftFrontSpd);
+        rightBackMot.movey(rightBackSpd);
+        leftBackMot.movey(leftBackSpd);
+
+
+    }
+
+
 }
 
 
