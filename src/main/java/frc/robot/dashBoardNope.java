@@ -5,10 +5,10 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class dashBoard {
+public class dashBoardNope {
     DoublePublisher xPub;
     DoubleSubscriber ySub;
-    dashBoard(){
+    dashBoardNope(){
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable table = inst.getTable("datatable");
         xPub = table.getDoubleTopic("x").publish();
