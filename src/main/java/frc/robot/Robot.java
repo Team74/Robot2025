@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
 boolean zeroMode = false;
 XboxController controller = new XboxController(0);
 Dashboard dashboard = new Dashboard();
+
 
 AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
@@ -56,6 +58,9 @@ SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLe
      
   public Robot() {
   
+  }
+  public void robotInit() {
+  CameraServer.startAutomaticCapture(); 
   }
 
   @Override
