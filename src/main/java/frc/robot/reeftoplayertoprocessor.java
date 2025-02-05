@@ -59,7 +59,7 @@ public class reeftoplayertoprocessor extends TimedRobot {
     leftBack = _leftBack;
 
   }
- public void willsAutonMethod () {
+ public void willsAutonMethod (){
         String currentState = "Start"; 
 
         switch (currentState){
@@ -96,8 +96,19 @@ public class reeftoplayertoprocessor extends TimedRobot {
             rightBack.movey(0);
             leftBack.movey(0);
             time = 0;
+            currentState = "Rotating";
+          }
             break;
-        }
+
+        case "Rotating":
+        rightFront.turny(90);
+        rightFront.movey(-0.1);
+        leftFront.turny(90);
+        leftFront.movey(-0.1);
+        rightBack.turny(0);
+        rightBack.movey(-0.1);
+        leftBack.turny(0);
+        leftBack.movey(-0.1);
+      }
     }
-  } 
-}
+  }

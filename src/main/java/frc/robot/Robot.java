@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -28,8 +30,6 @@ import edu.wpi.first.wpilibj.XboxController;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  
-
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -55,6 +55,9 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
+  }
+  public void robotInit() {
+  CameraServer.startAutomaticCapture(); 
   }
 
   @Override
