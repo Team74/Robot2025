@@ -184,7 +184,7 @@ public void autonState(int time) {
       currentState = "driving";
       break;
 
-case "Thing":
+case "turning":
 rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
