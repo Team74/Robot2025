@@ -70,12 +70,15 @@ public class Robot extends TimedRobot {
     time = 0;
     
   }
-
+String test = "start";
   @Override
   public void autonomousPeriodic() {
+   test = willsClass.mattsMethod(test);
+
+    //willsClass.willsAutonMethod();
     //PlayerToReef(time);
     time++;
-    System.out.println(currentState + time);
+    System.out.println("master" + test + time);
 
 
    /* double speedX = 0.0;
