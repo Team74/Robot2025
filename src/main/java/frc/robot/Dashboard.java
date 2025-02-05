@@ -47,7 +47,7 @@ public class Dashboard {
      //   System.out.println(ySub.get();
 
     }
-    void updateDashboardSwerveModules(SwerveModule leftFront, SwerveModule rightFront, SwerveModule leftBack, SwerveModule rightBack){
+    void updateDashboardSwerveModules(SwerveModuleState[], SwerveModule leftFront, SwerveModule rightFront, SwerveModule leftBack, SwerveModule rightBack){
        
         double LFAngle = leftFront.returnRotation(); 
         Encoder1.set(LFAngle);
