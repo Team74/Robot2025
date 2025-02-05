@@ -28,20 +28,11 @@ import edu.wpi.first.wpilibj.XboxController;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-<<<<<<< HEAD
-  boolean zeroMode = (1 > 2);
-  //reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor();
-
-  boolean zeroMode = false;
-  XboxController controller = new XboxController(0);
-  dashBoardNope dashboard = new dashBoardNope();
-=======
   
 
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
->>>>>>> 30ebfb3a198b3a4ce78feb30bfc274ac62e2d374
 
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
@@ -49,11 +40,7 @@ public class Robot extends TimedRobot {
   SwerveModule leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode);
   SwerveModule rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode);
   SwerveModule leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode);
-<<<<<<< HEAD
- // reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
-=======
   reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
->>>>>>> 30ebfb3a198b3a4ce78feb30bfc274ac62e2d374
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
   Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
@@ -196,13 +183,8 @@ public void autonState(int time) {
       time = 0;
       currentState = "driving";
       break;
-<<<<<<< HEAD
-  }
-case "driving":
-=======
 
 case "Thing":
->>>>>>> 30ebfb3a198b3a4ce78feb30bfc274ac62e2d374
 rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
@@ -221,14 +203,9 @@ leftFront.movey(0);
 rightBack.movey(0);
 leftBack.movey(0);
 time = 0;
-currentState = "turn1"
 }
 break; 
-<<<<<<< HEAD
-  }
-=======
 
->>>>>>> 30ebfb3a198b3a4ce78feb30bfc274ac62e2d374
 
       case "turn1":
         time = 0;
