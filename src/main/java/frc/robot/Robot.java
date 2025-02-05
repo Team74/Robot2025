@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
 
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
-  Dashboard dashboard = new Dashboard();
+  Dashboard dashboard = new Dashboard(); 
 
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
