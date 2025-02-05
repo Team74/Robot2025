@@ -46,7 +46,7 @@ public class SwerveModule {
         
     }
     double returnRotation(){
-        return encoder.get() + encoderOffset;
+        return encoder.get() - 180 + encoderOffset;
 
     }
     double getRotation() {
