@@ -47,12 +47,16 @@ public class Dashboard {
      //   System.out.println(ySub.get();
 
     }
-    void updateDashboardSwerveModules(SwerveModuleState[] moduleStates, SwerveModule leftFront, SwerveModule rightFront, SwerveModule leftBack, SwerveModule rightBack){
-        Encoder1.set(moduleStates[0].angle.getDegrees());
-        Encoder2.set(moduleStates[1].angle.getDegrees());
-        Encoder3.set(moduleStates[2].angle.getDegrees());
-        Encoder4.set(moduleStates[3].angle.getDegrees());
-            System.out.println(moduleStates[1].angle.getDegrees());
+    void updateDashboardSwerveModules( SwerveModule leftFront, SwerveModule rightFront, SwerveModule leftBack, SwerveModule rightBack){
+       
+        double LFAngle = leftFront.returnRotation(); 
+        Encoder1.set(LFAngle);
+        double LBAngle = leftBack.returnRotation(); 
+        Encoder2.set(LBAngle);
+        double RFAngle = rightFront.returnRotation(); 
+        Encoder3.set(RFAngle);
+        double RBAngle = rightBack.returnRotation(); 
+        Encoder4.set(RBAngle);
 
         double LFSpeed = leftFront.driveMotor.getEncoder().getVelocity(); 
         LFdriveSpeed.set(LFSpeed*-1);

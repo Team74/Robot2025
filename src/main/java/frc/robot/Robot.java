@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -31,8 +33,6 @@ import edu.wpi.first.wpilibj.XboxController;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  
-
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -61,6 +61,9 @@ public class Robot extends TimedRobot {
      
   public Robot() {
   }
+  public void robotInit() {
+  CameraServer.startAutomaticCapture(); 
+  }
 
   @Override
   public void robotPeriodic() {}
@@ -72,12 +75,15 @@ public class Robot extends TimedRobot {
     time = 0;
     
   }
-
+String test = "start";
   @Override
   public void autonomousPeriodic() {
+   test = willsClass.mattsMethod(test);
+
+    //willsClass.willsAutonMethod();
     //PlayerToReef(time);
     time++;
-    System.out.println(currentState + time);
+    System.out.println("master" + test + time);
 
 
    /* double speedX = 0.0;
@@ -189,7 +195,7 @@ public void autonState(int time) {
       currentState = "driving";
       break;
 
-case "Thing":
+case "turning":
 rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
@@ -263,7 +269,7 @@ break;
   moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
   moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
   moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
-  dashboard.updateDashboardSwerveModules(moduleStates, leftFront, rightFront, leftBack, rightBack); 
+  dashboard.updateDashboardSwerveModules(leftFront, rightFront, leftBack, rightBack); 
 
     rightFront.turny(moduleStates[0].angle.getDegrees());
     rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
