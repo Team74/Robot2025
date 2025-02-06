@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -33,6 +36,8 @@ public class Robot extends TimedRobot {
   boolean zeroMode = false;
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
+  SparkMax liftMotor = new SparkMax(45, MotorType.kBrushless);
+  XboxController operatorController = new XboxController(1);
 
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
@@ -269,6 +274,10 @@ break;
     leftBack.turny(moduleStates[3].angle.getDegrees());
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
 
+    
+    double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.3, 0.3);
+    liftMotor.set(hsTargetspeed);
+    System.out.println(hsTargetspeed);
   
   }
 
