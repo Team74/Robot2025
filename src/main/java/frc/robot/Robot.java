@@ -264,7 +264,7 @@ break;
   moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
   moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
   moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
-  dashboard.updateDashboardSwerveModules(moduleStates, leftFront, rightFront, leftBack, rightBack); 
+  dashboard.updateDashboardSwerveModules(leftFront, rightFront, leftBack, rightBack); 
 
     rightFront.turny(moduleStates[0].angle.getDegrees());
     rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
