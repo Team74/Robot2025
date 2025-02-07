@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   XboxController operatorController = new XboxController(1);
   LimeLightTestinger limes = new LimeLightTestinger();
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  LimeLightTest limelightcam = new LimeLightTest();
+  limeLightTest limelightcam = new limeLightTest();
 
   SwerveModule rightFront;
   SwerveModule leftFront;
