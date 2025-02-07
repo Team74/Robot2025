@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.cameraserver.CameraServer;
-
+import frc.robot.LimeLightTestinger;
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -34,25 +34,30 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
+  boolean oldDriveBase = false;
+
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = new SparkMax(45, MotorType.kBrushless);
   XboxController operatorController = new XboxController(1);
-
+  LimeLightTestinger limes = new LimeLightTestinger();
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   LimeLightTest limelightcam = new LimeLightTest();
 
-  SwerveModule rightFront = new SwerveModule(1,-134.8564-180,33,4,zeroMode);
-  SwerveModule leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode);
-  SwerveModule rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode);
-  SwerveModule leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode);
-  reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
+  SwerveModule rightFront;
+  SwerveModule leftFront;
+  SwerveModule rightBack;
+  SwerveModule leftBack;
+
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
   Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
   Translation2d backLeft = new Translation2d(-0.33655, 0.33655); 
   private final Timer timerAuton = new Timer();
-  SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
+
+  reeftoplayertoprocessor willsClass;
+  SwerveDriveKinematics kinematics;
+
   int time = 0;  
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -61,9 +66,28 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
+
+    if (!oldDriveBase) {
+      // competition base CAN IDs
+      rightFront = new SwerveModule(1,-134.8564-180,33,4,zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode,oldDriveBase);
+    } else {
+      // old drive base CAN IDs
+      rightFront = new SwerveModule(1,-134.8564-180,12,17,zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,66.3065-180,20,2,zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,64.7032-180,14,32,zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,85.9213-180,29,15,zeroMode,oldDriveBase);
+    }
+  
+    willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
+    kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
+  
   }
+  
   public void robotInit() {
-  CameraServer.startAutomaticCapture(); 
+    CameraServer.startAutomaticCapture(); 
   }
 
   @Override
@@ -84,6 +108,8 @@ String test = "start";
     //willsClass.willsAutonMethod();
     //PlayerToReef(time);
     time++;
+    System.out.println("master" + test + time);
+    
     System.out.println("master" + test + time);*/
 
 
@@ -283,10 +309,12 @@ break;
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
 
     
-    double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.3, 0.3);
+    double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.7, 0.7);
     liftMotor.set(hsTargetspeed);
     System.out.println(hsTargetspeed);
-  
+
+    limes.limething();
+    
   }
 
   @Override
