@@ -33,7 +33,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean zeroMode = true;
+  boolean zeroMode = false;
   boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
