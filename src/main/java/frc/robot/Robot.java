@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = new SparkMax(45, MotorType.kBrushless);
   XboxController operatorController = new XboxController(1);
-
+  LimeLightTestinger limes = new LimeLightTestinger();
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   SwerveModule rightFront;
