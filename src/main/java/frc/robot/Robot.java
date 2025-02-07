@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.cameraserver.CameraServer;
-
+import frc.robot.LimeLightTestinger;
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
   SwerveModule rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode);
   SwerveModule leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode);
   reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
+  LimeLightTestinger limes = new LimeLightTestinger();
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
   Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
@@ -84,7 +85,7 @@ String test = "start";
     //PlayerToReef(time);
     time++;
     System.out.println("master" + test + time);
-
+    
 
    /* double speedX = 0.0;
     double speedY = -0.1;
@@ -281,10 +282,12 @@ break;
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
 
     
-    double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.3, 0.3);
+    double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.7, 0.7);
     liftMotor.set(hsTargetspeed);
     System.out.println(hsTargetspeed);
-  
+
+    limes.limething();
+    
   }
 
   @Override
