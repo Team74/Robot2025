@@ -20,10 +20,11 @@ public class SwerveModule {
     DutyCycleEncoder encoder;
 
     SwerveModule(int initialEncoderPort, 
-    double initialEncoderOffset, 
-    int initialTurningMotorID, 
-    int initialDriveMotorID,
-    boolean zeroMode) {
+                double initialEncoderOffset, 
+                int initialTurningMotorID, 
+                int initialDriveMotorID,
+                boolean zeroMode,
+                boolean oldDriveBase) {
         if(zeroMode){
             initialEncoderOffset = 0;
         }
@@ -38,10 +39,9 @@ public class SwerveModule {
         pid.enableContinuousInput(-180, 180);
         SparkBaseConfig zeroCoast = new SparkMaxConfig();
         if (zeroMode){
-        zeroCoast.idleMode(SparkBaseConfig.IdleMode.kCoast);
-        }  
-        else {
-        zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
+            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kCoast);
+        } else {
+            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
         }
         
     }
