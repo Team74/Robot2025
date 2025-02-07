@@ -7,6 +7,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 public class SwerveModule {
@@ -18,12 +20,15 @@ public class SwerveModule {
     int encoderPort;
     double encoderOffset;
     DutyCycleEncoder encoder;
+    AnalogEncoder encoderA;
+    Boolean oldDriveBase = false;
 
     SwerveModule(int initialEncoderPort, 
-    double initialEncoderOffset, 
-    int initialTurningMotorID, 
-    int initialDriveMotorID,
-    boolean zeroMode) {
+                double initialEncoderOffset, 
+                int initialTurningMotorID, 
+                int initialDriveMotorID,
+                boolean zeroMode,
+                boolean initialoldDriveBase) {
         if(zeroMode){
             initialEncoderOffset = 0;
         }
@@ -31,25 +36,38 @@ public class SwerveModule {
         encoderOffset = initialEncoderOffset;
         turningMotorID = initialTurningMotorID;
         driveMotorID = initialDriveMotorID;
-        encoder = new DutyCycleEncoder(initialEncoderPort,360,initialEncoderOffset);
+        oldDriveBase = initialoldDriveBase;
+        if (oldDriveBase){
+            encoderA = new AnalogEncoder(initialEncoderPort,360,initialEncoderOffset);
+        }
+        else {
+            encoder = new DutyCycleEncoder(initialEncoderPort,360,initialEncoderOffset);
+        }
+
         turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
         pid = new PIDController(0.0023889, 0, 0);
         pid.enableContinuousInput(-180, 180);
         SparkBaseConfig zeroCoast = new SparkMaxConfig();
         if (zeroMode){
-        zeroCoast.idleMode(SparkBaseConfig.IdleMode.kCoast);
-        }  
-        else {
-        zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
+            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kCoast);
+        } else {
+            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
         }
         
     }
+    
     double returnRotation(){
+        if (oldDriveBase) {
+            return encoderA.get() - 180 + encoderOffset;
+        }
         return encoder.get() - 180 + encoderOffset;
-
     }
+    
     double getRotation() {
+        if (oldDriveBase) {
+            return encoderA.get()-180;
+        }
         return encoder.get()-180;
     }
 

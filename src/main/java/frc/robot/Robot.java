@@ -34,6 +34,8 @@ import frc.robot.LimeLightTestinger;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
+  boolean oldDriveBase = false;
+
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = new SparkMax(45, MotorType.kBrushless);
@@ -41,18 +43,20 @@ public class Robot extends TimedRobot {
 
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
-  SwerveModule rightFront = new SwerveModule(1,-134.8564-180,33,4,zeroMode);
-  SwerveModule leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode);
-  SwerveModule rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode);
-  SwerveModule leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode);
-  reeftoplayertoprocessor willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
-  LimeLightTestinger limes = new LimeLightTestinger();
+  SwerveModule rightFront;
+  SwerveModule leftFront;
+  SwerveModule rightBack;
+  SwerveModule leftBack;
+
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
   Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
   Translation2d backLeft = new Translation2d(-0.33655, 0.33655); 
   private final Timer timerAuton = new Timer();
-  SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
+
+  reeftoplayertoprocessor willsClass;
+  SwerveDriveKinematics kinematics;
+
   int time = 0;  
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -61,9 +65,28 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
+
+    if (!oldDriveBase) {
+      // competition base CAN IDs
+      rightFront = new SwerveModule(1,-134.8564-180,33,4,zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode,oldDriveBase);
+    } else {
+      // old drive base CAN IDs
+      rightFront = new SwerveModule(1,-134.8564-180,12,17,zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,66.3065-180,20,2,zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,64.7032-180,14,32,zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,85.9213-180,29,15,zeroMode,oldDriveBase);
+    }
+  
+    willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
+    kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
+  
   }
+  
   public void robotInit() {
-  CameraServer.startAutomaticCapture(); 
+    CameraServer.startAutomaticCapture(); 
   }
 
   @Override
