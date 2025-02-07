@@ -7,7 +7,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
@@ -38,7 +37,7 @@ public class SwerveModule {
         driveMotorID = initialDriveMotorID;
         oldDriveBase = initialoldDriveBase;
         if (oldDriveBase){
-            encoderA = new AnalogEncoder(initialEncoderPort,360,initialEncoderOffset);
+            encoderA = new AnalogEncoder(initialEncoderPort);
         }
         else {
             encoder = new DutyCycleEncoder(initialEncoderPort,360,initialEncoderOffset);
@@ -82,10 +81,11 @@ public class SwerveModule {
         driveMotor.set(targetSpeed*-1);
     }
     void driveMotors (
-    SwerveModule rightFrontMot, double rightFrontSpd,
-    SwerveModule leftFrontMot, double leftFrontSpd, 
-    SwerveModule rightBackMot, double rightBackSpd, 
-    SwerveModule leftBackMot, double leftBackSpd){
+        SwerveModule rightFrontMot, double rightFrontSpd,
+        SwerveModule leftFrontMot, double leftFrontSpd, 
+        SwerveModule rightBackMot, double rightBackSpd, 
+        SwerveModule leftBackMot, double leftBackSpd
+    ) {
         rightFrontMot.movey(rightFrontSpd);
         leftFrontMot.movey(leftFrontSpd);
         rightBackMot.movey(rightBackSpd);
