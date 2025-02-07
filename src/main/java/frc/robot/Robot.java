@@ -33,7 +33,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean zeroMode = false;
+  boolean zeroMode = true;
   boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
@@ -74,10 +74,10 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode,oldDriveBase);
     } else {
       // old drive base CAN IDs
-      rightFront = new SwerveModule(1,-134.8564-180,33,4,zeroMode,oldDriveBase);
-      leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode,oldDriveBase);
-      rightBack = new SwerveModule(2,64.7032-180,19,16,zeroMode,oldDriveBase);
-      leftBack = new SwerveModule(3,85.9213-180,10,11,zeroMode,oldDriveBase);
+      rightFront = new SwerveModule(1,-134.8564-180,12,17,zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,66.3065-180,20,2,zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,64.7032-180,14,32,zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,85.9213-180,29,15,zeroMode,oldDriveBase);
     }
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);

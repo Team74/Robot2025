@@ -12,10 +12,10 @@ public class SwerveDrive {
 
     public SwerveDrive() {
         
-        SwerveModule rightFront = new SwerveModule(1,48.6278,33,4,zeroMode,oldDriveBase);
-        SwerveModule leftFront = new SwerveModule(0,-112.6435,14,6,zeroMode,oldDriveBase);
-        SwerveModule rightBack = new SwerveModule(2,-105.9345,19,16,zeroMode,oldDriveBase);
-        SwerveModule leftBack = new SwerveModule(3,-91.9409,10,11,zeroMode,oldDriveBase);
+        SwerveModule rightFront = new SwerveModule(1,48.6278,20,2,zeroMode,oldDriveBase);
+        SwerveModule leftFront = new SwerveModule(0,-112.6435,12,17,zeroMode,oldDriveBase);
+        SwerveModule rightBack = new SwerveModule(2,-105.9345,14,32,zeroMode,oldDriveBase);
+        SwerveModule leftBack = new SwerveModule(3,-91.9409,29,15,zeroMode,oldDriveBase);
 
         Translation2d rightFrontLocation = new Translation2d(0.33655, -0.33655); 
         Translation2d leftFrontLocation = new Translation2d(0.33655, 0.33655); 
