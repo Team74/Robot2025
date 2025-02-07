@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
   XboxController operatorController = new XboxController(1);
 
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+  LimeLightTest limelightcam = new LimeLightTest();
 
   SwerveModule rightFront = new SwerveModule(1,-134.8564-180,33,4,zeroMode);
   SwerveModule leftFront = new SwerveModule(0,66.3065-180,14,6,zeroMode);
@@ -78,12 +79,12 @@ public class Robot extends TimedRobot {
 String test = "start";
   @Override
   public void autonomousPeriodic() {
-   test = willsClass.mattsMethod(test);
+   /*test = willsClass.mattsMethod(test);
 
     //willsClass.willsAutonMethod();
     //PlayerToReef(time);
     time++;
-    System.out.println("master" + test + time);
+    System.out.println("master" + test + time);*/
 
 
    /* double speedX = 0.0;
@@ -246,6 +247,7 @@ break;
   @Override
   public void teleopPeriodic() { 
     dashboard.updateDashboard();
+    limelightcam.LimeTest();
 
     if (zeroMode){
       System.out.println(

@@ -1,5 +1,5 @@
 package frc.robot;
 
-public class lift {
+public class Lift {
     
 }
