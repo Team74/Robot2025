@@ -40,7 +40,7 @@ public class SwerveModule {
             encoderA = new AnalogEncoder(initialEncoderPort,360,initialEncoderOffset-180);
         }
         else {
-            encoder = new DutyCycleEncoder(initialEncoderPort,360,initialEncoderOffset);
+            encoder = new DutyCycleEncoder(initialEncoderPort,360,initialEncoderOffset-180);
         }
 
         turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
