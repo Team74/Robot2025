@@ -24,7 +24,7 @@ public class limeLightTest {
         //post to smart dashboard periodically
         /*SmartDashboard.putNumber("LimelightX", x);
         SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightArea", area);*/
+        SmartDashboard.putNumber("LimelightArea", area);
         //System.out.println("tx value: " + tx.getDouble(limex) + "ty value:" + ty.getDouble(limey) + "ta value:" + ta.getDouble(limearea));
         if (limex < -15) {
             System.out.println("Too far Right!!");
@@ -34,6 +34,10 @@ public class limeLightTest {
         }
         if (limey > 10) {
             System.out.println("Too far Down!!");
+        }*/
+
+        if (limex > 10) {
+            
         }
 
 

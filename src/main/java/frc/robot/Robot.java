@@ -38,10 +38,14 @@ public class Robot extends TimedRobot {
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
-  SparkMax liftMotor = new SparkMax(45, MotorType.kBrushless);
+  SparkMax liftMotor = new SparkMax(12, MotorType.kBrushless);
   XboxController operatorController = new XboxController(1);
   LimeLightTestinger limes = new LimeLightTestinger();
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
+  //Code for the NavX Mini
+  //AHRS gyroMicro = new AHRS(NavXComType.kI2C);
+  
   limeLightTest limelightcam = new limeLightTest();
 
   SwerveModule rightFront;
@@ -275,14 +279,18 @@ break;
     dashboard.updateDashboard();
     limelightcam.LimeTest();
 
+    if (gyro != null) {
+      System.out.println("Gyro x " + gyro.getRawGyroX() + "Gyro y " + gyro.getRawGyroY() + "Gyro z" + gyro.getRawGyroZ());
+    }
+    
     if (zeroMode){
-      System.out.println(
+      /*System.out.println(
         rightFront.getRotation() 
         +", " + leftFront.getRotation()
         +", " + rightBack.getRotation()
         +", " + leftBack.getRotation()
       );
-      return;
+      return;*/
     } 
  
    
@@ -311,9 +319,9 @@ break;
     
     double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.7, 0.7);
     liftMotor.set(hsTargetspeed);
-    System.out.println(hsTargetspeed);
+    //System.out.println(hsTargetspeed);
 
-    limes.limething();
+    //limes.limething();
     
   }
 
