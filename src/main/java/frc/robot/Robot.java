@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -58,6 +59,8 @@ public class Robot extends TimedRobot {
   reeftoplayertoprocessor willsClass;
   SwerveDriveKinematics kinematics;
 
+  Servo outtakeServo = new Servo(0);
+
   int time = 0;  
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -94,6 +97,7 @@ public class Robot extends TimedRobot {
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
+
   
   }
   
@@ -327,6 +331,18 @@ break;
     }
 
     limes.limething();
+
+
+     // outtakeServo is only instantiated for competition base
+     if (outtakeServo != null) {
+      double outtakeAngle = 0.0;
+      if (operatorController.getAButton()) {
+        outtakeAngle = 90.0 / 270.0;
+      }
+      outtakeServo.set(outtakeAngle);
+      //outtakeServo.setAngle(75);
+      System.out.println(outtakeAngle);
+    }
     
   }
 
