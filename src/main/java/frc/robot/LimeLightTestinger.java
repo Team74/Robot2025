@@ -23,7 +23,7 @@ public class LimeLightTestinger {
     double area = ta.getDouble(0.0);
     Boolean iffy = tv.getBoolean(true);
     if (iffy == true) {
-        System.out.println(x + "tx, " + y + "ty, " + area + "ta");
+        //System.out.println(x + "tx, " + y + "ty, " + area + "ta");
     }
 
 

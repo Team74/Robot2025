@@ -43,10 +43,6 @@ public class Robot extends TimedRobot {
   XboxController operatorController = new XboxController(1);
   LimeLightTestinger limes = new LimeLightTestinger();
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-
-  //Code for the NavX Mini
-  //AHRS gyroMicro = new AHRS(NavXComType.kI2C);
-  
   limeLightTest limelightcam = new limeLightTest();
 
   SwerveModule rightFront;
@@ -76,27 +72,35 @@ public class Robot extends TimedRobot {
 
     if (!oldDriveBase) {
       // competition base CAN IDs
+      leftFront = new SwerveModule(0,66.3065,
+          14,6,
+          zeroMode,oldDriveBase);
       rightFront = new SwerveModule(1,-134.8564,
-          33,4,zeroMode,oldDriveBase);
-      leftFront = new SwerveModule(0,
-          66.3065,14,6,zeroMode,oldDriveBase);
-      rightBack = new SwerveModule(2,
-          64.7032,19,16,zeroMode,oldDriveBase);
-      leftBack = new SwerveModule(3,
-          85.9213,10,11,zeroMode,oldDriveBase);
+          33,4,
+          zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,64.7032,
+          19,16,
+          zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,85.9213,
+          10,11,
+          zeroMode,oldDriveBase);
 
-      liftMotor = new SparkMax(45, MotorType.kBrushless);
+      liftMotor = new SparkMax(12, MotorType.kBrushed);
 
     } else {
       // old drive base CAN IDs
-      rightFront = new SwerveModule(1,169.0,
-          12,17,zeroMode,oldDriveBase);
-      leftFront = new SwerveModule(0,-75.5,
-          20,2,zeroMode,oldDriveBase);
-      rightBack = new SwerveModule(2,-176.5,
-          14,32,zeroMode,oldDriveBase);
-      leftBack = new SwerveModule(3,-116,
-          29,15,zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,348.0,
+          12,17,
+          zeroMode,oldDriveBase);
+      rightFront = new SwerveModule(1,70.1,
+          20,2,
+          zeroMode,oldDriveBase);
+      rightBack = new SwerveModule(2,2.31,
+          14,32,
+          zeroMode,oldDriveBase);
+      leftBack = new SwerveModule(3,69.3,
+          29,15,
+          zeroMode,oldDriveBase);
     }
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
@@ -161,12 +165,9 @@ public void autonState(int time) {
       leftFront.movey(0);
       rightBack.movey(0);
       leftBack.movey(0);
-      gyro.reset();
-      time = 0;
-      currentState = "driving";
-      break;
-
-case "driving":
+rightBack.movey(0);
+leftBack.movey(0);
+time = 0;
 rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
@@ -294,18 +295,14 @@ break;
     dashboard.updateDashboard();
     limelightcam.LimeTest();
 
-    if (gyro != null) {
-      System.out.println("Gyro x " + gyro.getRawGyroX() + "Gyro y " + gyro.getRawGyroY() + "Gyro z" + gyro.getRawGyroZ());
-    }
-    
     if (zeroMode){
-      /*System.out.println(
+      System.out.println(
         rightFront.getRotation() 
         +", " + leftFront.getRotation()
         +", " + rightBack.getRotation()
         +", " + leftBack.getRotation()
       );
-      return;*/
+      return;
     } 
  
    
@@ -335,10 +332,21 @@ break;
     if (liftMotor != null) {
       double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.7, 0.7);
       liftMotor.set(hsTargetspeed);
-      System.out.println(hsTargetspeed);
+      System.out.println("here");
     }
 
-    //limes.limething();
+    limes.limething();
+
+
+    // outtakeServo is only instantiated for competition base
+    if (outtakeServo != null) {
+      // servo has 270 degree range
+      double outtakeAngle = 0.0;
+      if (operatorController.getAButton()) {
+        outtakeAngle = 90.0;
+      }
+      outtakeServo.set(outtakeAngle / 270.0);
+    }
     
   }
 
