@@ -99,16 +99,16 @@ public class Robot extends TimedRobot {
 
     } else {
       // old drive base CAN IDs
-      leftFront = new SwerveModule(0,348.0,
+      leftFront = new SwerveModule(0,348.0-90,
           12,17,
           zeroMode,oldDriveBase);
-      rightFront = new SwerveModule(1,70.1,
+      rightFront = new SwerveModule(1,70.1-270,
           20,2,
           zeroMode,oldDriveBase);
-      rightBack = new SwerveModule(2,2.31,
+      rightBack = new SwerveModule(2,2.31-180,
           14,32,
           zeroMode,oldDriveBase);
-      leftBack = new SwerveModule(3,69.3,
+      leftBack = new SwerveModule(3,69.3-180,
           29,15,
           zeroMode,oldDriveBase);
     }
@@ -124,12 +124,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic(){
 
-  @Override
-  public void autonomousInit() {
-    timerAuton.restart();
-    gyro.reset();
     time = 0;
     
   }
@@ -356,7 +352,6 @@ break;
     if (liftMotor != null) {
       double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.7, 0.7);
       liftMotor.set(hsTargetspeed);
-      System.out.println("here");
     }
 
     limes.limething();
@@ -367,7 +362,7 @@ break;
       // servo has 270 degree range
       double outtakeAngle = 0.0;
       if (operatorController.getAButton()) {
-        outtakeAngle = 90.0;
+        outtakeAngle = 270.0;
       }
       outtakeServo.set(outtakeAngle / 270.0);
     }
