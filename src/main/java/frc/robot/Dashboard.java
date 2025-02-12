@@ -69,6 +69,5 @@ public class Dashboard {
     }       
     void updateDashboardGyro(AHRS gyro){
         Gyro.set(gyro.getAngle());
-            System.out.println(gyro.getAngle());
     }
 }
