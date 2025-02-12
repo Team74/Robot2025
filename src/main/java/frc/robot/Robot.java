@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
   SparkMax liftMotor = null;
   XboxController operatorController = new XboxController(1);
   LimeLightTestinger limes = new LimeLightTestinger();
+  // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   //Code for the NavX Mini
@@ -53,6 +54,10 @@ public class Robot extends TimedRobot {
   SwerveModule leftFront;
   SwerveModule rightBack;
   SwerveModule leftBack;
+  SwerveModule[] moduleList;
+  PlayerToReef playerToReef;
+
+  String autonState = "P2R";
 
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
@@ -87,6 +92,11 @@ public class Robot extends TimedRobot {
 
       liftMotor = new SparkMax(45, MotorType.kBrushless);
 
+      moduleList[0] = rightFront;
+      moduleList[1] = rightBack;
+      moduleList[2] = leftFront;
+      moduleList[3] = leftBack;
+
     } else {
       // old drive base CAN IDs
       rightFront = new SwerveModule(1,169.0,
@@ -101,7 +111,7 @@ public class Robot extends TimedRobot {
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-
+    playerToReef = new PlayerToReef(moduleList, liftMotor);
   
   }
   
@@ -119,109 +129,120 @@ public class Robot extends TimedRobot {
     time = 0;
     
   }
+
 String test = "start";
   @Override
   public void autonomousPeriodic() {
-   /*test = willsClass.mattsMethod(test);
-
-    //willsClass.willsAutonMethod();
-    //PlayerToReef(time);
-    time++;
-    System.out.println("master" + test + time);
-    
-    System.out.println("master" + test + time);*/
-
-
-   /* double speedX = 0.0;
-    double speedY = -0.1;
-/*neg Y is forward
- * neg X is left
- */
-
-
-/*if (timerAuton.get() < 2){
-  speedX = 0.0;
-  speedY = -0.1;
-  } else if (timerAuton.get() < 4 && timerAuton.get() > 2) {
-  speedX = 0.1;
-  speedY = 0.0; 
-  } else if (timerAuton.get() < 6 && timerAuton.get() > 4) {
-    speedX = 0.0;
-    speedY = 0.1; 
-  }String currentState = "Start";
- 
-public void autonState(int time) {
-  switch (currentState){
-    case "Start":
-      rightFront.turny(0);
-      leftFront.turny(0);
-      rightBack.turny(0);
-      leftBack.turny(0);
-      rightFront.movey(0);
-      leftFront.movey(0);
-      rightBack.movey(0);
-      leftBack.movey(0);
-      gyro.reset();
-      time = 0;
-      currentState = "driving";
-      break;
-
-case "driving":
-rightFront.turny(0);
-leftFront.turny( 0);
-rightBack.turny(0);
-leftBack.turny(0);
-rightFront.movey(-0.1);
-leftFront.movey(-0.1);
-rightBack.movey(-0.1);
-leftBack.movey(-0.1);
-if (time > 50) {
-rightFront.turny(0);
-leftFront.turny(0);
-rightBack.turny(0);
-leftBack.turny(0);
-rightFront.movey(0);
-leftFront.movey(0);
-rightBack.movey(0);
-leftBack.movey(0);
-time = 0;
-}
-break; else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
-    speedX = -0.1;
-    speedY = 0.0;
-  } else if (timerAuton.get() > 8) {
-    timerAuton.restart();
-  }
-  else {
-    speedX = 0.0; public PlayerToReef() {
-        String State = "start";
-        int time = 0;
-        switch (State) {
-            case "start":
-                driveBase
-
-        }
+      switch (autonState) {
         
+        case "P2R":
+        playerToReef.RunP2R(time);
+        time ++;
 
-
-
-
+      }
+    
+    
+       /*test = willsClass.mattsMethod(test);
+    
+        //willsClass.willsAutonMethod();
+        //PlayerToReef(time);
+        time++;
+        System.out.println("master" + test + time);
+        
+        System.out.println("master" + test + time);*/
+    
+    
+       /* double speedX = 0.0;
+        double speedY = -0.1;
+    /*neg Y is forward
+     * neg X is left
+     */
+    
+    
+    /*if (timerAuton.get() < 2){
+      speedX = 0.0;
+      speedY = -0.1;
+      } else if (timerAuton.get() < 4 && timerAuton.get() > 2) {
+      speedX = 0.1;
+      speedY = 0.0; 
+      } else if (timerAuton.get() < 6 && timerAuton.get() > 4) {
+        speedX = 0.0;
+        speedY = 0.1; 
+      }String currentState = "Start";
+     
+    public void autonState(int time) {
+      switch (currentState){
+        case "Start":
+          rightFront.turny(0);
+          leftFront.turny(0);
+          rightBack.turny(0);
+          leftBack.turny(0);
+          rightFront.movey(0);
+          leftFront.movey(0);
+          rightBack.movey(0);
+          leftBack.movey(0);
+          gyro.reset();
+          time = 0;
+          currentState = "driving";
+          break;
+    
+    case "driving":
+    rightFront.turny(0);
+    leftFront.turny( 0);
+    rightBack.turny(0);
+    leftBack.turny(0);
+    rightFront.movey(-0.1);
+    leftFront.movey(-0.1);
+    rightBack.movey(-0.1);
+    leftBack.movey(-0.1);
+    if (time > 50) {
+    rightFront.turny(0);
+    leftFront.turny(0);
+    rightBack.turny(0);
+    leftBack.turny(0);
+    rightFront.movey(0);
+    leftFront.movey(0);
+    rightBack.movey(0);
+    leftBack.movey(0);
+    time = 0;
     }
-/*ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
-SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
-
-moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
-moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()))400
-leftFront.turny(mod
-  time = 0;leStates[1].angle.getDegrees());
-leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
-rightBack.turny(moduleStates[2].angle.getDegrees());
-rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
-leftBack.turny(moduleStates[3].angtime++;le.getDegrees());
-leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
-  }
-
-String currentState = "Start";
+    break; else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
+        speedX = -0.1;
+        speedY = 0.0;
+      } else if (timerAuton.get() > 8) {
+        timerAuton.restart();
+      }
+      else {
+        speedX = 0.0; public PlayerToReef() {
+            String State = "start";
+            int time = 0;
+            switch (State) {
+                case "start":
+                    driveBase
+    
+            }
+            
+    
+    
+    
+    
+        }
+    /*ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
+    
+    moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
+    moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()))400
+    leftFront.turny(mod
+      time = 0;leStates[1].angle.getDegrees());
+    leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
+    rightBack.turny(moduleStates[2].angle.getDegrees());
+    rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
+    leftBack.turny(moduleStates[3].angtime++;le.getDegrees());
+    leftBack.movey(moduleStates[3].speedMetersPerSecond/2);*/
+      }
+    
+   
+    String currentState = "Start";
  
 public void autonState(int time) {
   //willsClass.willsAutonMethod();
