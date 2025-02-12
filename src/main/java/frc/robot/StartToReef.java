@@ -4,7 +4,7 @@ import com.revrobotics.spark.SparkMax;
 
 import frc.robot.testrobotautonmovement.RobotMovement.Motor;
 
-public class PlayerToReef {
+public class StartToReef {
     SwerveModule rightFront;
     SwerveModule rightBack;
     SwerveModule leftFront;
@@ -12,7 +12,7 @@ public class PlayerToReef {
     SparkMax liftMotor;
     String state = "start";
 
-    public PlayerToReef(SwerveModule[] List, SparkMax Lift) {
+    public StartToReef(SwerveModule[] List, SparkMax Lift) {
         rightFront = List[0];
         rightBack = List[1];
         leftFront = List[2];
@@ -20,7 +20,7 @@ public class PlayerToReef {
         liftMotor = Lift;
     }
 
-    void RunP2R(int time) {
+    void RunS2R(int time) {
         switch (state) {
             // first number in if statement is time in seconds
             case "start":

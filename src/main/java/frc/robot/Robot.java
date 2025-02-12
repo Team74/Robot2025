@@ -51,9 +51,9 @@ public class Robot extends TimedRobot {
   SwerveModule rightBack;
   SwerveModule leftBack;
   SwerveModule[] moduleList;
-  PlayerToReef playerToReef;
+  StartToReef startToReef;
 
-  String autonState = "P2R";
+  String autonState = "S2R";
 
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
   Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    playerToReef = new PlayerToReef(moduleList, liftMotor);
+    startToReef = new StartToReef(moduleList, liftMotor);
   
   }
   
@@ -139,8 +139,8 @@ String test = "start";
   public void autonomousPeriodic() {
       switch (autonState) {
         
-        case "P2R":
-        playerToReef.RunP2R(time);
+        case "S2R":
+        startToReef.RunS2R(time);
         time ++;
 
       }
