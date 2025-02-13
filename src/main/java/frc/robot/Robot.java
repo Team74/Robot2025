@@ -344,13 +344,13 @@ break;
   dashboard.updateDashboardSwerveModules(leftFront, rightFront, leftBack, rightBack); 
 
     rightFront.turny(moduleStates[0].angle.getDegrees());
-    rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
+    rightFront.movey( if (controller.getRightBumper()) {moduleStates[0].speedMetersPerSecond} else moduleStates[0].speedMetersPerSecond/2);
     leftFront.turny(moduleStates[1].angle.getDegrees());
-    leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
+    leftFront.movey( if (controller.getRightBumper()) {moduleStates[3].speedMetersPerSecond} else moduleStates[1].speedMetersPerSecond/2);
     rightBack.turny(moduleStates[2].angle.getDegrees());
-    rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
+    rightBack.movey( if (controller.getRightBumper()) {moduleStates[3].speedMetersPerSecond} else moduleStates[2].speedMetersPerSecond/2);
     leftBack.turny(moduleStates[3].angle.getDegrees());
-    leftBack.movey(moduleStates[3].speedMetersPerSecond/2);
+    leftBack.movey( if (controller.getRightBumper()) {moduleStates[3].speedMetersPerSecond} else moduleStates[3].speedMetersPerSecond/2);
 
     // liftMotor is only instantiated for competition base
     if (liftMotor != null) {
