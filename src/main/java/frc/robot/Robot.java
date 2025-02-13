@@ -338,15 +338,24 @@ break;
   moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
   moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
   dashboard.updateDashboardSwerveModules(leftFront, rightFront, leftBack, rightBack); 
+  
+  rightFront.turny(moduleStates[0].angle.getDegrees());
+  leftFront.turny(moduleStates[1].angle.getDegrees());
+  rightBack.turny(moduleStates[2].angle.getDegrees());
+  leftBack.turny(moduleStates[3].angle.getDegrees());
 
-    rightFront.turny(moduleStates[0].angle.getDegrees());
-    rightFront.movey( if (controller.getRightBumper()) {moduleStates[0].speedMetersPerSecond} else moduleStates[0].speedMetersPerSecond/2);
-    leftFront.turny(moduleStates[1].angle.getDegrees());
-    leftFront.movey( if (controller.getRightBumper()) {moduleStates[3].speedMetersPerSecond} else moduleStates[1].speedMetersPerSecond/2);
-    rightBack.turny(moduleStates[2].angle.getDegrees());
-    rightBack.movey( if (controller.getRightBumper()) {moduleStates[3].speedMetersPerSecond} else moduleStates[2].speedMetersPerSecond/2);
-    leftBack.turny(moduleStates[3].angle.getDegrees());
-    leftBack.movey( if (controller.getRightBumper()) {moduleStates[3].speedMetersPerSecond} else moduleStates[3].speedMetersPerSecond/2);
+  if (controller.getRightBumperButton())  {
+    rightFront.movey(moduleStates[0].speedMetersPerSecond);
+    leftFront.movey(moduleStates[1].speedMetersPerSecond);
+    rightBack.movey(moduleStates[2].speedMetersPerSecond);
+    leftBack.movey(moduleStates[3].speedMetersPerSecond);
+    
+  }else {
+    rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
+    leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
+    rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
+    leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
+  }
 
     // liftMotor is only instantiated for competition base
     if (liftMotor != null) {
