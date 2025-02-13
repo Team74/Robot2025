@@ -349,7 +349,7 @@ break;
     leftFront.movey(moduleStates[1].speedMetersPerSecond);
     rightBack.movey(moduleStates[2].speedMetersPerSecond);
     leftBack.movey(moduleStates[3].speedMetersPerSecond);
-    
+
   }else {
     rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
     leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
@@ -359,8 +359,14 @@ break;
 
     // liftMotor is only instantiated for competition base
     if (liftMotor != null) {
-      double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.7, 0.7);
-      liftMotor.set(hsTargetspeed);
+      if (operatorController.getRightBumperButton()) {
+        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.5, 0.5);
+        liftMotor.set(hsTargetspeed);
+      } else {
+        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -1.0, 1.0);
+        liftMotor.set(hsTargetspeed);
+      }
+      
     }
 
     limes.limething();
