@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    startToReef = new StartToReef(moduleList, liftMotor);
+    startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
   
   }
   
@@ -138,7 +138,6 @@ String test = "start";
         case "S2R":
         startToReef.RunS2R(time);
         time ++;
-
       }
     
     
