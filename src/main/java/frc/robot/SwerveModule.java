@@ -29,7 +29,7 @@ public class SwerveModule {
                 boolean zeroMode,
                 boolean initialoldDriveBase) {
         if(zeroMode){
-            initialEncoderOffset = 0;
+            initialEncoderOffset = 0.0;
         }
         encoderPort = initialEncoderPort;
         encoderOffset = initialEncoderOffset;
@@ -37,16 +37,25 @@ public class SwerveModule {
         driveMotorID = initialDriveMotorID;
         oldDriveBase = initialoldDriveBase;
         if (oldDriveBase){
-            encoderA = new AnalogEncoder(initialEncoderPort,360,initialEncoderOffset);
+            encoderA = new AnalogEncoder(initialEncoderPort,360.0,initialEncoderOffset-90.0);
         }
         else {
-            encoder = new DutyCycleEncoder(initialEncoderPort,360,initialEncoderOffset-180.0);
+            encoder = new DutyCycleEncoder(initialEncoderPort,360.0,initialEncoderOffset-180.0);
         }
 
         turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
-        pid = new PIDController(0.0023889, 0, 0);
-        pid.enableContinuousInput(-180, 180);
+
+        if (oldDriveBase){
+            pid = new PIDController(0.0023889/2.0, 0, 0);
+            pid.enableContinuousInput(-180.0, 180.0);
+        }
+        else {
+            pid = new PIDController(0.0023889, 0, 0);
+            pid.enableContinuousInput(-180.0, 180.0);
+        }
+
+        
         SparkBaseConfig zeroCoast = new SparkMaxConfig();
         if (zeroMode){
             zeroCoast.idleMode(SparkBaseConfig.IdleMode.kCoast);
@@ -66,8 +75,8 @@ public class SwerveModule {
     
     double getRotation() {
         if (oldDriveBase) {
-            return (encoderA.get());
-            //return (encoderA.get()* -1) -180;
+            //return (encoderA.get());
+            return (encoderA.get()* -1) -90;
         }
         return encoder.get()-180;
     }
@@ -75,8 +84,8 @@ public class SwerveModule {
     void turny(double targetAngle){
         double currentPosition = getRotation();
         double targetSpeed = pid.calculate(currentPosition,targetAngle);
-        if (driveMotorID == 17) {
-            System.out.println(pid.getError());
+        if (turningMotorID == 12) {
+            System.out.println("cp: " + currentPosition + "er: " + pid.getError() + "ta: "+ targetAngle);
         }
         targetSpeed = MathUtil.clamp(targetSpeed, -0.5, 0.5);
         turningMotor.set(targetSpeed);
