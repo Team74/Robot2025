@@ -35,7 +35,7 @@ import frc.robot.LimeLightTestinger;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
   SwerveModule leftBack;
   SwerveModule[] moduleList;
   StartToReef startToReef;
+  driveForwardAuton driveForward;
 
   String autonState = "S2R";
 
@@ -75,6 +76,7 @@ public class Robot extends TimedRobot {
      
   public Robot() {
     moduleList = new SwerveModule[4];
+
     if (!oldDriveBase) {
       // competition base CAN IDs
       leftFront = new SwerveModule(0,66.3065,
@@ -92,11 +94,7 @@ public class Robot extends TimedRobot {
 
       liftMotor = new SparkMax(12, MotorType.kBrushed);
 
-      moduleList[0] = rightFront;
-      moduleList[1] = rightBack;
-      moduleList[2] = leftFront;
-      moduleList[3] = leftBack;
-
+      
     } else {
       // old drive base CAN IDs
       leftFront = new SwerveModule(0,348.0-90,
@@ -111,18 +109,16 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,69.3-180,
           29,15,
           zeroMode,oldDriveBase);
-
-          moduleList[0] = rightFront;
-          moduleList[1] = rightBack;
-          moduleList[2] = leftFront;
-          moduleList[3] = leftBack;
-    
     }
-  
+    moduleList[0] = rightFront;
+    moduleList[1] = rightBack;
+    moduleList[2] = leftFront;
+    moduleList[3] = leftBack;
+
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
     startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
-  
+    // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
   public void robotInit() {
@@ -134,8 +130,14 @@ public class Robot extends TimedRobot {
   public void robotPeriodic(){
 
     
-    
   }
+
+  public void autonomousInit(){
+    startToReef.state = "start";
+    time = 0;
+    gyro.reset();
+  }
+
 
 String test = "start";
   @Override
