@@ -7,7 +7,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class limeLightTest {
 
-    public void LimeTest () {
+    public double LimeTest () {
 
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
         NetworkTableEntry tx = table.getEntry("tx");
@@ -22,25 +22,19 @@ public class limeLightTest {
         double limearea = ta.getDouble(0.0);
 
         //post to smart dashboard periodically
-        /*SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightArea", area);
-        //System.out.println("tx value: " + tx.getDouble(limex) + "ty value:" + ty.getDouble(limey) + "ta value:" + ta.getDouble(limearea));
-        if (limex < -15) {
+        SmartDashboard.putNumber("LimelightX", limex);
+        SmartDashboard.putNumber("LimelightY", limey);
+        SmartDashboard.putNumber("LimelightArea", limearea);
+        System.out.println("tx value: " + tx.getDouble(limex) + "ty value:" + ty.getDouble(limey) + "ta value:" + ta.getDouble(limearea));
+        if (limex < -5) {
             System.out.println("Too far Right!!");
+            return -0.2;
         }
-        if (limex > 15) {
+        if (limex > 5) {
             System.out.println("Too far Left!!");
+            return 0.2;
         }
-        if (limey > 10) {
-            System.out.println("Too far Down!!");
-        }*/
-
-        if (limex > 10) {
-            
-        }
-
-
+        return 0;
 
     }
 

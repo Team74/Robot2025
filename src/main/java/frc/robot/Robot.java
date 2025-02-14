@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
@@ -124,6 +125,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     CameraServer.startAutomaticCapture(); 
     time = 0;
+
+    for(int port = 5800; port <= 5809; port++) {
+      PortForwarder.add(port, "limelight.local", port);
+    }
   }
   
   @Override
@@ -321,7 +326,11 @@ break;
   @Override
   public void teleopPeriodic() { 
     dashboard.updateDashboard();
-    limelightcam.LimeTest();
+    //limelightcam.LimeTest();
+    double LLc = 0;
+if (controller.getAButton()){
+  LLc = limelightcam.LimeTest();
+}
     if (zeroMode){
       System.out.println(
         rightFront.getRotation() 
@@ -336,8 +345,8 @@ break;
     if (controller.getYButton()){
       gyro.reset();
     }  
-      
-    ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
+
+    ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), LLc + controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
