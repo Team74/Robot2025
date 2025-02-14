@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
   SwerveModule leftBack;
   SwerveModule[] moduleList;
   StartToReef startToReef;
+  driveForwardAuton driveForward;
 
   String autonState = "S2R";
 
@@ -116,8 +117,8 @@ public class Robot extends TimedRobot {
 
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    startToReef = new StartToReef(moduleList, liftMotor, kinematics, gyro);
-  
+    startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
+    // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
   public void robotInit() {
@@ -145,7 +146,6 @@ String test = "start";
         case "S2R":
         startToReef.RunS2R(time);
         time ++;
-
       }
     
     
