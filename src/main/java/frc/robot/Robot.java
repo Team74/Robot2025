@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -36,7 +37,7 @@ import frc.robot.LimeLightTestinger;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -67,6 +68,9 @@ public class Robot extends TimedRobot {
   SwerveDriveKinematics kinematics;
 
   Servo outtakeServo = new Servo(0);
+  //Limit switch for the bottom of the lift
+  //todo: rename
+  DigitalInput limitSensor = new DigitalInput(8);
 
   int time = 0;  
   /**
@@ -374,15 +378,24 @@ if (controller.getAButton()){
   }
 
     // liftMotor is only instantiated for competition base
+    double hsTargetspeed = 0;
+
     if (liftMotor != null) {
       if (operatorController.getRightBumperButton()) {
-        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
-        liftMotor.set(hsTargetspeed);
+        hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
       } else {
-        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
-        liftMotor.set(hsTargetspeed);
+        hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
       }
-      
+
+      //If the limit switch is triggered and control stick is down then stop!
+      if (!limitSensor.get() && operatorController.getLeftY() > 0) {
+        hsTargetspeed = 0;
+
+        System.out.println("Limit Hit");
+      } 
+
+      liftMotor.set(hsTargetspeed);
+
     }
 
     limes.limething();
