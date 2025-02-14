@@ -35,7 +35,7 @@ import frc.robot.LimeLightTestinger;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
+    moduleList = new SwerveModule[4];
 
     if (!oldDriveBase) {
       // competition base CAN IDs
@@ -92,11 +93,7 @@ public class Robot extends TimedRobot {
 
       liftMotor = new SparkMax(12, MotorType.kBrushed);
 
-      moduleList[0] = rightFront;
-      moduleList[1] = rightBack;
-      moduleList[2] = leftFront;
-      moduleList[3] = leftBack;
-
+      
     } else {
       // old drive base CAN IDs
       leftFront = new SwerveModule(0,348.0-90,
@@ -112,10 +109,14 @@ public class Robot extends TimedRobot {
           29,15,
           zeroMode,oldDriveBase);
     }
-  
+    moduleList[0] = rightFront;
+    moduleList[1] = rightBack;
+    moduleList[2] = leftFront;
+    moduleList[3] = leftBack;
+
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    startToReef = new StartToReef(moduleList, liftMotor);
+    startToReef = new StartToReef(moduleList, liftMotor, kinematics, gyro);
   
   }
   
@@ -126,9 +127,15 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic(){
 
-    time = 0;
     
   }
+
+  public void autonomousInit(){
+    startToReef.state = "start";
+    time = 0;
+    gyro.reset();
+  }
+
 
 String test = "start";
   @Override
