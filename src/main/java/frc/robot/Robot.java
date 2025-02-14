@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
-
+    moduleList = new SwerveModule[4];
     if (!oldDriveBase) {
       // competition base CAN IDs
       leftFront = new SwerveModule(0,66.3065,
@@ -111,6 +111,12 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,69.3-180,
           29,15,
           zeroMode,oldDriveBase);
+
+          moduleList[0] = rightFront;
+          moduleList[1] = rightBack;
+          moduleList[2] = leftFront;
+          moduleList[3] = leftBack;
+    
     }
   
     willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
@@ -121,25 +127,25 @@ public class Robot extends TimedRobot {
   
   public void robotInit() {
     CameraServer.startAutomaticCapture(); 
+    time = 0;
   }
-
+  
   @Override
   public void robotPeriodic(){
 
-    time = 0;
+    
     
   }
 
 String test = "start";
   @Override
   public void autonomousPeriodic() {
-      switch (autonState) {
+     switch (autonState) {
         
         case "S2R":
         startToReef.RunS2R(time);
-        time ++;
       }
-    
+      time ++;
     
        /*test = willsClass.mattsMethod(test);
     
@@ -308,12 +314,12 @@ break;
 
   @Override
   public void teleopInit() {}
+  
 
   @Override
   public void teleopPeriodic() { 
     dashboard.updateDashboard();
     limelightcam.LimeTest();
-
     if (zeroMode){
       System.out.println(
         rightFront.getRotation() 
@@ -359,10 +365,10 @@ break;
     // liftMotor is only instantiated for competition base
     if (liftMotor != null) {
       if (operatorController.getRightBumperButton()) {
-        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -0.5, 0.5);
+        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
         liftMotor.set(hsTargetspeed);
       } else {
-        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY(), -1.0, 1.0);
+        double hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
         liftMotor.set(hsTargetspeed);
       }
       
@@ -373,12 +379,12 @@ break;
 
     // outtakeServo is only instantiated for competition base
     if (outtakeServo != null) {
-      // servo has 270 degree range
+      // servo has 180 degree range
       double outtakeAngle = 0.0;
       if (operatorController.getAButton()) {
-        outtakeAngle = 270.0;
+        outtakeAngle = 180.0;
       }
-      outtakeServo.set(outtakeAngle / 270.0);
+      outtakeServo.set(outtakeAngle / 180.0);
     }
     
   }

@@ -14,13 +14,14 @@ public class StartToReef {
     String state = "start";
     Servo outtakeServo;
 
-    public StartToReef(SwerveModule[] list, SparkMax lift, Servo servo) {
+    public StartToReef(SwerveModule[] list , SparkMax lift, Servo servo) {
         rightFront = list[0];
         rightBack = list[1];
         leftFront = list[2];
         leftBack = list[3];
-        liftMotor = lift;
-        outtakeServo = servo;
+       liftMotor = lift;
+       outtakeServo = servo;
+       state = "start";
     }
 
     void RunS2R(int time) {
@@ -79,7 +80,63 @@ public class StartToReef {
 
         }
     }
+    void oldRunS2R(int time) {
+        System.out.println(state);
+        switch (state) {
+            // first number in if statement is time in seconds
+            case "start":
+            MotorSet(0.0,0.0,false);
+            if (time > 0) {
+                time = 0;
+                state = "move1";
+                break;
+            }
 
+            case "move1":
+            MotorSet(0.2,0.0,false);
+            if (time > 3*50) {
+                time = 0;
+                state = "lift";
+                break;
+            }
+
+            case "lift":
+            MotorSet(0.0,0,false);
+           
+            if (time > 1*50) {
+                time = 0;
+                state = "dumpy";
+                break;
+            }
+
+            case "dumpy":
+            MotorSet(0.0,0,false);
+           
+          
+            if (time > .5*50) {
+                time = 0;
+                state = "down";
+                break;
+            }
+
+            case "down":
+            MotorSet(0.0,0,false);
+           
+           
+            if (time > 1*50) {
+                time = 0;
+                state = "stop";
+                break;
+            }
+
+            case "stop":
+            MotorSet(0.0,0,false);
+                state = "stop";
+                break;
+            
+
+        }
+    }
 
 
     void MotorSet(double speed, double angle, boolean turning){

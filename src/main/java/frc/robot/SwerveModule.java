@@ -84,9 +84,9 @@ public class SwerveModule {
     void turny(double targetAngle){
         double currentPosition = getRotation();
         double targetSpeed = pid.calculate(currentPosition,targetAngle);
-        if (turningMotorID == 12) {
-            System.out.println("cp: " + currentPosition + "er: " + pid.getError() + "ta: "+ targetAngle);
-        }
+        //if (turningMotorID == 12) {
+        //    System.out.println("cp: " + currentPosition + "er: " + pid.getError() + "ta: "+ targetAngle);
+        //}
         targetSpeed = MathUtil.clamp(targetSpeed, -0.5, 0.5);
         turningMotor.set(targetSpeed);
     }
