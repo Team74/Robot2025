@@ -70,7 +70,8 @@ public class Robot extends TimedRobot {
   Servo outtakeServo = new Servo(0);
   //Limit switch for the bottom of the lift
   //todo: rename
-  DigitalInput limitSensor = new DigitalInput(8);
+  DigitalInput limitSensorBottom = new DigitalInput(8);
+  DigitalInput limitSensorTop = new DigitalInput(9);
 
   int time = 0;  
   /**
@@ -120,9 +121,9 @@ public class Robot extends TimedRobot {
     moduleList[2] = leftFront;
     moduleList[3] = leftBack;
 
-    willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
+   // willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
+    //startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
     // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
@@ -344,13 +345,12 @@ if (controller.getAButton()){
       );
       return;
     } 
- 
-   
+  
     if (controller.getYButton()){
       gyro.reset();
     }  
 
-    ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), LLc + controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
+    ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -386,12 +386,19 @@ if (controller.getAButton()){
       } else {
         hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
       }
-
+      // System.err.println(!limitSensorBottom.get() + " " + !limitSensorTop.get() + " " + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
+      // //System.err.println(!limitSensorBottom.get() + " " + + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
       //If the limit switch is triggered and control stick is down then stop!
-      if (!limitSensor.get() && operatorController.getLeftY() > 0) {
+      if (!limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
         hsTargetspeed = 0;
 
-        System.out.println("Limit Hit");
+        System.out.println("Bottom Limit Hit");
+      } 
+      //If the limit switch is triggered and control stick is down then stop!
+      if (!limitSensorTop.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) < 0) {
+        hsTargetspeed = 0;
+
+        System.out.println("Top Limit Hit");
       } 
 
       liftMotor.set(hsTargetspeed);
