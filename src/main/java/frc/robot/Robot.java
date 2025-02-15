@@ -46,7 +46,8 @@ public class Robot extends TimedRobot {
   LimeLightTestinger limes = new LimeLightTestinger();
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  limeLightTest limelightcam = new limeLightTest();
+  limeLightTest limelightcam = new limeLightTest(gyro);
+
 
   SwerveModule rightFront;
   SwerveModule leftFront;
@@ -334,7 +335,9 @@ break;
     dashboard.updateDashboard();
     //limelightcam.LimeTest();
     double LLc = 0;
+    double gyroCenter = 0; 
 if (controller.getAButton()){
+  gyroCenter = limelightcam.ReefCenter(); 
   LLc = limelightcam.LimeTest();
 }
     if (zeroMode){
@@ -350,8 +353,16 @@ if (controller.getAButton()){
     if (controller.getYButton()){
       gyro.reset();
     }  
-
-    ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX()+LLc, controller.getRightX(),gyro.getRotation2d() );
+    
+    if (controller.getXButton()){
+      System.out.println(gyro.getAngle());
+    }  
+    ChassisSpeeds control;
+    if (!controller.getAButton()) {
+      control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), gyro.getRotation2d() );
+    } else {
+      control = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, LLc, gyroCenter, new Rotation2d(0));
+    }
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -377,7 +388,7 @@ if (controller.getAButton()){
     rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
   }
-
+  
     // liftMotor is only instantiated for competition base
     double hsTargetspeed = 0;
 
