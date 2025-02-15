@@ -334,11 +334,13 @@ break;
   public void teleopPeriodic() { 
     dashboard.updateDashboard();
     //limelightcam.LimeTest();
-    double LLc = 0;
-    double gyroCenter = 0; 
-if (controller.getAButton()){
-  gyroCenter = limelightcam.ReefCenter(); 
-  LLc = limelightcam.LimeTest();
+    double trackSide = 0;
+    double trackTurn = 0; 
+    double trackPush = 0;
+if (controller.getLeftTriggerAxis() > 0.1){
+  trackSide = limelightcam.LimeTest();
+  trackTurn = limelightcam.ReefCenter(); 
+  trackPush = limelightcam.ReefPush();
 }
     if (zeroMode){
       System.out.println(
@@ -358,11 +360,12 @@ if (controller.getAButton()){
       System.out.println(gyro.getAngle());
     }  
     ChassisSpeeds control;
-    if (!controller.getAButton()) {
+    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
+      control = ChassisSpeeds.fromFieldRelativeSpeeds(trackPush*1, trackSide*1, trackTurn*1, new Rotation2d(0));
+    } else {         
       control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), gyro.getRotation2d() );
-    } else {
-      control = ChassisSpeeds.fromFieldRelativeSpeeds(0.0, LLc, gyroCenter, new Rotation2d(0));
     }
+
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));

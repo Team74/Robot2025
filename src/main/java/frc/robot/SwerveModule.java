@@ -51,7 +51,7 @@ public class SwerveModule {
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
 
         if (oldDriveBase){
-            pid = new PIDController(0.0023889/2.0, 0, 0);
+            pid = new PIDController(0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
         }
         else {
