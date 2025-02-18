@@ -37,7 +37,7 @@ import frc.robot.LimeLightTestinger;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -46,7 +46,8 @@ public class Robot extends TimedRobot {
   LimeLightTestinger limes = new LimeLightTestinger();
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  limeLightTest limelightcam = new limeLightTest();
+  limeLightTest limelightcam = new limeLightTest(gyro);
+
 
   SwerveModule rightFront;
   SwerveModule leftFront;
@@ -85,11 +86,11 @@ public class Robot extends TimedRobot {
 
     if (!oldDriveBase) {
       // competition base CAN IDs
-      leftFront = new SwerveModule(0,66.3065,
-          14,6,
-          zeroMode,oldDriveBase);
       rightFront = new SwerveModule(1,-134.8564,
           33,4,
+          zeroMode,oldDriveBase);
+      leftFront = new SwerveModule(0,66.3065,
+          14,6,
           zeroMode,oldDriveBase);
       rightBack = new SwerveModule(2,64.7032,
           19,16,
@@ -103,16 +104,17 @@ public class Robot extends TimedRobot {
       
     } else {
       // old drive base CAN IDs
-      leftFront = new SwerveModule(0,348.0-90,
+ 
+      rightFront = new SwerveModule(1,353,
+          20,2,
+          zeroMode,oldDriveBase);     
+      leftFront = new SwerveModule(0,68,
           12,17,
           zeroMode,oldDriveBase);
-      rightFront = new SwerveModule(1,70.1-270,
-          20,2,
-          zeroMode,oldDriveBase);
-      rightBack = new SwerveModule(2,2.31-180,
+      rightBack = new SwerveModule(2,358,
           14,32,
           zeroMode,oldDriveBase);
-      leftBack = new SwerveModule(3,69.3-180,
+      leftBack = new SwerveModule(3,241-180,
           29,15,
           zeroMode,oldDriveBase);
     }
@@ -332,16 +334,20 @@ break;
   public void teleopPeriodic() { 
     dashboard.updateDashboard();
     //limelightcam.LimeTest();
-    double LLc = 0;
-if (controller.getAButton()){
-  LLc = limelightcam.LimeTest();
+    double trackSide = 0;
+    double trackTurn = 0; 
+    double trackPush = 0;
+if (controller.getLeftTriggerAxis() > 0.1){
+  trackSide = limelightcam.LimeTest();
+  trackTurn = limelightcam.ReefCenter(); 
+  trackPush = limelightcam.ReefPush();
 }
     if (zeroMode){
       System.out.println(
-        rightFront.getRotation() 
-        +", " + leftFront.getRotation()
-        +", " + rightBack.getRotation()
-        +", " + leftBack.getRotation()
+        "RF:" + rightFront.getRotation() 
+        +", LF:" + leftFront.getRotation()
+        +", RB:" + rightBack.getRotation()
+        +", LB:" + leftBack.getRotation()
       );
       return;
     } 
@@ -349,8 +355,17 @@ if (controller.getAButton()){
     if (controller.getYButton()){
       gyro.reset();
     }  
+    
+    if (controller.getXButton()){
+      System.out.println(gyro.getAngle());
+    }  
+    ChassisSpeeds control;
+    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
+      control = ChassisSpeeds.fromFieldRelativeSpeeds(trackPush*1, trackSide*1, trackTurn*1, new Rotation2d(0));
+    } else {         
+      control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), gyro.getRotation2d() );
+    }
 
-    ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),gyro.getRotation2d() );
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -376,7 +391,7 @@ if (controller.getAButton()){
     rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
   }
-
+  
     // liftMotor is only instantiated for competition base
     double hsTargetspeed = 0;
 

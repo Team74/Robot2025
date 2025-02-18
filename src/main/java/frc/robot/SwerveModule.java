@@ -30,16 +30,20 @@ public class SwerveModule {
                 int initialDriveMotorID,
                 boolean zeroMode,
                 boolean initialoldDriveBase) {
-        if(zeroMode){
-            initialEncoderOffset = 0.0;
-        }
+        
         encoderPort = initialEncoderPort;
         encoderOffset = initialEncoderOffset;
         turningMotorID = initialTurningMotorID;
         driveMotorID = initialDriveMotorID;
         oldDriveBase = initialoldDriveBase;
+
+        /*if(zeroMode){
+            encoderOffset = 0.0;
+           initialEncoderOffset = 0.0;
+        }*/
+
         if (oldDriveBase){
-            encoderA = new AnalogEncoder(initialEncoderPort,360.0,initialEncoderOffset-90.0);
+            encoderA = new AnalogEncoder(initialEncoderPort,360.0,initialEncoderOffset);
         }
         else {
             encoder = new DutyCycleEncoder(initialEncoderPort,360.0,initialEncoderOffset-180.0);
@@ -49,7 +53,7 @@ public class SwerveModule {
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
 
         if (oldDriveBase){
-            pid = new PIDController(0.0023889/2.0, 0, 0);
+            pid = new PIDController(0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
         }
         else {
@@ -77,8 +81,11 @@ public class SwerveModule {
     
     double getRotation() {
         if (oldDriveBase) {
-            //return (encoderA.get());
-            return (encoderA.get()* -1) -90;
+            if (encoderA.get() < 180) {
+                return ((encoderA.get()))*-1;
+            } else {
+                return (encoderA.get())-(2*(encoderA.get()-180));
+            }
         }
         return encoder.get()-180;
     }
