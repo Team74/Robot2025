@@ -53,21 +53,21 @@ public class driveForwardAuton {
         ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(Y, X, rotation, gyro1.getRotation2d());
         SwerveModuleState[] moduleStates = drive1.toSwerveModuleStates(control);
 
-  moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
-  moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
-  moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
-  moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
-  
-  rightFront.turny(moduleStates[0].angle.getDegrees());
-  leftFront.turny(moduleStates[1].angle.getDegrees());
-  rightBack.turny(moduleStates[2].angle.getDegrees());
-  leftBack.turny(moduleStates[3].angle.getDegrees());
+        moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
+        moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
+        moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
+        moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
+        
+        rightFront.turny(moduleStates[0].angle.getDegrees());
+        leftFront.turny(moduleStates[1].angle.getDegrees());
+        rightBack.turny(moduleStates[2].angle.getDegrees());
+        leftBack.turny(moduleStates[3].angle.getDegrees());
 
 
-    rightFront.movey(moduleStates[0].speedMetersPerSecond);
-    leftFront.movey(moduleStates[1].speedMetersPerSecond);
-    rightBack.movey(moduleStates[2].speedMetersPerSecond);
-    leftBack.movey(moduleStates[3].speedMetersPerSecond);
+        rightFront.movey(moduleStates[0].speedMetersPerSecond);
+        leftFront.movey(moduleStates[1].speedMetersPerSecond);
+        rightBack.movey(moduleStates[2].speedMetersPerSecond);
+        leftBack.movey(moduleStates[3].speedMetersPerSecond);
 
 
     }
