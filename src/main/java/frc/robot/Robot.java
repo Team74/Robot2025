@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit(){
-    startToReef.state = "start";
+    //startToReef.state = "start";
     time = 0;
     gyro.reset();
   }
@@ -152,98 +152,16 @@ public class Robot extends TimedRobot {
 String test = "start";
   @Override
   public void autonomousPeriodic() {
+
+    autonState(time);
      switch (autonState) {
         
         case "S2R":
-        startToReef.RunS2R(time);
+        //startToReef.RunS2R(time);
       }
       time ++;
     
-       /*test = willsClass.mattsMethod(test);
     
-        //willsClass.willsAutonMethod();
-        //PlayerToReef(time);
-        time++;
-        System.out.println("master" + test + time);
-        
-        System.out.println("master" + test + time);*/
-    
-    
-       /* double speedX = 0.0;
-        double speedY = -0.1;
-    /*neg Y is forward
-     * neg X is left
-     */
-    
-    
-    /*if (timerAuton.get() < 2){
-      speedX = 0.0;
-      speedY = -0.1;
-      } else if (timerAuton.get() < 4 && timerAuton.get() > 2) {
-      speedX = 0.1;
-      speedY = 0.0; 
-      } else if (timerAuton.get() < 6 && timerAuton.get() > 4) {
-        speedX = 0.0;
-        speedY = 0.1; 
-      }String currentState = "Start";
-     
-    public void autonState(int time) {
-      switch (currentState){
-        case "Start":
-          rightFront.turny(0);
-          leftFront.turny(0);
-          rightBack.turny(0);
-          leftBack.turny(0);
-          rightFront.movey(0);
-          leftFront.movey(0);
-          rightBack.movey(0);
-          leftBack.movey(0);
-          gyro.reset();
-          time = 0;
-          currentState = "driving";
-          break;
-    
-    case "driving":
-    rightFront.turny(0);
-    leftFront.turny( 0);
-    rightBack.turny(0);
-    leftBack.turny(0);
-    rightFront.movey(-0.1);
-    leftFront.movey(-0.1);
-    rightBack.movey(-0.1);
-    leftBack.movey(-0.1);
-    if (time > 50) {
-    rightFront.turny(0);
-    leftFront.turny(0);
-    rightBack.turny(0);
-    leftBack.turny(0);
-    rightFront.movey(0);
-    leftFront.movey(0);
-    rightBack.movey(0);
-    leftBack.movey(0);
-    time = 0;
-    }
-    break; else if (timerAuton.get() < 8 && timerAuton.get() > 6) {
-        speedX = -0.1;
-        speedY = 0.0;
-      } else if (timerAuton.get() > 8) {
-        timerAuton.restart();
-      }
-      else {
-        speedX = 0.0; public PlayerToReef() {
-            String State = "start";
-            int time = 0;
-            switch (State) {
-                case "start":
-                    driveBase
-    
-            }
-            
-    
-    
-    
-    
-        }
     /*ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
@@ -284,11 +202,11 @@ rightFront.turny(0);
 leftFront.turny( 0);
 rightBack.turny(0);
 leftBack.turny(0);
-rightFront.movey(-0.4);
-leftFront.movey(-0.1);
-rightBack.movey(-0.1);
-leftBack.movey(-0.1);
-if (time > 50) {
+rightFront.movey(0.3);
+leftFront.movey(0.3);
+rightBack.movey(0.3);
+leftBack.movey(0.3);
+if (time > 100) {
 rightFront.turny(0);
 leftFront.turny(0);
 rightBack.turny(0);
