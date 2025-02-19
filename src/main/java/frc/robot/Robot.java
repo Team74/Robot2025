@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.cameraserver.CameraServer;
 
 /**
@@ -256,6 +257,18 @@ break;
     double trackTurn = 0; 
     double trackPush = 0;
 if (controller.getLeftTriggerAxis() > 0.1){
+  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+            for (RawFiducial fiducial : fiducials) {
+                    int id = fiducial.id;
+                    double txnc = fiducial.txnc;
+                    double tync = fiducial.tync;
+                    double ta = fiducial.ta;
+                    double distToCamera = fiducial.distToCamera;
+                    double distToRobot = fiducial.distToRobot;
+                    double ambiguity = fiducial.ambiguity; 
+                System.out.println("Tag: " + id);
+            }
+          }
   trackSide = limelightcam.LimeTest();
   trackTurn = limelightcam.ReefCenter(); 
   trackPush = limelightcam.ReefPush();
