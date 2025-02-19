@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.cameraserver.CameraServer;
-import frc.robot.LimeLightTestinger;
+
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
   XboxController operatorController = new XboxController(1);
-  LimeLightTestinger limes = new LimeLightTestinger();
+
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
@@ -337,9 +337,6 @@ if (controller.getLeftTriggerAxis() > 0.1){
       liftMotor.set(hsTargetspeed);
 
     }
-
-    limes.limething();
-
 
     // outtakeServo is only instantiated for competition base
     if (outtakeServo != null) {
