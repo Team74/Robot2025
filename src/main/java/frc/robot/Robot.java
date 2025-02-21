@@ -21,13 +21,17 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.LimeLightTestinger;
 /**
@@ -37,7 +41,7 @@ import frc.robot.LimeLightTestinger;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
@@ -47,7 +51,8 @@ public class Robot extends TimedRobot {
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
-
+  AnalogInput stringThingInput;
+  AnalogPotentiometer stringThing;
 
   SwerveModule rightFront;
   SwerveModule leftFront;
@@ -100,6 +105,8 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);
 
       liftMotor = new SparkMax(12, MotorType.kBrushed);
+      stringThingInput = new AnalogInput(0);
+      stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
       
     } else {
@@ -332,6 +339,9 @@ break;
 
   @Override
   public void teleopPeriodic() { 
+
+    System.out.println(stringThing.get());
+
     dashboard.updateDashboard();
     //limelightcam.LimeTest();
     double trackSide = 0;
@@ -426,9 +436,9 @@ if (controller.getLeftTriggerAxis() > 0.1){
     // outtakeServo is only instantiated for competition base
     if (outtakeServo != null) {
       // servo has 180 degree range
-      double outtakeAngle = 0.0;
+      double outtakeAngle = 180.0;
       if (operatorController.getAButton()) {
-        outtakeAngle = 180.0;
+        outtakeAngle = 0.0;
       }
       outtakeServo.set(outtakeAngle / 180.0);
     }
