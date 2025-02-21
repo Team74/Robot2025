@@ -371,7 +371,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       outtakeServo.set(outtakeAngle / 180.0);
     }
     
-  } {
+  }
 
   @Override
   public void disabledInit() {}
