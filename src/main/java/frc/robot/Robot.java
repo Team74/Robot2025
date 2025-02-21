@@ -42,24 +42,24 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
+  SparkMax liftMotor2 = null;
   XboxController operatorController = new XboxController(1);
 
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
-  AnalogInput stringThingInput;
-  AnalogPotentiometer stringThing;
+  
+  
 
   SwerveModule rightFront;
   SwerveModule leftFront;
   SwerveModule rightBack;
   SwerveModule leftBack;
-  SwerveModule[] moduleList;
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
@@ -88,10 +88,11 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
-    moduleList = new SwerveModule[4];
 
     if (!oldDriveBase) {
-      // competition base CAN IDs
+    //competition base CAN IDs
+      AnalogInput stringThingInput;
+      AnalogPotentiometer stringThing;
       rightFront = new SwerveModule(1,-134.8564,
           33,4,
           zeroMode,oldDriveBase);
@@ -105,15 +106,17 @@ public class Robot extends TimedRobot {
           10,11,
           zeroMode,oldDriveBase);
 
+      liftMotor2 = new SparkMax(47, MotorType.kBrushless);
       liftMotor = new SparkMax(12, MotorType.kBrushed);
-      stringThingInput = new AnalogInput(0);
-      stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
+
+        stringThingInput = new AnalogInput(0);
+        stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
       
     } else {
       // old drive base CAN IDs
  
-      rightFront = new SwerveModule(1,353,
+      /*rightFront = new SwerveModule(1,353,
           20,2,
           zeroMode,oldDriveBase);     
       leftFront = new SwerveModule(0,68,
@@ -124,16 +127,13 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);
       leftBack = new SwerveModule(3,241-180,
           29,15,
-          zeroMode,oldDriveBase);
+          zeroMode,oldDriveBase);*/
     }
-    moduleList[0] = rightFront;
-    moduleList[1] = rightBack;
-    moduleList[2] = leftFront;
-    moduleList[3] = leftBack;
+
 
    // willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    //startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
+    startToReef = new StartToReef(liftMotor, outtakeServo);
     // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
@@ -162,14 +162,17 @@ public class Robot extends TimedRobot {
 String test = "start";
   @Override
   public void autonomousPeriodic() {
-
-    autonState(time);
-     switch (autonState) {
+    startToReef.oldRunS2R();
+    //autonState(time);
+   //  switch (autonState) {
         
-        case "S2R":
-        //startToReef.RunS2R(time);
-      }
-      time ++;
+      //  case "S2R":
+       
+       time = time + 10;
+       // break;
+     // }
+ 
+       
     
     
     /*ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
@@ -259,7 +262,7 @@ break;
   @Override
   public void teleopPeriodic() { 
 
-    System.out.println(stringThing.get());
+//    System.out.println(stringThing.get());
 
     dashboard.updateDashboard();
     //limelightcam.LimeTest();
@@ -342,6 +345,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       } else {
         hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
       }
+    
       // System.err.println(!limitSensorBottom.get() + " " + !limitSensorTop.get() + " " + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
       // //System.err.println(!limitSensorBottom.get() + " " + + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
       //If the limit switch is triggered and control stick is down then stop!
@@ -370,7 +374,11 @@ if (controller.getLeftTriggerAxis() > 0.1){
       }
       outtakeServo.set(outtakeAngle / 180.0);
     }
-    
+
+    if (liftMotor2 != null) {
+liftMotor2.getAbsoluteEncoder();
+      
+    }
     
 }
 

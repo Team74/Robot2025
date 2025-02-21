@@ -6,29 +6,26 @@ import edu.wpi.first.wpilibj.Servo;
 import frc.robot.testrobotautonmovement.RobotMovement.Motor;
 
 public class StartToReef {
-    SwerveModule rightFront;
-    SwerveModule rightBack;
-    SwerveModule leftFront;
-    SwerveModule leftBack;
+
     SparkMax liftMotor;
     String state = "start";
     Servo outtakeServo;
+    int time;
+    driveTrain driveTrain = new driveTrain();
 
-    public StartToReef(SwerveModule[] list , SparkMax lift, Servo servo) {
-        rightFront = list[0];
-        rightBack = list[1];
-        leftFront = list[2];
-        leftBack = list[3];
-       liftMotor = lift;
-       outtakeServo = servo;
-       state = "start";
+    public StartToReef(SparkMax lift, Servo servo) {
+        time = 0;
+        liftMotor = lift;
+        outtakeServo = servo;
+        System.out.println(state);
     }
 
-    void RunS2R(int time) {
+    void RunS2R() {
+        time++;
         switch (state) {
             // first number in if statement is time in seconds
             case "start":
-            MotorSet(0.0,0.0,false);
+            driveTrain.drive(0, 0, 0, false);
             if (time > 0*50) {
                 time = 0;
                 state = "move1";
@@ -36,7 +33,7 @@ public class StartToReef {
             }
 
             case "move1":
-            MotorSet(0.1,0.0,false);
+            driveTrain.drive(0.2, 0, 0, false);   
             if (time > 3*50) {
                 time = 0;
                 state = "lift";
@@ -44,7 +41,7 @@ public class StartToReef {
             }
 
             case "lift":
-            MotorSet(0.0,0,false);
+            driveTrain.drive(0, 0, 0, false);
             liftSet(4);
             if (time > 1*50) {
                 time = 0;
@@ -53,8 +50,8 @@ public class StartToReef {
             }
 
             case "dumpy":
-            MotorSet(0.0,0,false);
-            liftSet(1);
+            driveTrain.drive(0, 0, 0, false);
+            liftSet(4);
             outtakeServo.set(1);
             if (time > .5*50) {
                 time = 0;
@@ -63,7 +60,7 @@ public class StartToReef {
             }
 
             case "down":
-            MotorSet(0.0,0,false);
+            driveTrain.drive(0, 0, 0, false); 
             liftSet(0);
             outtakeServo.set(0);
             if (time > 1*50) {
@@ -73,19 +70,21 @@ public class StartToReef {
             }
 
             case "stop":
-            MotorSet(0.0,0,false);
+            driveTrain.drive(0, 0, 0, false);
                 state = "stop";
                 break;
             
 
         }
     }
-    void oldRunS2R(int time) {
-        System.out.println(state);
+
+    void oldRunS2R() {
+        System.out.println(state + time);
+        time++;
         switch (state) {
-            // first number in if statement is time in seconds
+    
             case "start":
-            MotorSet(0.0,0.0,false);
+            driveTrain.drive(0, 0, 0, false);
             if (time > 0) {
                 time = 0;
                 state = "move1";
@@ -93,71 +92,44 @@ public class StartToReef {
             }
 
             case "move1":
-            MotorSet(0.2,0.0,false);
-            if (time > 3*50) {
+            driveTrain.drive(0.2, 0, 0, false);
+            if (time > 150) {
                 time = 0;
                 state = "lift";
                 break;
             }
 
             case "lift":
-            MotorSet(0.0,0,false);
-           
-            if (time > 1*50) {
+            driveTrain.drive(0, 0, 0, false);
+            if (time > 50) {
                 time = 0;
                 state = "dumpy";
                 break;
             }
 
             case "dumpy":
-            MotorSet(0.0,0,false);
-           
-          
-            if (time > .5*50) {
+            driveTrain.drive(0, 0, 0, false);
+            if (time > 25) {
                 time = 0;
                 state = "down";
                 break;
             }
 
             case "down":
-            MotorSet(0.0,0,false);
-           
-           
-            if (time > 1*50) {
+            driveTrain.drive(0, 0, 0, false);
+            if (time > 50) {
                 time = 0;
                 state = "stop";
                 break;
             }
 
             case "stop":
-            MotorSet(0.0,0,false);
-                state = "stop";
-                break;
+            driveTrain.drive(0, 0, 0, false);                
+            state = "stop";
+                break; 
             
 
         }
-    }
-
-
-    void MotorSet(double speed, double angle, boolean turning){
-        if(turning) {
-        rightFront.turny(45);
-        leftFront.turny( 135);
-        rightBack.turny(135);
-        leftBack.turny(45);
-        rightFront.movey(speed);
-        leftFront.movey(speed);
-        rightBack.movey(-speed);
-        leftBack.movey(-speed);
-        } else
-        rightFront.turny(angle);
-        leftFront.turny(angle);
-        rightBack.turny(angle);
-        leftBack.turny(angle);
-        rightFront.movey(speed);
-        leftFront.movey(speed);
-        rightBack.movey(speed);
-        leftBack.movey(speed);
     }
 
     void liftSet(int level) {
