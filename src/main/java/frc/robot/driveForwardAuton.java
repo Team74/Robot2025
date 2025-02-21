@@ -1,13 +1,22 @@
 package frc.robot;
 
+import javax.naming.directory.InvalidSearchFilterException;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 
+import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.testrobotautonmovement.RobotMovement.Motor;
+
 
 public class driveForwardAuton {
     SwerveModule rightFront;
@@ -41,7 +50,28 @@ public class driveForwardAuton {
 
             case "stop":
             MotorSet(0.0,0.0,0.0);
+                state = "Tag1";
             break;
+
+            case "Tag1":
+            /*NetworkTableInstance.getDefault().getTable("limelight").getEntry("tid").getValue();
+            NetworkTableEntry jsonEntry = table.getEntry("json");
+
+            String jsonString = jsonEntry.getString("{}");
+            JSONObject json = new JSONObject(jsonString);
+            JSONArray targets = json.getJSONArray("targets");
+
+            int desiredTagId = 13;
+            for (int i = 0; i < targets.length (); i++){
+                JSONObject target = targets.getJSONOnject(i);
+                int tagId = target.getInt("tid");
+                if (tagId == desiredTagId) {
+                    double tx = target.getdouble("tx");
+                    double ty = target.getdouble("ty");
+                }
+            }*/
+
+
 
         }
     }
