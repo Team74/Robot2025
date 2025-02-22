@@ -4,8 +4,7 @@
 
 package frc.robot;
 
-import java.rmi.server.Operation;
-
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
@@ -265,7 +264,10 @@ break;
   
 
   @Override
-  public void teleopPeriodic() { 
+  public void teleopPeriodic() {
+if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
+
+} 
 
 //    System.out.println(stringThing.get());
 
@@ -369,7 +371,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (!limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
         hsTargetspeed = 0;
 
-        System.out.println("Bottom Limit Hit");
+        System.out.println("BottSom Limit Hit");
       } 
       //If the limit switch is triggered and control stick is down then stop!
       if (!limitSensorTop.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) < 0) {
