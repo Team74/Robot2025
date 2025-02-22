@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     //competition base CAN IDs
       AnalogInput stringThingInput;
       AnalogPotentiometer stringThing;
-      rightFront = new SwerveModule(1,-134.8564,
+     /* rightFront = new SwerveModule(1,-134.8564,
           33,4,
           zeroMode,oldDriveBase);
       leftFront = new SwerveModule(0,66.3065,
@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);
       leftBack = new SwerveModule(3,85.9213,
           10,11,
-          zeroMode,oldDriveBase);
+          zeroMode,oldDriveBase);*/ 
 
       liftMotor2 = new SparkMax(47, MotorType.kBrushless);
       liftMotor = new SparkMax(12, MotorType.kBrushed);
@@ -192,7 +192,7 @@ String test = "start";
    
     String currentState = "Start";
  
-public void autonState(int time) {
+/* public void autonState(int time) {
   //willsClass.willsAutonMethod();
  //Will's case code
   switch (currentState) { 
@@ -252,7 +252,7 @@ break;
         }  
     }
   
-  }
+  } */
 
 
   @Override
@@ -312,6 +312,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
    
 // replaced old teleop with driveTrain
 
+
     /*ChassisSpeeds control;
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
@@ -347,6 +348,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
   } */
   
     // liftMotor is only instantiated for competition base
+
     double hsTargetspeed = 0;
 
     if (liftMotor != null) {
@@ -386,7 +388,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     if (liftMotor2 != null) {
-liftMotor2.getAbsoluteEncoder();
+      liftMotor2.getAbsoluteEncoder();
       
     }
     
