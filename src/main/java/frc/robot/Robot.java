@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
-  
+  driveTrain driveTrain = new driveTrain();
   
 
   SwerveModule rightFront;
@@ -303,7 +303,17 @@ if (controller.getLeftTriggerAxis() > 0.1){
     if (controller.getXButton()){
       System.out.println(gyro.getAngle());
     }  
-    ChassisSpeeds control;
+
+    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
+      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButtonPressed());
+    } else {         
+      driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButtonPressed());
+    }
+   
+// replaced old teleop with driveTrain
+
+    /*ChassisSpeeds control;
+
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
       control = ChassisSpeeds.fromFieldRelativeSpeeds(trackPush*1, trackSide*1, trackTurn*1, new Rotation2d(0));
     } else {         
@@ -334,7 +344,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
     rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
-  }
+  } */
   
     // liftMotor is only instantiated for competition base
     double hsTargetspeed = 0;
