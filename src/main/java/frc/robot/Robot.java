@@ -410,21 +410,6 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
 
-    double cageSpeed = 0;
-
-    if (cageLift != null) {
-      int pov = operatorController.getPOV();
-      if (pov == -1){
-        cageSpeed = 0;
-      }
-      else if (pov > 315 || pov < 45) {
-        cageSpeed = 0.3;
-      }
-      else if (pov > 135 && pov < 225) {
-        cageSpeed = -0.3;
-      }
-      cageLift.set(cageSpeed);
-
     if (liftMotor2 != null) {
       liftMotor2.getAbsoluteEncoder();
       
