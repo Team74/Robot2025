@@ -23,13 +23,17 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -45,19 +49,20 @@ public class Robot extends TimedRobot {
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
+  SparkMax liftMotor2 = null;
   XboxController operatorController = new XboxController(1);
   SparkMax cageLift = null;
 
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
-
+  driveTrain driveTrain = new driveTrain();
+  
 
   SwerveModule rightFront;
   SwerveModule leftFront;
   SwerveModule rightBack;
   SwerveModule leftBack;
-  SwerveModule[] moduleList;
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
@@ -86,10 +91,11 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
-    moduleList = new SwerveModule[4];
 
     if (!oldDriveBase) {
-      // competition base CAN IDs
+    //competition base CAN IDs
+      AnalogInput stringThingInput;
+      AnalogPotentiometer stringThing;
       rightFront = new SwerveModule(1,-134.8564,
           33,4,
           zeroMode,oldDriveBase);
@@ -103,15 +109,19 @@ public class Robot extends TimedRobot {
           10,11,
           zeroMode,oldDriveBase);
 
+      liftMotor2 = new SparkMax(47, MotorType.kBrushless);
       liftMotor = null;//new SparkMax(120, MotorType.kBrushed);
 
       cageLift = new SparkMax(12, MotorType.kBrushed);
+
+        stringThingInput = new AnalogInput(0);
+        stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
       
     } else {
       // old drive base CAN IDs
  
-      rightFront = new SwerveModule(1,353,
+      /*rightFront = new SwerveModule(1,353,
           20,2,
           zeroMode,oldDriveBase);     
       leftFront = new SwerveModule(0,68,
@@ -122,16 +132,13 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);
       leftBack = new SwerveModule(3,241-180,
           29,15,
-          zeroMode,oldDriveBase);
+          zeroMode,oldDriveBase);*/
     }
-    moduleList[0] = rightFront;
-    moduleList[1] = rightBack;
-    moduleList[2] = leftFront;
-    moduleList[3] = leftBack;
+
 
    // willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    //startToReef = new StartToReef(moduleList, liftMotor, outtakeServo);
+    startToReef = new StartToReef(liftMotor, outtakeServo);
     // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
@@ -160,14 +167,17 @@ public class Robot extends TimedRobot {
 String test = "start";
   @Override
   public void autonomousPeriodic() {
-
-    autonState(time);
-     switch (autonState) {
+    startToReef.oldRunS2R();
+    //autonState(time);
+   //  switch (autonState) {
         
-        case "S2R":
-        //startToReef.RunS2R(time);
-      }
-      time ++;
+      //  case "S2R":
+       
+       time = time + 10;
+       // break;
+     // }
+ 
+       
     
     
     /*ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(speedY,speedX,0.5,gyro.getRotation2d());
@@ -256,6 +266,9 @@ break;
 
   @Override
   public void teleopPeriodic() { 
+
+//    System.out.println(stringThing.get());
+
     dashboard.updateDashboard();
     //limelightcam.LimeTest();
     double trackSide = 0;
@@ -295,7 +308,17 @@ if (controller.getLeftTriggerAxis() > 0.1){
     if (controller.getXButton()){
       System.out.println(gyro.getAngle());
     }  
-    ChassisSpeeds control;
+
+    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
+      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButtonPressed());
+    } else {         
+      driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButtonPressed());
+    }
+   
+// replaced old teleop with driveTrain
+
+    /*ChassisSpeeds control;
+
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
       control = ChassisSpeeds.fromFieldRelativeSpeeds(trackPush*1, trackSide*1, trackTurn*1, new Rotation2d(0));
     } else {         
@@ -326,7 +349,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
     rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
     leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
-  }
+  } */
   
     // liftMotor is only instantiated for competition base
     double hsTargetspeed = 0;
@@ -337,6 +360,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       } else {
         hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
       }
+    
       // System.err.println(!limitSensorBottom.get() + " " + !limitSensorTop.get() + " " + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
       // //System.err.println(!limitSensorBottom.get() + " " + + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
       //If the limit switch is triggered and control stick is down then stop!
@@ -359,9 +383,9 @@ if (controller.getLeftTriggerAxis() > 0.1){
     // outtakeServo is only instantiated for competition base
     if (outtakeServo != null) {
       // servo has 180 degree range
-      double outtakeAngle = 0.0;
+      double outtakeAngle = 180.0;
       if (operatorController.getAButton()) {
-        outtakeAngle = 180.0;
+        outtakeAngle = 0.0;
       }
       outtakeServo.set(outtakeAngle / 180.0);
       
@@ -382,7 +406,26 @@ if (controller.getLeftTriggerAxis() > 0.1){
       }
       cageLift.set(cageSpeed);
     }
-    
+
+
+    double cageSpeed = 0;
+
+    if (cageLift != null) {
+      int pov = operatorController.getPOV();
+      if (pov == -1){
+        cageSpeed = 0;
+      }
+      else if (pov > 315 || pov < 45) {
+        cageSpeed = 0.3;
+      }
+      else if (pov > 135 && pov < 225) {
+        cageSpeed = -0.3;
+      }
+      cageLift.set(cageSpeed);
+
+    if (liftMotor2 != null) {
+      liftMotor2.getAbsoluteEncoder();  
+    }
     
 }
 

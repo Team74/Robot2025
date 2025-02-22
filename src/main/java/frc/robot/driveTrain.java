@@ -15,7 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = false;
+    boolean oldDriveBase = true;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -41,8 +41,8 @@ public class driveTrain {
             // competition base CAN IDs
             leftFront = new SwerveModule(0,66.3065, 14,6, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(1,-134.8564, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(2,64.7032, 19,16, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(3,85.9213, 10,11, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(2,64.7032, 10,11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(3,85.9213, 19,16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 
