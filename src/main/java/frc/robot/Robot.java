@@ -414,7 +414,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       liftMotor2.getAbsoluteEncoder();
       
     }
-  }
+  
 }
 
   @Override
