@@ -68,6 +68,6 @@ public class Dashboard {
         RBdriveSpeed.set(RBSpeed*-1);
     }       
     void updateDashboardGyro(AHRS gyro){
-        Gyro.set(gyro.getAngle());
+        Gyro.set(gyro.getRoll());
     }
 }

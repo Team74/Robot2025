@@ -96,7 +96,7 @@ public class SwerveModule {
         //if (turningMotorID == 12) {
         //    System.out.println("cp: " + currentPosition + "er: " + pid.getError() + "ta: "+ targetAngle);
         //}
-        targetSpeed = MathUtil.clamp(targetSpeed, -0.5, 0.5);
+        targetSpeed = MathUtil.clamp(targetSpeed, -0.75, 0.75);
         turningMotor.set(targetSpeed);
     }
     void movey(double targetSpeed){

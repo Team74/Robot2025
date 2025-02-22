@@ -15,7 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = true;
+    boolean oldDriveBase = false;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -44,7 +44,7 @@ public class driveTrain {
             rightBack = new SwerveModule(2,64.7032, 10,11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(3,85.9213, 19,16, zeroMode,oldDriveBase);
 
-            liftMotor = new SparkMax(12, MotorType.kBrushed);
+         //   liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 
         else {
             // old drive base CAN IDs
@@ -61,7 +61,7 @@ public class driveTrain {
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
-        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), 
+        odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(gyro.getRoll()), 
             new SwerveModulePosition[]{
                 rightFront.getPosition(),
                 leftFront.getPosition(),
@@ -71,7 +71,7 @@ public class driveTrain {
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
-        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d() );
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, new Rotation2d(gyro.getRoll()) );
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
         moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -105,7 +105,7 @@ public class driveTrain {
 
     public void updateOdometry() {
         odometry.update(
-            gyro.getRotation2d(),
+            new Rotation2d(gyro.getRoll()),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),

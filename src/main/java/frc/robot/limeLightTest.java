@@ -42,32 +42,32 @@ public class limeLightTest {
        // System.out.println("tx value: " + limex + "ty value:" + limey + "ta value:" + limearea);
         
         if (limex < - (5 + limearea)) {
-            System.out.println("side");
+   
             return -PIDPush.calculate(limex, 0.0);
         }
         if (limex > (5 + limearea)) {
-            System.out.println("side");
+         
             return -PIDPush.calculate(limex, 0.0);
         }
         return 0;
     }
     
     double ReefCenter() {
-        double currentAngle = (gyro.getAngle() % 360); 
-        currentTarget =  60 * (int)Math.round((gyro.getAngle() % 360) / 60);
+        double currentAngle = (gyro.getRoll() % 360); 
+        currentTarget =  60 * (int)Math.round((gyro.getRoll() % 360) / 60);
         
         if (currentAngle > currentTarget + (2 + limearea)) {
-            System.out.println("turning");
+      
             return PIDAngle.calculate(currentAngle,currentTarget);  
         }
         if (currentAngle < currentTarget - (2 + limearea)) {
-            System.out.println("turning");
+     
             return PIDAngle.calculate(currentAngle,currentTarget);
         }
         return 0; 
     }
     double ReefPush() {
-        if (!TrackCheck(gyro.getAngle(), currentTarget, (5 + limearea))){
+        if (!TrackCheck(gyro.getRoll(), currentTarget, (5 + limearea))){
             return 0.0;
         }
         if (!TrackCheck(limex, 0, (8 + limearea))){
@@ -76,10 +76,10 @@ public class limeLightTest {
         
         if (limearea > 0 && limearea < 9) {
             if (ReefCenter() == 0 && LimeTest() == 0) {
-                System.out.println("forwards");
+           
                 return -0.5;
             } else {
-                System.out.println("forwards"); 
+         
                 return -0.2;
             }
         }

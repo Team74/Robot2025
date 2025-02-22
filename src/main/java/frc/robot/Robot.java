@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
-  driveTrain driveTrain = new driveTrain();
+ driveTrain driveTrain = new driveTrain();
   
 
   SwerveModule rightFront;
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
           10,11,
           zeroMode,oldDriveBase);*/ 
 
-      liftMotor2 = new SparkMax(47, MotorType.kBrushless);
+      //liftMotor2 = new SparkMax(47, MotorType.kBrushless);
       liftMotor = null;//new SparkMax(120, MotorType.kBrushed);
 
       cageLift = new SparkMax(12, MotorType.kBrushed);
@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
     } else {
       // old drive base CAN IDs
  
-      /*rightFront = new SwerveModule(1,353,
+      rightFront = new SwerveModule(1,353,
           20,2,
           zeroMode,oldDriveBase);     
       leftFront = new SwerveModule(0,68,
@@ -132,13 +132,13 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);
       leftBack = new SwerveModule(3,241-180,
           29,15,
-          zeroMode,oldDriveBase);*/
+          zeroMode,oldDriveBase);
     }
 
 
    // willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    startToReef = new StartToReef(liftMotor, outtakeServo, driveTrain);
+   // startToReef = new StartToReef(liftMotor, outtakeServo, driveTrain);
     // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
@@ -306,19 +306,19 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }  
     
     if (controller.getXButton()){
-      System.out.println(gyro.getAngle());
+      System.out.println(gyro.getRoll());
     }  
 
-    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
+     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButtonPressed());
     } else {         
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButtonPressed());
-    }
+    } 
    
 // replaced old teleop with driveTrain
 
 
-    /*ChassisSpeeds control;
+   /*  ChassisSpeeds control;
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
       control = ChassisSpeeds.fromFieldRelativeSpeeds(trackPush*1, trackSide*1, trackTurn*1, new Rotation2d(0));
