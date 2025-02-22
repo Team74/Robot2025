@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.rmi.server.Operation;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
@@ -42,13 +44,14 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
   SparkMax liftMotor2 = null;
   XboxController operatorController = new XboxController(1);
+  SparkMax cageLift = null;
 
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -107,7 +110,9 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);*/ 
 
       liftMotor2 = new SparkMax(47, MotorType.kBrushless);
-      liftMotor = new SparkMax(12, MotorType.kBrushed);
+      liftMotor = null;//new SparkMax(120, MotorType.kBrushed);
+
+      cageLift = new SparkMax(12, MotorType.kBrushed);
 
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
@@ -385,13 +390,46 @@ if (controller.getLeftTriggerAxis() > 0.1){
         outtakeAngle = 0.0;
       }
       outtakeServo.set(outtakeAngle / 180.0);
+      
     }
+
+    double cageSpeed = 0;
+
+    if (cageLift != null) {
+      int pov = operatorController.getPOV();
+      if (pov == -1){
+        cageSpeed = 0;
+      }
+      else if (pov > 315 || pov < 45) {
+        cageSpeed = 0.3;
+      }
+      else if (pov > 135 && pov < 225) {
+        cageSpeed = -0.3;
+      }
+      cageLift.set(cageSpeed);
+    }
+
+
+    double cageSpeed = 0;
+
+    if (cageLift != null) {
+      int pov = operatorController.getPOV();
+      if (pov == -1){
+        cageSpeed = 0;
+      }
+      else if (pov > 315 || pov < 45) {
+        cageSpeed = 0.3;
+      }
+      else if (pov > 135 && pov < 225) {
+        cageSpeed = -0.3;
+      }
+      cageLift.set(cageSpeed);
 
     if (liftMotor2 != null) {
       liftMotor2.getAbsoluteEncoder();
       
     }
-    
+  }
 }
 
   @Override
