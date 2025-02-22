@@ -11,12 +11,13 @@ public class StartToReef {
     String state = "start";
     Servo outtakeServo;
     int time;
-    driveTrain driveTrain = new driveTrain();
+    driveTrain driveTrain;
 
-    public StartToReef(SparkMax lift, Servo servo) {
+    public StartToReef(SparkMax lift, Servo servo, driveTrain driveTrain1) {
         time = 0;
         liftMotor = lift;
         outtakeServo = servo;
+        driveTrain = driveTrain1;
         System.out.println(state);
     }
 

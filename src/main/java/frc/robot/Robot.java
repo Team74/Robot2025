@@ -91,8 +91,8 @@ public class Robot extends TimedRobot {
 
     if (!oldDriveBase) {
     //competition base CAN IDs
-      AnalogInput stringThingInput;
-      AnalogPotentiometer stringThing;
+     // AnalogInput stringThingInput = null;
+      //AnalogPotentiometer stringThing = null;
      /* rightFront = new SwerveModule(1,-134.8564,
           33,4,
           zeroMode,oldDriveBase);
@@ -109,8 +109,8 @@ public class Robot extends TimedRobot {
       liftMotor2 = new SparkMax(47, MotorType.kBrushless);
       liftMotor = new SparkMax(12, MotorType.kBrushed);
 
-        stringThingInput = new AnalogInput(0);
-        stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
+       // stringThingInput = new AnalogInput(0);
+       // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
       
     } else {
@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
 
    // willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-    startToReef = new StartToReef(liftMotor, outtakeServo);
+    startToReef = new StartToReef(liftMotor, outtakeServo, driveTrain);
     // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
