@@ -12,6 +12,7 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -47,10 +48,13 @@ public class Robot extends TimedRobot {
   boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
+  XboxController operatorController = new XboxController(1);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
   SparkMax liftMotor2 = null;
-  XboxController operatorController = new XboxController(1);
+  double targetAngleArm = 0;
+  double armOffset = 0;
+  
   SparkMax cageLift = null;
 
   // Competition Bot and Old Base
@@ -108,9 +112,9 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,85.9213,
           10,11,
           zeroMode,oldDriveBase);*/ 
-
-      //liftMotor2 = new SparkMax(47, MotorType.kBrushless);
-      liftMotor = null;//new SparkMax(120, MotorType.kBrushed);
+    //liftMotor = new SparkMax(120, MotorType.kBrushed);
+      liftMotor2 = new SparkMax(47, MotorType.kBrushless);
+ 
 
       cageLift = new SparkMax(12, MotorType.kBrushed);
 
@@ -121,7 +125,7 @@ public class Robot extends TimedRobot {
     } else {
       // old drive base CAN IDs
  
-      rightFront = new SwerveModule(1,353,
+     /*  rightFront = new SwerveModule(1,353,
           20,2,
           zeroMode,oldDriveBase);     
       leftFront = new SwerveModule(0,68,
@@ -132,7 +136,7 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);
       leftBack = new SwerveModule(3,241-180,
           29,15,
-          zeroMode,oldDriveBase);
+          zeroMode,oldDriveBase);*/
     }
 
 
@@ -173,7 +177,7 @@ String test = "start";
         
       //  case "S2R":
        
-       time = time + 10;
+      
        // break;
      // }
  
@@ -411,8 +415,33 @@ if (controller.getLeftTriggerAxis() > 0.1){
 
 
     if (liftMotor2 != null) {
-      liftMotor2.getAbsoluteEncoder();
-      
+
+
+
+      double currentAngleArm = liftMotor2.getAbsoluteEncoder().getPosition()*360;
+
+      if (operatorController.getAButton()) {
+        targetAngleArm = 15;
+      }
+      if (operatorController.getXButton()) {
+        targetAngleArm = 30;
+      }
+      if (operatorController.getBButton()) {
+        targetAngleArm = 45;
+      }
+      if (operatorController.getYButton()) {
+        targetAngleArm = 60;
+      }
+      if (operatorController.getRightBumperButton()) {
+        targetAngleArm = 75;
+      }
+      if (operatorController.getLeftBumperButton()) {
+        targetAngleArm = 90;
+      }
+
+      PIDController pidArm = new PIDController(.1023, 0, 0);
+      double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm);
+      liftMotor2.set(armSpeed);
     }
   
 }

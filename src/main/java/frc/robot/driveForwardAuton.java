@@ -27,6 +27,7 @@ public class driveForwardAuton {
     String state = "start";
     SwerveDriveKinematics drive1;
     AHRS gyro1;
+    double pi = 3.141592653589793238462643383279502884197;
 
     public driveForwardAuton(SwerveModule[] List, SparkMax Lift, SwerveDriveKinematics drive, AHRS gyro) {
         rightFront = List[0];
@@ -80,7 +81,7 @@ public class driveForwardAuton {
 
     void MotorSet(double Y, double X, double rotation){
     
-        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(Y, X, rotation, gyro1.getRotation2d());
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(Y, X, rotation, new Rotation2d(gyro1.getRoll()*(pi/180)));
         SwerveModuleState[] moduleStates = drive1.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
