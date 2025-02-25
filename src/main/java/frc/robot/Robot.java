@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
           zeroMode,oldDriveBase);*/ 
     //liftMotor = new SparkMax(120, MotorType.kBrushed);
       liftMotor2 = new SparkMax(47, MotorType.kBrushless);
- 
+     
 
       cageLift = new SparkMax(12, MotorType.kBrushed);
 
@@ -312,7 +312,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }  
     
     if (controller.getXButton()){
-      System.out.println(gyro.getRoll());
+      System.out.println(gyro.getAngle());
     }  
 
      if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {

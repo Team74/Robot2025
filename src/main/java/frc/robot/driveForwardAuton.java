@@ -81,7 +81,7 @@ public class driveForwardAuton {
 
     void MotorSet(double Y, double X, double rotation){
     
-        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(Y, X, rotation, new Rotation2d(gyro1.getRoll()*(pi/180)));
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(Y, X, rotation, gyro1.getRotation2d());
         SwerveModuleState[] moduleStates = drive1.toSwerveModuleStates(control);
 
   moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));

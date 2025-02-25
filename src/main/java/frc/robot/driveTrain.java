@@ -29,7 +29,6 @@ public class driveTrain {
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
     SparkMax liftMotor = null;
-    double pi = 3.141592653589793238462643383279502884197;
     double powerMulti = 0.6;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
@@ -61,7 +60,7 @@ public class driveTrain {
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
-        odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(gyro.getRoll()*(pi/180)), 
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), 
             new SwerveModulePosition[]{
                 rightFront.getPosition(),
                 leftFront.getPosition(),
@@ -71,7 +70,7 @@ public class driveTrain {
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
-        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, new Rotation2d(gyro.getRoll()*(pi/180)) );
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
         moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -105,7 +104,7 @@ public class driveTrain {
 
     public void updateOdometry() {
         odometry.update(
-            new Rotation2d(gyro.getRoll()*(pi/180)),
+            gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),
