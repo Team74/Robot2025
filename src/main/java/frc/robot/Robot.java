@@ -113,11 +113,12 @@ public class Robot extends TimedRobot {
           10,11,
           zeroMode,oldDriveBase);*/ 
     //liftMotor = new SparkMax(120, MotorType.kBrushed);
+    
       liftMotor2 = new SparkMax(47, MotorType.kBrushless);
      
 
       cageLift = new SparkMax(12, MotorType.kBrushed);
-      
+      cageLift.getEncoder().setPosition(0);
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
@@ -401,22 +402,25 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     double cageSpeed = 0;
-    System.err.println("cageLift:" + cageLift);
+    double cageHeight = 0;
+ 
     if (cageLift != null) {
+      
+      cageHeight = cageLift.getEncoder().getPosition();
+
       int pov = operatorController.getPOV();
       if (pov == -1){
         cageSpeed = 0;
       }
-      else if (pov > 315 || pov < 45) {
+      else if (pov >= 315 || pov <= 45 && !(cageHeight > 0 )) {
         cageSpeed = 0.3;
-        System.out.println("up");
+     
       }
-      else if (pov > 135 && pov < 225) {
+      else if (pov >= 135 && pov <= 225 && !(cageHeight < -10 )) {
         cageSpeed = -0.3;
-        System.out.println("down");
+  
       }
-      System.out.println(pov);
-      System.err.println("cageSpeed:" + cageSpeed);
+     System.out.println(cageHeight);
 
       cageLift.set(cageSpeed);
     }
