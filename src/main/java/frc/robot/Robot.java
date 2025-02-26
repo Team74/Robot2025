@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.awt.Color;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -26,12 +29,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
@@ -265,13 +270,46 @@ break;
 
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
+    DriverStation.Alliance redcolor = Alliance.Red;
+    DriverStation.Alliance bluecolor = Alliance.Blue;
+    if (alliancecolor == redcolor) {
+      //does something
+    }
+    if (alliancecolor == bluecolor) {
+      //does something
+    }
+  }
   
 
   @Override
   public void teleopPeriodic() {
 if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
+  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+  for (RawFiducial fiducial : fiducials) {
+          int id = fiducial.id;
+          double txnc = fiducial.txnc;
+          double tync = fiducial.tync;
+          double ta = fiducial.ta;
+          double distToCamera = fiducial.distToCamera;
+          double distToRobot = fiducial.distToRobot;
+          double ambiguity = fiducial.ambiguity; 
 
+          if(id==14){
+                      
+          }
+          if(id==15) {
+
+          }
+          if(id==5){
+
+          }
+          if(id==4){
+
+          }
+      System.out.println("Tag: " + id);
+  }
 } 
 
 //    System.out.println(stringThing.get());
