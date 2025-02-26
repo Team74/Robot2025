@@ -86,10 +86,10 @@ public class driveTrain {
         leftBack.turny(moduleStates[3].angle.getDegrees());
       
         if (highSpeed)  {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond);
+          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
+          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
+          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
+          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
       
         }else {
           rightFront.movey(moduleStates[0].speedMetersPerSecond/2);

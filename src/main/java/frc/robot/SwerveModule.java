@@ -57,7 +57,7 @@ public class SwerveModule {
             pid.enableContinuousInput(-180.0, 180.0);
         }
         else {
-            pid = new PIDController(0.0023889, 0, 0);
+            pid = new PIDController(0.0025+0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
         }
 

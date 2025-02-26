@@ -58,13 +58,13 @@ public class Dashboard {
         double RBAngle = rightBack.returnRotation(); 
         Encoder4.set(RBAngle);
 
-        double LFSpeed = leftFront.driveMotor.getAppliedOutput(); 
+        double LFSpeed = leftFront.driveMotor.getEncoder().getVelocity(); 
         LFdriveSpeed.set(LFSpeed*-1);
-        double RFSpeed = rightFront.driveMotor.getAppliedOutput(); 
+        double RFSpeed = rightFront.driveMotor.getEncoder().getVelocity(); 
         RFdriveSpeed.set(RFSpeed*-1);
-        double LBSpeed = leftBack.driveMotor.getAppliedOutput(); 
+        double LBSpeed = leftBack.driveMotor.getEncoder().getVelocity(); 
         LBdriveSpeed.set(LBSpeed*-1);
-        double RBSpeed = rightBack.driveMotor.getAppliedOutput(); 
+        double RBSpeed = rightBack.driveMotor.getEncoder().getVelocity(); 
         RBdriveSpeed.set(RBSpeed*-1);
     }       
     void updateDashboardGyro(AHRS gyro){
