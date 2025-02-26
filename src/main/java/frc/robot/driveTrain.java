@@ -27,14 +27,16 @@ public class driveTrain {
     SwerveDriveOdometry odometry;
 
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    Dashboard dashboard;
 
     SparkMax liftMotor = null;
     double powerMulti = 0.6;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
 
-    driveTrain() {
+    driveTrain(Dashboard dash) {
         gyro.reset();
+        dashboard = dash;
         
         if (!oldDriveBase) {
             // competition base CAN IDs
@@ -95,6 +97,7 @@ public class driveTrain {
           rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
           leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
         }          
+        dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
     }
 
     void resetGyro()

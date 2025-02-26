@@ -44,7 +44,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
- driveTrain driveTrain = new driveTrain();
+ driveTrain driveTrain;
   
 
   SwerveModule rightFront;
@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
-
+    driveTrain = new driveTrain(dashboard);
     if (!oldDriveBase) {
     //competition base CAN IDs
      // AnalogInput stringThingInput = null;
