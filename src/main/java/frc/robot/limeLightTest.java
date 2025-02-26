@@ -53,8 +53,8 @@ public class limeLightTest {
     }
     
     double ReefCenter() {
-        double currentAngle = (gyro.getRoll() % 360); 
-        currentTarget =  60 * (int)Math.round((gyro.getRoll() % 360) / 60);
+        double currentAngle = (gyro.getAngle() % 360); 
+        currentTarget =  60 * (int)Math.round((gyro.getAngle() % 360) / 60);
         
         if (currentAngle > currentTarget + (2 + limearea)) {
       
@@ -67,7 +67,7 @@ public class limeLightTest {
         return 0; 
     }
     double ReefPush() {
-        if (!TrackCheck(gyro.getRoll(), currentTarget, (5 + limearea))){
+        if (!TrackCheck(gyro.getAngle(), currentTarget, (5 + limearea))){
             return 0.0;
         }
         if (!TrackCheck(limex, 0, (8 + limearea))){

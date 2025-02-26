@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.awt.Color;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -26,12 +29,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
@@ -59,7 +64,7 @@ public class Robot extends TimedRobot {
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
-  driveTrain driveTrain = new driveTrain();
+  driveTrain driveTrain;
   
 
   SwerveModule rightFront;
@@ -95,6 +100,7 @@ public class Robot extends TimedRobot {
   
      
   public Robot() {
+    driveTrain = new driveTrain(dashboard);
 
     if (!oldDriveBase) {
     //competition base CAN IDs
@@ -117,7 +123,7 @@ public class Robot extends TimedRobot {
  
 
       //cageLift = new SparkMax(140, MotorType.kBrushed);
-
+      cageLift.getEncoder().setPosition(0);
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
@@ -269,13 +275,46 @@ break;
 
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
+    DriverStation.Alliance redcolor = Alliance.Red;
+    DriverStation.Alliance bluecolor = Alliance.Blue;
+    if (alliancecolor == redcolor) {
+      //does something
+    }
+    if (alliancecolor == bluecolor) {
+      //does something
+    }
+  }
   
 
   @Override
   public void teleopPeriodic() {
 if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
+  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+  for (RawFiducial fiducial : fiducials) {
+          int id = fiducial.id;
+          double txnc = fiducial.txnc;
+          double tync = fiducial.tync;
+          double ta = fiducial.ta;
+          double distToCamera = fiducial.distToCamera;
+          double distToRobot = fiducial.distToRobot;
+          double ambiguity = fiducial.ambiguity; 
 
+          if(id==14){
+                      
+          }
+          if(id==15) {
+
+          }
+          if(id==5){
+
+          }
+          if(id==4){
+
+          }
+      System.out.println("Tag: " + id);
+  }
 } 
 
 //    System.out.println(stringThing.get());
@@ -317,13 +356,13 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }  
     
     if (controller.getXButton()){
-      System.out.println(gyro.getRoll());
+      System.out.println(gyro.getAngle());
     }  
 
      if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
-      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButtonPressed());
+      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton());
     } else {         
-      driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButtonPressed());
+      driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButton());
     } 
    
 // replaced old teleop with driveTrain
@@ -405,18 +444,26 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     double cageSpeed = 0;
-
+    double cageHeight = 0;
+ 
     if (cageLift != null) {
+      
+      cageHeight = cageLift.getEncoder().getPosition();
+
       int pov = operatorController.getPOV();
       if (pov == -1){
         cageSpeed = 0;
       }
-      else if (pov > 315 || pov < 45) {
+      else if (pov >= 315 || pov <= 45 && !(cageHeight > 0 )) {
         cageSpeed = 0.3;
+     
       }
-      else if (pov > 135 && pov < 225) {
+      else if (pov >= 135 && pov <= 225 && !(cageHeight < -10 )) {
         cageSpeed = -0.3;
+  
       }
+     System.out.println(cageHeight);
+
       cageLift.set(cageSpeed);
     }
 

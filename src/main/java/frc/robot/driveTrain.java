@@ -28,15 +28,16 @@ public class driveTrain {
     SwerveDriveOdometry odometry;
 
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    Dashboard dashboard;
 
     SparkMax liftMotor = null;
-    double pi = 3.141592653589793238462643383279502884197;
     double powerMulti = 0.6;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
 
-    driveTrain() {
+    driveTrain(Dashboard dash) {
         gyro.reset();
+        dashboard = dash;
         
         if (!oldDriveBase) {
             // competition base CAN IDs
@@ -62,7 +63,7 @@ public class driveTrain {
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
-        odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(gyro.getRoll()*(pi/180)), 
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), 
             new SwerveModulePosition[]{
                 rightFront.getPosition(),
                 leftFront.getPosition(),
@@ -72,7 +73,7 @@ public class driveTrain {
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
-        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, new Rotation2d(gyro.getRoll()*(pi/180)) );
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
         moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
@@ -86,10 +87,10 @@ public class driveTrain {
         leftBack.turny(moduleStates[3].angle.getDegrees());
       
         if (highSpeed)  {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond);
+          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
+          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
+          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
+          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
       
         }else {
           rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
@@ -97,6 +98,7 @@ public class driveTrain {
           rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
           leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
         }          
+        dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
     }
 
     void resetGyro()
@@ -106,7 +108,7 @@ public class driveTrain {
 
     public void updateOdometry() {
         odometry.update(
-            new Rotation2d(gyro.getRoll()*(pi/180)),
+            gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),
