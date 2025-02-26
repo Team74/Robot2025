@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   limeLightTest limelightcam = new limeLightTest(gyro);
- driveTrain driveTrain = new driveTrain();
+  driveTrain driveTrain = new driveTrain();
   
 
   SwerveModule rightFront;
@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
+  Auton_2P auton_2p = new Auton_2P(driveTrain);
   String autonState = "S2R";
 
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
@@ -111,11 +112,11 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,85.9213,
           10,11,
           zeroMode,oldDriveBase);*/ 
-    //liftMotor = new SparkMax(120, MotorType.kBrushed);
-      liftMotor2 = new SparkMax(47, MotorType.kBrushless);
+      liftMotor = new SparkMax(12, MotorType.kBrushed);
+      liftMotor2 = new SparkMax(3, MotorType.kBrushless);
  
 
-      cageLift = new SparkMax(12, MotorType.kBrushed);
+      //cageLift = new SparkMax(140, MotorType.kBrushed);
 
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
@@ -164,13 +165,17 @@ public class Robot extends TimedRobot {
     //startToReef.state = "start";
     time = 0;
     gyro.reset();
+   autoState = new Object[]{"Starting", 0};
   }
 
+Object[] autoState = new Object[]{"Starting", 0};
 
-String test = "start";
   @Override
   public void autonomousPeriodic() {
-    startToReef.oldRunS2R();
+    
+  autoState = auton_2p.Run_2P(autoState);
+
+    //startToReef.oldRunS2R();
     //autonState(time);
    //  switch (autonState) {
         
@@ -420,7 +425,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
 
 
 
-      double currentAngleArm = liftMotor2.getAbsoluteEncoder().getPosition()*360;
+      double currentAngleArm = liftMotor2.getEncoder().getPosition();
 
       if (operatorController.getAButton()) {
         targetAngleArm = 15;
@@ -440,7 +445,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (operatorController.getLeftBumperButton()) {
         targetAngleArm = 90;
       }
-
+System.out.println("currentAngleArm:" + currentAngleArm);
       PIDController pidArm = new PIDController(.1023, 0, 0);
       double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm);
       liftMotor2.set(armSpeed);

@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class driveTrain {
@@ -113,5 +114,31 @@ public class driveTrain {
                 leftBack.getPosition()
             });
       }
+      RawFiducial GetAprilTagTelemotry(int aprilTag) {
+        RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+            for (RawFiducial fiducial : fiducials) {
+                    int id = fiducial.id;
+                    double txnc = fiducial.txnc;
+                    double tync = fiducial.tync;
+                    double ta = fiducial.ta;
+                    double distToCamera = fiducial.distToCamera;
+                    double distToRobot = fiducial.distToRobot;
+                    double ambiguity = fiducial.ambiguity; 
 
+                    if(id == aprilTag) {
+                        return fiducial;
+                    }
+                    if(txnc == aprilTag){
+                        return fiducial;
+                    }
+                    if(tync == aprilTag){
+                        return fiducial;
+                    }
+                    if(ta == aprilTag){
+                        return fiducial;
+                    }
+                System.out.println("Tag: " + id);
+            }
+            return null;
+      }
 }
