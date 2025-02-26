@@ -44,7 +44,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
      
   public Robot() {
     driveTrain = new driveTrain(dashboard);
+
     if (!oldDriveBase) {
     //competition base CAN IDs
      // AnalogInput stringThingInput = null;
@@ -116,7 +117,7 @@ public class Robot extends TimedRobot {
      
 
       cageLift = new SparkMax(12, MotorType.kBrushed);
-
+      
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
@@ -400,7 +401,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     double cageSpeed = 0;
-
+    System.err.println("cageLift:" + cageLift);
     if (cageLift != null) {
       int pov = operatorController.getPOV();
       if (pov == -1){
@@ -408,10 +409,15 @@ if (controller.getLeftTriggerAxis() > 0.1){
       }
       else if (pov > 315 || pov < 45) {
         cageSpeed = 0.3;
+        System.out.println("up");
       }
       else if (pov > 135 && pov < 225) {
         cageSpeed = -0.3;
+        System.out.println("down");
       }
+      System.out.println(pov);
+      System.err.println("cageSpeed:" + cageSpeed);
+
       cageLift.set(cageSpeed);
     }
 
