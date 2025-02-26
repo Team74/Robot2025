@@ -316,9 +316,9 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }  
 
      if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
-      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButtonPressed());
+      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton());
     } else {         
-      driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButtonPressed());
+      driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(), controller.getRightBumperButton());
     } 
    
 // replaced old teleop with driveTrain
