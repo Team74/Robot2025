@@ -55,7 +55,8 @@ public class Robot extends TimedRobot {
   XboxController operatorController = new XboxController(1);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
-  SparkMax liftMotor2 = null;
+  SparkMax armMotor = null;
+  SparkMax outTakeMotor = null;
   double targetAngleArm = 0;
   double armOffset = 0;
   double currentHeightLift = 0;
@@ -120,10 +121,13 @@ public class Robot extends TimedRobot {
           10,11,
           zeroMode,oldDriveBase);*/ 
       liftMotor = new SparkMax(12, MotorType.kBrushless);
-      liftMotor2 = new SparkMax(3, MotorType.kBrushless);
- 
       liftMotor.getEncoder().setPosition(0.0);
+
+      armMotor = new SparkMax(3, MotorType.kBrushless);
+      armMotor.getEncoder().setPosition(0.0);
       
+      outTakeMotor = new SparkMax(1, MotorType.kBrushed);
+
       cageLift = new SparkMax(46, MotorType.kBrushed);
       cageLift.getEncoder().setPosition(0.0);
        // stringThingInput = new AnalogInput(0);
@@ -292,6 +296,7 @@ break;
 
   @Override
   public void teleopPeriodic() {
+
 if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
   for (RawFiducial fiducial : fiducials) {
@@ -436,7 +441,8 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     // outtakeServo is only instantiated for competition base
-    if (outtakeServo != null) {
+
+    /*if (outtakeServo != null) {
       // servo has 180 degree range
       double outtakeAngle = 180.0;
       if (operatorController.getAButton()) {
@@ -444,7 +450,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       }
       outtakeServo.set(outtakeAngle / 180.0);
       
-    }
+    }*/
 
     double cageSpeed = 0;
     double cageHeight = 0;
@@ -470,12 +476,25 @@ if (controller.getLeftTriggerAxis() > 0.1){
       cageLift.set(cageSpeed);
     }
 
+    double outTakeSpeed = 0;
+    if (outTakeMotor != null) {
 
-    if (liftMotor2 != null) {
+      if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0) {
+        outTakeSpeed = 1;
+      }
+
+      if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0) {
+        outTakeSpeed = -1;
+      }
+
+      outTakeMotor.set(outTakeSpeed);
+    }
 
 
 
-      double currentAngleArm = liftMotor2.getEncoder().getPosition();
+    if (armMotor != null) {
+
+      double currentAngleArm = armMotor.getEncoder().getPosition();
 
       if (operatorController.getAButton()) {
         targetAngleArm = 30;
@@ -499,7 +518,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
 System.out.println("currentAngleArm:" + currentAngleArm);
       PIDController pidArm = new PIDController(.1023, 0, 0);
       double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm*125);
-      liftMotor2.set(armSpeed);
+      armMotor.set(armSpeed);
     }
   
 }
