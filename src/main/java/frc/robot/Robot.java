@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
   SparkMax liftMotor2 = null;
   double targetAngleArm = 0;
   double armOffset = 0;
+  double currentHeightLift = 0;
   
   SparkMax cageLift = null;
 
@@ -118,12 +119,13 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,85.9213,
           10,11,
           zeroMode,oldDriveBase);*/ 
-      liftMotor = new SparkMax(12, MotorType.kBrushed);
+      liftMotor = new SparkMax(12, MotorType.kBrushless);
       liftMotor2 = new SparkMax(3, MotorType.kBrushless);
  
-
-      //cageLift = new SparkMax(140, MotorType.kBrushed);
-      cageLift.getEncoder().setPosition(0);
+      liftMotor.getEncoder().setPosition(0.0);
+      
+      cageLift = new SparkMax(46, MotorType.kBrushed);
+      cageLift.getEncoder().setPosition(0.0);
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
@@ -407,6 +409,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     double hsTargetspeed = 0;
 
     if (liftMotor != null) {
+      currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
       if (operatorController.getRightBumperButton()) {
         hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
       } else {
@@ -419,7 +422,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (!limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
         hsTargetspeed = 0;
 
-        System.out.println("BottSom Limit Hit");
+        System.out.println("Bottom Limit Hit");
       } 
       //If the limit switch is triggered and control stick is down then stop!
       if (!limitSensorTop.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) < 0) {
@@ -492,9 +495,10 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (operatorController.getLeftBumperButton()) {
         targetAngleArm = 90;
       }
+
 System.out.println("currentAngleArm:" + currentAngleArm);
       PIDController pidArm = new PIDController(.1023, 0, 0);
-      double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm);
+      double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm*125);
       liftMotor2.set(armSpeed);
     }
   
