@@ -296,8 +296,20 @@ break;
 
   @Override
   public void teleopPeriodic() {
+if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
+  
+  var results = LimelightHelpers.getLatestResults("");
+  
+System.out.println(results.botpose_tagcount);
 
-if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
+  if(results.targets_Retro.length > 0) {
+    var target = results.targets_Retro[0];
+
+    double skew = target.ts;
+    System.out.println("skew:" + skew);
+
+  }
+
   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
   for (RawFiducial fiducial : fiducials) {
           int id = fiducial.id;
@@ -308,9 +320,20 @@ if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
           double distToRobot = fiducial.distToRobot;
           double ambiguity = fiducial.ambiguity; 
 
+          double[] otherstuff = LimelightHelpers.getT2DArray("");
+          var bla = NetworkTableInstance.getDefault().getTable("").getValue("ts");
+
+          
+          var skew = otherstuff[16];
+          System.out.println("bla:" + bla);
+          System.out.println("skew:" + skew);
+
           if(id==14){
-                      
-          }
+
+          if (controller.getLeftY() != 0) {
+            driveTrain.drive(controller.getLeftX(),0,0,false);
+          }           
+        }
           if(id==15) {
 
           }
@@ -514,8 +537,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (operatorController.getLeftBumperButton()) {
         targetAngleArm = 180;
       }
-
-System.out.println("currentAngleArm:" + currentAngleArm);
+//System.out.println("currentAngleArm:" + currentAngleArm);
       PIDController pidArm = new PIDController(.1023, 0, 0);
       double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm*125);
       armMotor.set(armSpeed);
