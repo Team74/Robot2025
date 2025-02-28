@@ -125,8 +125,8 @@ public class Robot extends TimedRobot {
 
       armMotor = new SparkMax(3, MotorType.kBrushless);
       armMotor.getEncoder().setPosition(0.0);
-      
-      outTakeMotor = new SparkMax(1, MotorType.kBrushed);
+
+      outTakeMotor = new SparkMax(5, MotorType.kBrushed);
 
       cageLift = new SparkMax(46, MotorType.kBrushed);
       cageLift.getEncoder().setPosition(0.0);
@@ -134,7 +134,8 @@ public class Robot extends TimedRobot {
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
       
-    } else {
+    } else {      
+
       // old drive base CAN IDs
  
      /*  rightFront = new SwerveModule(1,353,
