@@ -478,22 +478,22 @@ if (controller.getLeftTriggerAxis() > 0.1){
       double currentAngleArm = liftMotor2.getEncoder().getPosition();
 
       if (operatorController.getAButton()) {
-        targetAngleArm = 15;
-      }
-      if (operatorController.getXButton()) {
         targetAngleArm = 30;
       }
-      if (operatorController.getBButton()) {
-        targetAngleArm = 45;
-      }
-      if (operatorController.getYButton()) {
+      if (operatorController.getXButton()) {
         targetAngleArm = 60;
       }
+      if (operatorController.getBButton()) {
+        targetAngleArm = 90;
+      }
+      if (operatorController.getYButton()) {
+        targetAngleArm = 120;
+      }
       if (operatorController.getRightBumperButton()) {
-        targetAngleArm = 75;
+        targetAngleArm = 150;
       }
       if (operatorController.getLeftBumperButton()) {
-        targetAngleArm = 90;
+        targetAngleArm = 180;
       }
 
 System.out.println("currentAngleArm:" + currentAngleArm);
