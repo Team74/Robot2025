@@ -5,9 +5,11 @@
 package frc.robot;
 
 import java.awt.Color;
+import java.lang.ModuleLayer.Controller;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.core.io.ContentReference;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.studica.frc.AHRS;
@@ -290,18 +292,6 @@ break;
   @Override
   public void teleopPeriodic() {
 if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
-  
-  var results = LimelightHelpers.getLatestResults("");
-  
-System.out.println(results.botpose_tagcount);
-
-  if(results.targets_Retro.length > 0) {
-    var target = results.targets_Retro[0];
-
-    double skew = target.ts;
-    System.out.println("skew:" + skew);
-
-  }
 
   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
   for (RawFiducial fiducial : fiducials) {
@@ -313,30 +303,13 @@ System.out.println(results.botpose_tagcount);
           double distToRobot = fiducial.distToRobot;
           double ambiguity = fiducial.ambiguity; 
 
-          double[] otherstuff = LimelightHelpers.getT2DArray("");
-          var bla = NetworkTableInstance.getDefault().getTable("").getValue("ts");
-
-          
-          var skew = otherstuff[16];
-          System.out.println("bla:" + bla);
-          System.out.println("skew:" + skew);
-
-          if(id==14){
-
+          double Rotation = limelightcam.calculaterotation(90.0);
+          System.out.println("rot: " + Rotation);
+          if(id==14 ||id==15 || id==5 || id==4){
           if (controller.getLeftY() != 0) {
-            driveTrain.drive(controller.getLeftX(),0,0,false);
+            driveTrain.drive(controller.getLeftX(),0,Rotation,false);
           }           
         }
-          if(id==15) {
-
-          }
-          if(id==5){
-
-          }
-          if(id==4){
-
-          }
-      System.out.println("Tag: " + id);
   }
 } 
 
