@@ -42,9 +42,10 @@ public class driveTrain {
         if (!oldDriveBase) {
             // competition base CAN IDs
             leftFront = new SwerveModule(0,66.3065, 14,6, zeroMode,oldDriveBase);
-            rightFront = new SwerveModule(1,-134.8564, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(2,64.7032, 10,11, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(3,85.9213, 19,16, zeroMode,oldDriveBase);
+            rightFront = new SwerveModule(2,-134.8564, 33,4, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,64.7032, 10,11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(1,85.9213, 19,16, zeroMode,oldDriveBase);
+
 
          //   liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 

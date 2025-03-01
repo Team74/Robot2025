@@ -36,7 +36,11 @@ public class Auton_2P {
             if (time > 135) {
                 driveTrain.drive(0, 0, 0, false);
 
-                var April_22 = driveTrain.GetAprilTagTelemotry(22);
+            
+                
+            }
+            
+              var April_22 = driveTrain.GetAprilTagTelemotry(22);
                 var April_9 = driveTrain.GetAprilTagTelemotry(9);
                 
                 if (April_22 != null){
@@ -44,11 +48,7 @@ public class Auton_2P {
                     if (time > 200) {
                         driveTrain.drive( 0, 0, 45, false);
                     }
-                }
-                
-            }
-            
-                
+                }  
             
         }
         time++;
