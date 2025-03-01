@@ -52,21 +52,21 @@ public class Auton_2P {
 
             case "April_22Turn":
             
-                var April_22 = driveTrain.GetAprilTagTelemotry(22);
+            var April_22 = driveTrain.GetAprilTagTelemotry(22);
                 
-                if (April_22 != null){
-                    var txnc_22 = April_22.txnc;
-                    var ta_22 = April_22.ta;
+            if (April_22 != null){
+                var txnc_22 = April_22.txnc;
+                var ta_22 = April_22.ta;
 
-                    if (txnc_22 != 0){
-                        driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
-                    }
-                    if (ta_22 != 55){
-                        driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
-                    } else{
-                        driveTrain.drive(0, 0, 0, false);
-                    }
-                } 
+                if (txnc_22 != 0){
+                    driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
+                }
+                if (ta_22 != 55){
+                    driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
+                } else{
+                    driveTrain.drive(0, 0, 0, false);
+                }
+            } 
 
             time = 0;
             currentState = "Adjust'n";
