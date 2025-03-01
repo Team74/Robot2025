@@ -13,10 +13,8 @@ public class StartToReef {
     int time;
     driveTrain driveTrain;
 
-    public StartToReef(SparkMax lift, Servo servo, driveTrain driveTrain1) {
+    public StartToReef(driveTrain driveTrain1) {
         time = 0;
-        liftMotor = lift;
-        outtakeServo = servo;
         driveTrain = driveTrain1;
         System.out.println(state);
     }
@@ -43,7 +41,8 @@ public class StartToReef {
 
             case "lift":
             driveTrain.drive(0, 0, 0, false);
-            liftSet(4);
+            driveTrain.liftLevelSet(4);
+
             if (time > 1*50) {
                 time = 0;
                 state = "dumpy";
@@ -52,8 +51,8 @@ public class StartToReef {
 
             case "dumpy":
             driveTrain.drive(0, 0, 0, false);
-            liftSet(4);
-            outtakeServo.set(1);
+            driveTrain.liftLevelSet(4);
+            driveTrain.outTakeSet(1);
             if (time > .5*50) {
                 time = 0;
                 state = "down";
@@ -62,8 +61,8 @@ public class StartToReef {
 
             case "down":
             driveTrain.drive(0, 0, 0, false); 
-            liftSet(0);
-            outtakeServo.set(0);
+            driveTrain.liftLevelSet(1);
+            driveTrain.outTakeSet(0);
             if (time > 1*50) {
                 time = 0;
                 state = "stop";
@@ -131,23 +130,5 @@ public class StartToReef {
             
 
         }
-    }
-
-    void liftSet(int level) {
-        if (level == 1) {
-            liftMotor.set(0.0);
-        } else
-        if (level == 2) {
-            liftMotor.set(0.3333);
-        } else
-        if (level == 3) {
-            liftMotor.set(0.6666);
-        } else
-        if (level == 4) {
-            liftMotor.set(.1);
-        } else
-        if (level == 0) {
-            liftMotor.set(-.1);
-        } 
     }
 }

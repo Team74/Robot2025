@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -23,6 +24,7 @@ public class driveTrain {
     public SwerveModule rightBack;
     public SwerveModule leftBack;
 
+
     SwerveDriveKinematics kinematics;
 
     SwerveDriveOdometry odometry;
@@ -31,6 +33,22 @@ public class driveTrain {
     Dashboard dashboard;
 
     SparkMax liftMotor = null;
+    SparkMax armMotor = null;
+    SparkMax outTakeMotor1 = null;
+    SparkMax outTakeMotor2 = null;
+
+    PIDController pidArm;
+    double armSpeed;
+    double currentAngleArm;
+
+
+    PIDController pidLift;
+    double liftSpeed;
+    double targetLiftHeight;
+    double currentHeightLift = 0;
+
+
+
     double powerMulti = 0.6;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
@@ -46,6 +64,16 @@ public class driveTrain {
             rightBack = new SwerveModule(3,64.7032, 10,11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,85.9213, 19,16, zeroMode,oldDriveBase);
 
+            liftMotor = new SparkMax(46, MotorType.kBrushless);
+            liftMotor.getEncoder().setPosition(0.0);
+      
+            armMotor = new SparkMax(3, MotorType.kBrushless);
+            armMotor.getEncoder().setPosition(0.0);
+      
+            outTakeMotor1 = new SparkMax(5, MotorType.kBrushed);
+            outTakeMotor2 = new SparkMax(45, MotorType.kBrushed);
+      
+            
 
          //   liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 
@@ -94,17 +122,19 @@ public class driveTrain {
           leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
       
         }else {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
+          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
+          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
+          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
+          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
     }
 
-    void resetGyro()
-    {
+    void resetGyro() {
         gyro.reset();
+    }
+    double getGyro() {
+        return (gyro.getAngle() % 360);
     }
 
     public void updateOdometry() {
@@ -116,8 +146,8 @@ public class driveTrain {
                 rightBack.getPosition(),
                 leftBack.getPosition()
             });
-      }
-      RawFiducial GetAprilTagTelemotry(int aprilTag) {
+    }
+    RawFiducial GetAprilTagTelemotry(int aprilTag) {
         RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
             for (RawFiducial fiducial : fiducials) {
                     int id = fiducial.id;
@@ -143,5 +173,42 @@ public class driveTrain {
                 System.out.println("Tag: " + id);
             }
             return null;
-      }
+    }
+
+    void liftLevelSet(int level) {
+        currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
+        switch(level) {
+            case 1: 
+            targetLiftHeight = 0;
+            break;
+
+            case 2:
+            targetLiftHeight = 0;
+            break;
+
+            case 3:
+            targetLiftHeight = 0;
+            break;
+
+            case 4:
+            targetLiftHeight = 431.8;
+            break;
+
+        }
+        pidLift = new PIDController(.1,0 ,0 );
+        liftSpeed = pidLift.calculate(currentHeightLift, targetLiftHeight);
+        liftMotor.set(liftSpeed);
+    }
+
+    void outTakeSet(double speed) {
+        outTakeMotor1.set(speed);
+        outTakeMotor2.set(speed);
+    }
+
+    void armSet(int targetAngle) {
+        currentAngleArm = armMotor.getEncoder().getPosition();
+        pidArm = new PIDController(.1023, 0, 0);
+        armSpeed = pidArm.calculate(currentAngleArm, targetAngle*125);
+        armMotor.set(armSpeed);
+    }
 }
