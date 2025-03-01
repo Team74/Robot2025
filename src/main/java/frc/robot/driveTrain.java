@@ -17,7 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = true;
+    boolean oldDriveBase = false;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -60,21 +60,21 @@ public class driveTrain {
         
         if (!oldDriveBase) {
             // competition base CAN IDs
-            leftFront = new SwerveModule(0,66.3065, 14,6, zeroMode,oldDriveBase);
+            leftFront = new SwerveModule(0,66.3065, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,-134.8564, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,64.7032, 10,11, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(1,85.9213, 19,16, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,64.7032, 10, 11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(1,85.9213, 19, 16, zeroMode,oldDriveBase);
 
-            liftMotor = new SparkMax(3, MotorType.kBrushless);
+            liftMotor = new SparkMax(46, MotorType.kBrushless);
             liftMotor.getEncoder().setPosition(0.0);
       
-            armMotor = new SparkMax(46, MotorType.kBrushless);
+            armMotor = new SparkMax(3, MotorType.kBrushless);
             armMotor.getEncoder().setPosition(0.0);
       
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
             outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
 
-            cageLift = new SparkMax(12, MotorType.kBrushed);
+            cageLift = new SparkMax(12, MotorType.kBrushless);
             cageLift.getEncoder().setPosition(0.0);
       
             

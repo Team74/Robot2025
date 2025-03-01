@@ -49,7 +49,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -122,8 +122,8 @@ public class Robot extends TimedRobot {
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
-       cageLift = new SparkMax(12, MotorType.kBrushed);
-       cageLift.getEncoder().setPosition(0.0);
+       //cageLift = new SparkMax(12, MotorType.kBrushed);
+       //cageLift.getEncoder().setPosition(0.0);
       
     } else {      
 

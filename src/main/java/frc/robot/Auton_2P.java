@@ -25,8 +25,7 @@ public class Auton_2P {
         double trackPush = limelightcam.ReefPush();
         String currentState = autoState[0].toString();
         var April_22 = driveTrain.GetAprilTagTelemotry(22);
-        var txnc_22 = April_22.txnc;
-        var ta_22 = April_22.ta;
+        
     
         switch(currentState){
             
@@ -67,7 +66,9 @@ public class Auton_2P {
             
                 
             if (April_22 != null){
-                
+               
+                var txnc_22 = April_22.txnc;
+                var ta_22 = April_22.ta;
 
                 if (txnc_22 != 0){
                     driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
