@@ -16,7 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = false;
+    boolean oldDriveBase = true;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;

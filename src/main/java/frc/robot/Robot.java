@@ -49,7 +49,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
   driveTrain driveTrain;
   
   
+  
   SwerveModule rightFront;
   SwerveModule leftFront;
   SwerveModule rightBack;
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
-  Auton_2P auton_2p = new Auton_2P(driveTrain);
+  Auton_2P auton_2p = new Auton_2P(driveTrain, limelightcam);
   String autonState = "S2R";
 
   Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
@@ -103,6 +104,7 @@ public class Robot extends TimedRobot {
      
   public Robot() {
     driveTrain = new driveTrain(dashboard);
+    auton_2p = new Auton_2P(driveTrain, limelightcam);
 
     if (!oldDriveBase) {
     //competition base CAN IDs

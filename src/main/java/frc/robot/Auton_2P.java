@@ -5,13 +5,23 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 public class Auton_2P {
-   int time;
-   driveTrain driveTrain;
-    public Auton_2P(driveTrain _driveTrain){
-        driveTrain = _driveTrain;
-    }
-    Object[] Run_2P(Object[] autoState) {
+    int time;
+    driveTrain driveTrain;
+    limeLightTest limelightcam;
+    
 
+    public Auton_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
+        driveTrain = _driveTrain;
+        limelightcam  = _limelightcam;
+
+        
+
+    }
+
+    Object[] Run_2P(Object[] autoState) {
+        double trackSide = limelightcam.LimeTest();
+        double trackTurn = limelightcam.ReefCenter(); 
+        double trackPush = limelightcam.ReefPush();
         String currentState = autoState[0].toString();
 
         switch(currentState){
@@ -35,20 +45,44 @@ public class Auton_2P {
             }
             if (time > 135) {
                 driveTrain.drive(0, 0, 0, false);
-
-            
-                
             }
+            time = 0;
+            currentState = "April_22Turn";
+            break;
+
+            case "April_22Turn":
             
-              var April_22 = driveTrain.GetAprilTagTelemotry(22);
-                var April_9 = driveTrain.GetAprilTagTelemotry(9);
+                var April_22 = driveTrain.GetAprilTagTelemotry(22);
                 
                 if (April_22 != null){
-                    driveTrain.drive( 0, 0.4, 45, false);
-                    if (time > 200) {
-                        driveTrain.drive( 0, 0, 45, false);
+                    var txnc_22 = April_22.txnc;
+                    var ta_22 = April_22.ta;
+
+                    if (txnc_22 != 0){
+                        driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
                     }
-                }  
+                    if (ta_22 != 55){
+                        driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
+                    } else{
+                        driveTrain.drive(0, 0, 0, false);
+                    }
+                } 
+
+            time = 0;
+            currentState = "Adjust'n";
+            break;
+
+            case "Adjust'n":
+            if (time > 0) {
+                driveTrain.drive(0, 0.3, 0, false);
+            }
+            if (time > 10) {
+                driveTrain.drive(0, 0, 0, false);
+            }
+            time = 0;
+            break;
+                
+             
             
         }
         time++;
