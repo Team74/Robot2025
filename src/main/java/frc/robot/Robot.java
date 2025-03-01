@@ -441,6 +441,20 @@ if (controller.getLeftTriggerAxis() > 0.1){
       
     }*/
 
+    double liftMotorSpeed = 0;
+if (driveTrain.liftMotor != null) {
+
+  if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0) {
+    liftMotorSpeed = 1;
+  }
+
+  if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0) {
+    liftMotorSpeed = -1;
+  }
+
+  driveTrain.liftMotor.set(liftMotorSpeed);
+}
+
     double cageSpeed = 0;
     double cageHeight = 0;
  
