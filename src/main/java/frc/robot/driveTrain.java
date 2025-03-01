@@ -68,7 +68,7 @@ public class driveTrain {
             liftMotor.getEncoder().setPosition(0.0);
       
             armMotor = new SparkMax(3, MotorType.kBrushless);
-            armMotor.getEncoder().setPosition(0.0);
+            armMotor.getEncoder().setPosition(625);
       
             outTakeMotor1 = new SparkMax(5, MotorType.kBrushed);
             outTakeMotor2 = new SparkMax(45, MotorType.kBrushed);
@@ -135,6 +135,9 @@ public class driveTrain {
     }
     double getGyro() {
         return (gyro.getAngle() % 360);
+    }
+    void gyroOffset(double offset) {
+        gyro.setAngleAdjustment(offset);
     }
 
     public void updateOdometry() {
@@ -211,4 +214,5 @@ public class driveTrain {
         armSpeed = pidArm.calculate(currentAngleArm, targetAngle*125);
         armMotor.set(armSpeed);
     }
+    
 }
