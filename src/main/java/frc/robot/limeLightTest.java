@@ -53,18 +53,25 @@ public class limeLightTest {
     }
     
     double ReefCenter() {
-        double currentAngle = (gyro.getAngle() % 360); 
         currentTarget =  60 * (int)Math.round((gyro.getAngle() % 360) / 60);
+        return calculaterotation(currentTarget);
+ 
+    }
+    double calculaterotation(Double targetangle){
+        double currentAngle = (gyro.getAngle() % 360); 
+        System.out.println("currentAngle: " + currentAngle + " targetangle:" + targetangle);
         
-        if (currentAngle > currentTarget + (2 + limearea)) {
+        return PIDAngle.calculate(currentAngle,targetangle);
+
+        // if (currentAngle > targetangle + (2 + limearea)) {
       
-            return PIDAngle.calculate(currentAngle,currentTarget);  
-        }
-        if (currentAngle < currentTarget - (2 + limearea)) {
+        //     return PIDAngle.calculate(currentAngle,currentTarget);  
+        // }
+        // if (currentAngle < targetangle - (2 + limearea)) {
      
-            return PIDAngle.calculate(currentAngle,currentTarget);
-        }
-        return 0; 
+        //     return PIDAngle.calculate(currentAngle,targetangle);
+        // }
+        // return 0; 
     }
     double ReefPush() {
         if (!TrackCheck(gyro.getAngle(), currentTarget, (5 + limearea))){
