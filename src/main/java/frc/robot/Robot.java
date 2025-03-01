@@ -54,12 +54,9 @@ public class Robot extends TimedRobot {
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
   Dashboard dashboard = new Dashboard(); 
-  SparkMax liftMotor = null;
-  SparkMax armMotor = null;
-  SparkMax outTakeMotor = null;
-  double targetAngleArm = 0;
+  int liftLevel;
+  int targetAngleArm = 0;
   double armOffset = 0;
-  double currentHeightLift = 0;
   
   SparkMax cageLift = null;
 
@@ -120,19 +117,11 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,85.9213,
           10,11,
           zeroMode,oldDriveBase);*/ 
-      liftMotor = new SparkMax(12, MotorType.kBrushless);
-      liftMotor.getEncoder().setPosition(0.0);
-
-      armMotor = new SparkMax(3, MotorType.kBrushless);
-      armMotor.getEncoder().setPosition(0.0);
-
-      outTakeMotor = new SparkMax(5, MotorType.kBrushed);
-
-      cageLift = new SparkMax(46, MotorType.kBrushed);
-      cageLift.getEncoder().setPosition(0.0);
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
+       cageLift = new SparkMax(12, MotorType.kBrushed);
+       cageLift.getEncoder().setPosition(0.0);
       
     } else {      
 
@@ -438,30 +427,30 @@ if (controller.getLeftTriggerAxis() > 0.1){
 
     double hsTargetspeed = 0;
 
-    if (liftMotor != null) {
-      currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
-      if (operatorController.getRightBumperButton()) {
-        hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
-      } else {
-        hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
-      }
+    if (!oldDriveBase) {
+      
+      // if (operatorController.getRightBumperButton()) {
+      //   hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
+      // } else {
+      //   hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -1.0, 1.0);
+      // }
     
-      // System.err.println(!limitSensorBottom.get() + " " + !limitSensorTop.get() + " " + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
-      // //System.err.println(!limitSensorBottom.get() + " " + + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
-      //If the limit switch is triggered and control stick is down then stop!
-      if (!limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
-        hsTargetspeed = 0;
+      // // System.err.println(!limitSensorBottom.get() + " " + !limitSensorTop.get() + " " + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
+      // // //System.err.println(!limitSensorBottom.get() + " " + + MathUtil.applyDeadband(operatorController.getLeftY(), 0.02));
+      // //If the limit switch is triggered and control stick is down then stop!
+      // if (!limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+      //   hsTargetspeed = 0;
 
-        System.out.println("Bottom Limit Hit");
-      } 
-      //If the limit switch is triggered and control stick is down then stop!
-      if (!limitSensorTop.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) < 0) {
-        hsTargetspeed = 0;
+      //   System.out.println("Bottom Limit Hit");
+      // } 
+      // //If the limit switch is triggered and control stick is down then stop!
+      // if (!limitSensorTop.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) < 0) {
+      //   hsTargetspeed = 0;
 
-        System.out.println("Top Limit Hit");
-      } 
+      //   System.out.println("Top Limit Hit");
+      // } 
 
-      liftMotor.set(hsTargetspeed);
+      
 
     }
 
@@ -502,7 +491,8 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     double outTakeSpeed = 0;
-    if (outTakeMotor != null) {
+
+    if (!oldDriveBase) {
 
       if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0) {
         outTakeSpeed = 1;
@@ -512,37 +502,45 @@ if (controller.getLeftTriggerAxis() > 0.1){
         outTakeSpeed = -1;
       }
 
-      outTakeMotor.set(outTakeSpeed);
+      driveTrain.outTakeSet(outTakeSpeed);
     }
 
 
 
-    if (armMotor != null) {
-
-      double currentAngleArm = armMotor.getEncoder().getPosition();
+    if (!oldDriveBase) {
 
       if (operatorController.getAButton()) {
-        targetAngleArm = 30;
+        targetAngleArm = 15;
+        liftLevel = 1;
       }
       if (operatorController.getXButton()) {
-        targetAngleArm = 60;
+        targetAngleArm = 90;
+        liftLevel = 2;
+
       }
       if (operatorController.getBButton()) {
-        targetAngleArm = 90;
+        targetAngleArm = 135;
+        liftLevel = 3;
+
       }
       if (operatorController.getYButton()) {
-        targetAngleArm = 120;
+        targetAngleArm = 135;
+        liftLevel = 4;
+
       }
       if (operatorController.getRightBumperButton()) {
         targetAngleArm = 150;
+        liftLevel = 1;
+
       }
       if (operatorController.getLeftBumperButton()) {
         targetAngleArm = 180;
+        liftLevel = 1;
+
       }
-//System.out.println("currentAngleArm:" + currentAngleArm);
-      PIDController pidArm = new PIDController(.1023, 0, 0);
-      double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm*125);
-      armMotor.set(armSpeed);
+      //System.out.println("currentAngleArm:" + currentAngleArm);
+      driveTrain.armSet(targetAngleArm);
+      driveTrain.liftLevelSet(liftLevel);
     }
   
 }
