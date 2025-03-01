@@ -55,9 +55,11 @@ public class Robot extends TimedRobot {
   XboxController operatorController = new XboxController(1);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
-  SparkMax liftMotor2 = null;
+  SparkMax armMotor = null;
+  SparkMax outTakeMotor = null;
   double targetAngleArm = 0;
   double armOffset = 0;
+  double currentHeightLift = 0;
   
   SparkMax cageLift = null;
 
@@ -118,17 +120,22 @@ public class Robot extends TimedRobot {
       leftBack = new SwerveModule(3,85.9213,
           10,11,
           zeroMode,oldDriveBase);*/ 
-      liftMotor = new SparkMax(12, MotorType.kBrushed);
-      liftMotor2 = new SparkMax(3, MotorType.kBrushless);
- 
+      liftMotor = new SparkMax(12, MotorType.kBrushless);
+      liftMotor.getEncoder().setPosition(0.0);
 
-      //cageLift = new SparkMax(140, MotorType.kBrushed);
-      cageLift.getEncoder().setPosition(0);
+      armMotor = new SparkMax(3, MotorType.kBrushless);
+      armMotor.getEncoder().setPosition(0.0);
+
+      outTakeMotor = new SparkMax(5, MotorType.kBrushed);
+
+      cageLift = new SparkMax(46, MotorType.kBrushed);
+      cageLift.getEncoder().setPosition(0.0);
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
       
-    } else {
+    } else {      
+
       // old drive base CAN IDs
  
      /*  rightFront = new SwerveModule(1,353,
@@ -291,7 +298,20 @@ break;
 
   @Override
   public void teleopPeriodic() {
-if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
+if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
+  
+  var results = LimelightHelpers.getLatestResults("");
+  
+System.out.println(results.botpose_tagcount);
+
+  if(results.targets_Retro.length > 0) {
+    var target = results.targets_Retro[0];
+
+    double skew = target.ts;
+    System.out.println("skew:" + skew);
+
+  }
+
   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
   for (RawFiducial fiducial : fiducials) {
           int id = fiducial.id;
@@ -302,9 +322,20 @@ if (operatorController.getLeftBumperButtonPressed() && limelightcam.CanSee()) {
           double distToRobot = fiducial.distToRobot;
           double ambiguity = fiducial.ambiguity; 
 
+          double[] otherstuff = LimelightHelpers.getT2DArray("");
+          var bla = NetworkTableInstance.getDefault().getTable("").getValue("ts");
+
+          
+          var skew = otherstuff[16];
+          System.out.println("bla:" + bla);
+          System.out.println("skew:" + skew);
+
           if(id==14){
-                      
-          }
+
+          if (controller.getLeftY() != 0) {
+            driveTrain.drive(controller.getLeftX(),0,0,false);
+          }           
+        }
           if(id==15) {
 
           }
@@ -408,6 +439,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
     double hsTargetspeed = 0;
 
     if (liftMotor != null) {
+      currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
       if (operatorController.getRightBumperButton()) {
         hsTargetspeed = MathUtil.clamp(operatorController.getLeftY()*-1, -0.5, 0.5);
       } else {
@@ -420,7 +452,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (!limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
         hsTargetspeed = 0;
 
-        System.out.println("BottSom Limit Hit");
+        System.out.println("Bottom Limit Hit");
       } 
       //If the limit switch is triggered and control stick is down then stop!
       if (!limitSensorTop.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) < 0) {
@@ -434,7 +466,8 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
     // outtakeServo is only instantiated for competition base
-    if (outtakeServo != null) {
+
+    /*if (outtakeServo != null) {
       // servo has 180 degree range
       double outtakeAngle = 180.0;
       if (operatorController.getAButton()) {
@@ -442,7 +475,7 @@ if (controller.getLeftTriggerAxis() > 0.1){
       }
       outtakeServo.set(outtakeAngle / 180.0);
       
-    }
+    }*/
 
     double cageSpeed = 0;
     double cageHeight = 0;
@@ -468,12 +501,25 @@ if (controller.getLeftTriggerAxis() > 0.1){
       cageLift.set(cageSpeed);
     }
 
+    double outTakeSpeed = 0;
+    if (outTakeMotor != null) {
 
-    if (liftMotor2 != null) {
+      if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0) {
+        outTakeSpeed = 1;
+      }
+
+      if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0) {
+        outTakeSpeed = -1;
+      }
+
+      outTakeMotor.set(outTakeSpeed);
+    }
 
 
 
-      double currentAngleArm = liftMotor2.getEncoder().getPosition();
+    if (armMotor != null) {
+
+      double currentAngleArm = armMotor.getEncoder().getPosition();
 
       if (operatorController.getAButton()) {
         targetAngleArm = 30;
@@ -493,10 +539,10 @@ if (controller.getLeftTriggerAxis() > 0.1){
       if (operatorController.getLeftBumperButton()) {
         targetAngleArm = 180;
       }
-System.out.println("currentAngleArm:" + currentAngleArm);
+//System.out.println("currentAngleArm:" + currentAngleArm);
       PIDController pidArm = new PIDController(.1023, 0, 0);
-      double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm);
-      liftMotor2.set(armSpeed);
+      double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm*125);
+      armMotor.set(armSpeed);
     }
   
 }
