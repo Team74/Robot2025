@@ -34,8 +34,8 @@ public class driveTrain {
 
     SparkMax liftMotor = null;
     SparkMax armMotor = null;
-    SparkMax outTakeMotor1 = null;
-    SparkMax outTakeMotor2 = null;
+    SparkMax outTakeMotorOuter = null;
+    SparkMax outTakeMotorInner = null;
 
     PIDController pidArm;
     double armSpeed;
@@ -70,8 +70,8 @@ public class driveTrain {
             armMotor = new SparkMax(3, MotorType.kBrushless);
             armMotor.getEncoder().setPosition(0.0);
       
-            outTakeMotor1 = new SparkMax(5, MotorType.kBrushed);
-            outTakeMotor2 = new SparkMax(45, MotorType.kBrushed);
+            outTakeMotorOuter = new SparkMax(5, MotorType.kBrushed);
+            outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
       
             
 
@@ -201,8 +201,8 @@ public class driveTrain {
     }
 
     void outTakeSet(double speed) {
-        outTakeMotor1.set(speed);
-        outTakeMotor2.set(speed);
+        outTakeMotorOuter.set(speed);
+        outTakeMotorInner.set(speed);
     }
 
     void armSet(int targetAngle) {
