@@ -34,7 +34,8 @@ public class driveTrain {
 
     SparkMax liftMotor = null;
     SparkMax armMotor = null;
-    SparkMax outTakeMotor = null;
+    SparkMax outTakeMotor1 = null;
+    SparkMax outTakeMotor2 = null;
 
     PIDController pidArm;
     double armSpeed;
@@ -69,7 +70,8 @@ public class driveTrain {
             armMotor = new SparkMax(3, MotorType.kBrushless);
             armMotor.getEncoder().setPosition(0.0);
       
-            outTakeMotor = new SparkMax(5, MotorType.kBrushed);
+            outTakeMotor1 = new SparkMax(5, MotorType.kBrushed);
+            outTakeMotor2 = new SparkMax(45, MotorType.kBrushed);
       
             
 
@@ -120,16 +122,19 @@ public class driveTrain {
           leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
       
         }else {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond/2);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond/2);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond/2);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
+          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
+          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
+          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
+          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
     }
 
     void resetGyro() {
         gyro.reset();
+    }
+    double getGyro() {
+        return (gyro.getAngle() % 360);
     }
 
     public void updateOdometry() {
@@ -196,7 +201,8 @@ public class driveTrain {
     }
 
     void outTakeSet(double speed) {
-        outTakeMotor.set(speed);
+        outTakeMotor1.set(speed);
+        outTakeMotor2.set(speed);
     }
 
     void armSet(int targetAngle) {

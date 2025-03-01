@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
 
    // willsClass = new reeftoplayertoprocessor(rightFront, leftFront, rightBack, leftBack);
     kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
-   // startToReef = new StartToReef(liftMotor, outtakeServo, driveTrain);
+   // startToReef = new StartToReef(driveTrain);
     // driveForward = new driverForwardAuton(moduleList, liftMotor, kinematics, gyro);
   }
   
