@@ -36,6 +36,7 @@ public class driveTrain {
     SparkMax armMotor = null;
     SparkMax outTakeMotorOuter = null;
     SparkMax outTakeMotorInner = null;
+    SparkMax cageLift = null;
 
     PIDController pidArm;
     double armSpeed;
@@ -64,14 +65,17 @@ public class driveTrain {
             rightBack = new SwerveModule(3,64.7032, 10,11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,85.9213, 19,16, zeroMode,oldDriveBase);
 
-            liftMotor = new SparkMax(46, MotorType.kBrushless);
+            liftMotor = new SparkMax(3, MotorType.kBrushless);
             liftMotor.getEncoder().setPosition(0.0);
       
-            armMotor = new SparkMax(3, MotorType.kBrushless);
+            armMotor = new SparkMax(46, MotorType.kBrushless);
             armMotor.getEncoder().setPosition(0.0);
       
-            outTakeMotorOuter = new SparkMax(5, MotorType.kBrushed);
+            outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
             outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
+
+            cageLift = new SparkMax(12, MotorType.kBrushed);
+            cageLift.getEncoder().setPosition(0.0);
       
             
 
