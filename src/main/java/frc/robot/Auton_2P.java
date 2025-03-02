@@ -38,14 +38,14 @@ public class Auton_2P {
 
             case "Move'nToReef":
 
-            if (April_22 == null) {
+            /*if (April_22 == null) {
                 driveTrain.drive(0, .3, 0, false);
             }
             if (time > 50){
                 driveTrain.drive(0, 0, 0, false);
-            }
+            }*/
             
-            /*if(time > 0 && time <= 25) {
+            if(time > 0 && time <= 25) {
                 driveTrain.drive(0, .6, 0, false);
             }
             if(time > 30 && time <= 50) {
@@ -56,14 +56,12 @@ public class Auton_2P {
             }
             if (time > 60) {
                 driveTrain.drive(0, 0, 0, false);
-            }*/
+            }
             time = 0;
             currentState = "April_22Turn";
             break;
 
-            case "April_22Turn":
-            
-            
+            case "April_22Turn":         
                 
             if (April_22 != null){
                
@@ -92,8 +90,48 @@ public class Auton_2P {
                 driveTrain.drive(0, 0, 0, false);
             }
             time = 0;
+            /*currentState - "ToPlayerStation" */
             break;
-                
+            
+            /*case "ToPlayerStation":
+            if (time > 0) {
+                driveTrain.drive(0, -0.3, 0, false);
+            }
+            if (time > 10) {
+                driveTrain.drive(0, -.3 , 0.5 , false);
+            }
+            if (time > 25) {
+                driveTrain.drive(0 , -.5, 0 , false);
+            }
+            FIND APRILTAG 12
+            ROTATE INTAKE TO INTAKE POSITION    
+            if (time > 30) {
+                driveTrain.drive(0, 0, 0, false);
+            }
+
+            time = 0;
+            currentState - "ToReef2"
+            break;
+            
+            case "ToReef2":
+           FLIP INTAKE
+            if (time > 0) {
+                driveTrain.drive(0, 0.3, 0, false);
+            }
+            if (time > 10) {
+                driveTrain.drive(0, 0.3 , -0.35 , false);
+            }
+            FIND APRILTAG 17
+            if (time > 20) {
+                driveTrain.drive(0 , .5, 0 , false);
+            }
+            if (time > 30) {
+                driveTrain.drive(0, 0, 0, false);
+            }
+
+            time = 0;
+            break;
+            */
              
             
         }
