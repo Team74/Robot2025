@@ -441,21 +441,22 @@ if (controller.getLeftTriggerAxis() > 0.1){
       
     }*/
 
-    double liftMotorSpeed = 0;
 
-if (driveTrain.armMotor != null) {
-  if (MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) > 0) {
-    liftMotorSpeed = 1;
-  }
+    if (driveTrain.armMotor != null) {
+      double armMotorSpeed = 0;
+      double armClampSpeed = 0.3;
 
-  if (MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) < 0) {
-    liftMotorSpeed = -1;
-  }
-  liftMotorSpeed = operatorController.getLeftY() * 0.3;
+      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
+      driveTrain.armMotor.set(armMotorSpeed);
+    }
 
+    if (driveTrain.liftMotor != null) {
+      double liftMotorSpeed = 0;
+      double liftClampSpeed = 0.4;
 
-  driveTrain.armMotor.set(liftMotorSpeed);
-}
+      liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
+      driveTrain.liftMotor.set(liftMotorSpeed);
+    }
 
     double cageSpeed = 0;
     double cageHeight = 0;
