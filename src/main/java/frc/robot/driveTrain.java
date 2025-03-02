@@ -206,7 +206,7 @@ public class driveTrain {
 
     void outTakeSet(double speed) {
         outTakeMotorOuter.set(speed);
-        outTakeMotorInner.set(speed);
+        outTakeMotorInner.set(-speed);
     }
 
     void armSet(int targetAngle) {

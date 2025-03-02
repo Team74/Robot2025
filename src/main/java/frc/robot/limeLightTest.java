@@ -59,7 +59,7 @@ public class limeLightTest {
     }
     double calculaterotation(Double targetangle){
         double currentAngle = (gyro.getAngle() % 360); 
-        System.out.println("currentAngle: " + currentAngle + " targetangle:" + targetangle);
+        //System.out.println("currentAngle: " + currentAngle + " targetangle:" + targetangle);
         
         return PIDAngle.calculate(currentAngle,targetangle);
 

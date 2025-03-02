@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   int targetAngleArm = 0;
   double armOffset = 0;
   
-  SparkMax cageLift = null;
+  //SparkMax cageLift = null;
 
   // Competition Bot and Old Base
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -304,7 +304,7 @@ if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
           double ambiguity = fiducial.ambiguity; 
 
           double Rotation = limelightcam.calculaterotation(90.0);
-          System.out.println("rot: " + Rotation);
+          //System.out.println("rot: " + Rotation);
           if(id==14 ||id==15 || id==5 || id==4){
           if (controller.getLeftY() != 0) {
             driveTrain.drive(controller.getLeftX(),0,Rotation,false);
@@ -442,41 +442,45 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }*/
 
     double liftMotorSpeed = 0;
-if (driveTrain.liftMotor != null) {
 
-  if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0) {
+if (driveTrain.armMotor != null) {
+  if (MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) > 0) {
     liftMotorSpeed = 1;
   }
 
-  if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0) {
+  if (MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) < 0) {
     liftMotorSpeed = -1;
   }
+  liftMotorSpeed = operatorController.getLeftY() * 0.3;
 
-  driveTrain.liftMotor.set(liftMotorSpeed);
+
+  driveTrain.armMotor.set(liftMotorSpeed);
 }
 
     double cageSpeed = 0;
     double cageHeight = 0;
  
-    if (cageLift != null) {
+    if (driveTrain.cageLift != null) {
       
-      cageHeight = cageLift.getEncoder().getPosition();
+      cageHeight = driveTrain.cageLift.getEncoder().getPosition();
 
       int pov = operatorController.getPOV();
+      System.out.println("pov: " + pov);
+
       if (pov == -1){
         cageSpeed = 0;
       }
-      else if (pov >= 315 || pov <= 45 && !(cageHeight > 0 )) {
-        cageSpeed = 0.3;
+      else if (pov >= 315 || pov <= 45) {
+        cageSpeed = 0.1;
      
       }
-      else if (pov >= 135 && pov <= 225 && !(cageHeight < -10 )) {
-        cageSpeed = -0.3;
+      else if (pov >= 135 && pov <= 225) {
+        cageSpeed = -0.1;
   
       }
-     System.out.println(cageHeight);
+     System.out.println("cageHeight: " + cageHeight);
 
-      cageLift.set(cageSpeed);
+     driveTrain.cageLift.set(cageSpeed);
     }
 
     double outTakeSpeed = 0;
@@ -498,7 +502,7 @@ if (driveTrain.liftMotor != null) {
 
     if (!oldDriveBase) {
 
-      if (operatorController.getAButton()) {
+      /*if (operatorController.getAButton()) {
         targetAngleArm = 15;
         liftLevel = 1;
       }
@@ -526,10 +530,12 @@ if (driveTrain.liftMotor != null) {
         targetAngleArm = 180;
         liftLevel = 1;
 
-      }
+      }*/
+
+      
       //System.out.println("currentAngleArm:" + currentAngleArm);
-      driveTrain.armSet(targetAngleArm);
-      driveTrain.liftLevelSet(liftLevel);
+     // driveTrain.armSet(targetAngleArm);
+      //driveTrain.liftLevelSet(liftLevel);
     }
   
 }
