@@ -99,6 +99,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+    //what the sigma
     if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
 
       RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
@@ -151,14 +153,17 @@ public class Robot extends TimedRobot {
       return;
     }
 
+    //Button to resent the gyro
     if (controller.getYButton()) {
       driveTrain.gyro.reset();
     }
 
+    //test controls
     if (controller.getXButton()) {
       System.out.println(driveTrain.gyro.getAngle());
     }
 
+    //Shortcut to align to the Apriltags
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton());
     } else {
@@ -166,8 +171,7 @@ public class Robot extends TimedRobot {
           controller.getRightBumperButton());
     }
 
-
-    
+    //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       double armMotorSpeed = 0;
       double armClampSpeed = 0.3;
@@ -175,7 +179,9 @@ public class Robot extends TimedRobot {
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
       driveTrain.armMotor.set(armMotorSpeed);
     }
-if (driveTrain.liftMotor != null) {
+
+    //Controls for the Scoring Lift
+    if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
       double liftClampSpeed = 0.4;
 
@@ -183,10 +189,11 @@ if (driveTrain.liftMotor != null) {
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
-    double cageSpeed = 0;
-    double cageHeight = 0;
 
+    //Controls for the Climber
     if (driveTrain.cageLift != null) {
+      double cageSpeed = 0;
+      double cageHeight = 0;
 
       cageHeight = driveTrain.cageLift.getEncoder().getPosition();
 
@@ -195,32 +202,51 @@ if (driveTrain.liftMotor != null) {
 
       if (pov == -1) {
         cageSpeed = 0;
-      } else if (pov >= 315 || pov <= 45) {
-        cageSpeed = 0.1;
-
-      } else if (pov >= 135 && pov <= 225) {
-        cageSpeed = -0.1;
+      }
+      else if (pov >= 315 || pov <= 45) {
+        cageSpeed = 0.75;
+    
+      }
+      else if (pov >= 135 && pov <= 225) {
+        cageSpeed = -0.75;
 
       }
-      System.out.println("cageHeight: " + cageHeight);
 
-      driveTrain.cageLift.set(cageSpeed);
+    System.out.println("cageHeight: " + cageHeight);
+    driveTrain.cageLift.set(cageSpeed);
+
+    if (cageHeight > 115) {
+        cageSpeed = 0;
     }
+  }
 
-    double outTakeSpeed = 0;
 
+    //Outake and intake controls
+    //if statements for the algae (it goes faster to fling the algae away)
+    //if else statements for the coral intake and outake
     if (!oldDriveBase) {
+      double outTakeSpeed = 0;
 
-      if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0) {
+      if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = 1;
+      } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
+        outTakeSpeed = 0.5;
       }
 
-      if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0) {
+      if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = -1;
+      } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
+        outTakeSpeed = -0.5;
       }
-
+      
       driveTrain.outTakeSet(outTakeSpeed);
+
+      //Limiting statements
+      driveTrain.outTakeMotorInner.getOutputCurrent();
+      System.out.println(driveTrain.outTakeMotorInner.getOutputCurrent());
+
     }
+
 
   }
 
