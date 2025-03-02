@@ -166,12 +166,18 @@ public class Robot extends TimedRobot {
           controller.getRightBumperButton());
     }
 
-    double liftMotorSpeed = 0;
 
     if (driveTrain.armMotor != null) {
       if (MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) > 0) {
         liftMotorSpeed = 1;
       }
+    if (driveTrain.armMotor != null) {
+      double armMotorSpeed = 0;
+      double armClampSpeed = 0.3;
+
+      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
+      driveTrain.armMotor.set(armMotorSpeed);
+    }
 
       if (MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) < 0) {
         liftMotorSpeed = -1;
@@ -179,6 +185,13 @@ public class Robot extends TimedRobot {
       liftMotorSpeed = operatorController.getLeftY() * 0.3;
 
       driveTrain.armMotor.set(liftMotorSpeed);
+    }
+    if (driveTrain.liftMotor != null) {
+      double liftMotorSpeed = 0;
+      double liftClampSpeed = 0.4;
+
+      liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
+      driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
     double cageSpeed = 0;
