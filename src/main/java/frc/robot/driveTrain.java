@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.revrobotics.spark.SparkMax;
@@ -56,6 +57,7 @@ public class driveTrain {
     double targetLiftHeight;
     double currentHeightLift = 0;
 
+    Calendar calendar = Calendar.getInstance();
 
 
     double powerMulti = 0.6;
@@ -152,30 +154,21 @@ public class driveTrain {
     }
 
     void updaterobotorientation() {
-        var doRejectUpdate = false;
+        var acceptUpdate = false;
         LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        if(Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        var mt2 = LimelightHelpers.getBotPose2d("limelight");
+        
+        
+        
+        if(acceptUpdate)
         {
-          doRejectUpdate = true;
-        }
-        if(mt2.tagCount == 0)
-        {
-          doRejectUpdate = true;
-        }
-        if(!doRejectUpdate)
-        {
-            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            odometry.addVisionMeasurement(
-              mt2.pose,
-              mt2.timestampSeconds);  
+            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
+            odometry.addVisionMeasurement(mt2, calendar.get(Calendar.SECOND));  
               
         }
         else {
             odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            odometry.addVisionMeasurement(
-              odometry.getEstimatedPosition(),
-              new Date().getTime()); 
+            odometry.addVisionMeasurement(odometry.getEstimatedPosition(), calendar.get(Calendar.SECOND)); 
         }
     }
     public void updateOdometry() {
