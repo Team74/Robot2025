@@ -238,32 +238,32 @@ public class Robot extends TimedRobot {
 
 
     //Controls for the Climber
-    if (driveTrain.cageLift != null) {
-      double cageSpeed = 0;
-      double cageHeight = 0;
+    if (driveTrain.climbMotor != null) {
+      double climbSpeed = 0;
+      double climbHeight = 0;
 
-      cageHeight = driveTrain.cageLift.getEncoder().getPosition();
+      climbHeight = driveTrain.climbMotor.getEncoder().getPosition();
 
       int pov = operatorController.getPOV();
       System.out.println("pov: " + pov);
 
       if (pov == -1) {
-        cageSpeed = 0;
+        climbSpeed = 0;
       }
       else if (pov >= 315 || pov <= 45) {
-        cageSpeed = 0.75;
+        climbSpeed = 0.75;
     
       }
       else if (pov >= 135 && pov <= 225) {
-        cageSpeed = -0.75;
+        climbSpeed = -0.75;
 
       }
 
-    System.out.println("cageHeight: " + cageHeight);
-    driveTrain.cageLift.set(cageSpeed);
+    System.out.println("climbHeight: " + climbHeight);
+    driveTrain.climbMotor.set(climbSpeed);
 
-    if (cageHeight > 115) {
-        cageSpeed = 0;
+    if (climbHeight > 115) {
+        climbSpeed = 0;
     } 
   }
 

@@ -44,7 +44,7 @@ public class driveTrain {
     SparkMax armMotor = null;
     SparkMax outTakeMotorOuter = null;
     SparkMax outTakeMotorInner = null;
-    SparkMax cageLift = null;
+    SparkMax climbMotor = null;
 
     PIDController pidArm;
     double armSpeed;
@@ -82,8 +82,8 @@ public class driveTrain {
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
             outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
 
-            cageLift = new SparkMax(12, MotorType.kBrushless);
-            cageLift.getEncoder().setPosition(0.0);
+            climbMotor = new SparkMax(12, MotorType.kBrushless);
+            climbMotor.getEncoder().setPosition(0.0);
       
             
 
