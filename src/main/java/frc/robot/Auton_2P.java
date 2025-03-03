@@ -46,10 +46,10 @@ public class Auton_2P {
                 driveTrain.drive(0, 0, 0, false);
             }*/
             
-            if(time > 0 && time <= 25) {
+            if(time > 10 && time <= 35) {
                 driveTrain.drive(0, .6, 0, false);
             }
-            if(time > 30 && time <= 50) {
+            if(time > 40 && time <= 50) {
                 driveTrain.drive( 0, 0, -1, false);
             }
             if(time > 50 && time <= 60) {
@@ -69,13 +69,15 @@ public class Auton_2P {
                 var txnc_22 = April_22.txnc;
                 var ta_22 = April_22.ta;
 
-                if (txnc_22 != 0){
-                    driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
-                }
-                if (ta_22 != 55){
-                    driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
-                } else{
-                    driveTrain.drive(0, 0, 0, false);
+                if (time > 25){
+                    if (txnc_22 != 0){
+                        driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
+                    }
+                    if (ta_22 != 55){
+                        driveTrain.drive(-1*trackPush, -1*trackSide, -1*trackTurn, false);
+                    } else{
+                        driveTrain.drive(0, 0, 0, false);
+                    }
                 }
             } 
 
@@ -84,10 +86,10 @@ public class Auton_2P {
             break;
 
             case "Adjust'n":
-            if (time > 0) {
+            if (time > 10) {
                 driveTrain.drive(0, 0.3, 0, false);
             }
-            if (time > 10) {
+            if (time > 15) {
                 driveTrain.drive(0, 0, 0, false);
             }
             time = 0;
@@ -95,34 +97,33 @@ public class Auton_2P {
             break;
             
             case "ToPlayerStation":
-            if (time > 0) {
+            if (time > 10) {
                 driveTrain.drive(0, -0.3, 0, false);
             }
-            if (time > 10) {
+            if (time > 35) {
                 driveTrain.drive(0, -.3 , -0.5 , false);
             }
-            if (time > 25) {
+            if (time > 45) {
                 driveTrain.drive(0 , -.5, 0 , false);
             }  
-            if (time > 30) {
+            if (time > 90) {
                 driveTrain.drive(0, 0, 0, false);
             }
-
             time = 0;
             currentState = "ToReef2"; 
             break;
             
             case "ToReef2":
-            if (time > 0) {
+            if (time > 10) {
                 driveTrain.drive(0, 0.3, 0, false);
             }
-            if (time > 10) {
+            if (time > 25) {
                 driveTrain.drive(0, 0.3 , -0.35 , false);
             }
-            if (time > 20) {
+            if (time > 50) {
                 driveTrain.drive(0 , .5, 0 , false);
             }
-            if (time > 30) {
+            if (time > 75) {
                 driveTrain.drive(0, 0, 0, false);
             }
 
