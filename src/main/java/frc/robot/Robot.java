@@ -205,7 +205,10 @@ public class Robot extends TimedRobot {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton());
     }
-    System.out.println("ARM: " + driveTrain.armMotor.getEncoder().getPosition());
+
+    var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+
+    System.out.println("ARM: " + armPosition);
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
@@ -213,8 +216,68 @@ public class Robot extends TimedRobot {
       double armClampSpeed = 0.6;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
+
+      if(armPosition > 353 && armPosition < 553) {
+        armMotorSpeed = 0;
+      }
+
+      if(operatorController.getLeftBumperButton()) {
+
+        //Human Player
+        if(operatorController.getRightTriggerAxis() > 0) {
+          if(armPosition >= 0 && armPosition < 447.13) {
+            armMotorSpeed = 0.5;
+          }
+          if(armPosition > 447.13) {
+            armMotorSpeed = -0.5;
+          }
+        }
+
+        //Trough
+        if(operatorController.getAButton()) {
+          if(armPosition >= 0 && armPosition < 504.36) {
+            armMotorSpeed = 0.5;
+          }
+          if(armPosition > 504.36) {
+            armMotorSpeed = -0.5;
+          }
+        }
+        
+        //L2
+        if(operatorController.getBButton()) {
+          if(armPosition >= 0 && armPosition < 452.82) {
+            armMotorSpeed = 0.5;
+          }
+          if(armPosition > 452.82) {
+            armMotorSpeed = -0.5;
+          }
+        }
+        
+        //L3
+        if(operatorController.getXButton()) {
+          if(armPosition >= 0 && armPosition < 380.192) {
+            armMotorSpeed = 0.5;
+          }
+          if(armPosition > 380.192) {
+            armMotorSpeed = -0.5;
+          }
+        }
+
+        //L4
+        if(operatorController.getYButton()) {
+          if(armPosition >= 0 && armPosition < 353.255) {
+            armMotorSpeed = 0.5;
+          }
+          if(armPosition > 353.255) {
+            armMotorSpeed = -0.5;
+          }
+        }
+      }
+
       driveTrain.armMotor.set(armMotorSpeed);
     }
+    var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
+
     System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
@@ -222,9 +285,64 @@ public class Robot extends TimedRobot {
       double liftClampSpeed = 0.6;
 
       liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
+      
+      if(operatorController.getLeftBumperButton()) {
+
+        //Human Player
+        if(operatorController.getRightTriggerAxis() > 0) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 0.21) {
+            liftMotorSpeed = 0.5;
+          }
+          if(liftMotorPosition > 0.21) {
+            liftMotorSpeed = -0.5;
+          }
+        }
+
+        //Trough
+        if(operatorController.getAButton()) {
+          if(liftMotorPosition <= 0) {
+            liftMotorSpeed = 0.5;
+          }
+          if(liftMotorPosition > 0) {
+            liftMotorSpeed = -0.5;
+          }
+        }
+        
+        //L2
+        if(operatorController.getBButton()) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 0.21) {
+            liftMotorSpeed = 0.5;
+          }
+          if(liftMotorPosition > 0.21) {
+            liftMotorSpeed = -0.5;
+          }
+        }
+        
+        //L3
+        if(operatorController.getXButton()) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 0.21) {
+            liftMotorSpeed = 0.5;
+          }
+          if(liftMotorPosition > 0.21) {
+            liftMotorSpeed = -0.5;
+          }
+        }
+
+        //L4
+        if(operatorController.getYButton()) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 444.365) {
+            liftMotorSpeed = 0.5;
+          }
+          if(liftMotorPosition > 444.365) {
+            liftMotorSpeed = -0.5;
+          }
+        }
+      }
+
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
+    
 
     //Controls for the Climber
     if (driveTrain.cageLift != null) {
