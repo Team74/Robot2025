@@ -189,6 +189,8 @@ public class Robot extends TimedRobot {
     //Button to resent the gyro
     if (controller.getYButton()) {
       driveTrain.gyro.reset();
+      driveTrain.liftMotor.getEncoder().setPosition(0.0);
+
     }
 
     //test controls
@@ -203,6 +205,7 @@ public class Robot extends TimedRobot {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton());
     }
+    System.out.println("ARM: " + driveTrain.armMotor.getEncoder().getPosition());
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
@@ -212,7 +215,7 @@ public class Robot extends TimedRobot {
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
       driveTrain.armMotor.set(armMotorSpeed);
     }
-    System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
+    System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
