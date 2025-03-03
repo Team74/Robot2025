@@ -1,13 +1,20 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import java.util.Date;
+
 import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -16,7 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = false;
+    boolean oldDriveBase = true;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -25,7 +32,8 @@ public class driveTrain {
 
     SwerveDriveKinematics kinematics;
 
-    SwerveDriveOdometry odometry;
+   SwerveDrivePoseEstimator odometry;
+    //SwerveDriveOdometry odometry;
 
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
     Dashboard dashboard;
@@ -41,7 +49,7 @@ public class driveTrain {
         
         if (!oldDriveBase) {
             // competition base CAN IDs
-            leftFront = new SwerveModule(0,66.3065, 14,6, zeroMode,oldDriveBase);
+          leftFront = new SwerveModule(0,66.3065, 14,6, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(1,-134.8564, 33,4, zeroMode,oldDriveBase);
             rightBack = new SwerveModule(2,64.7032, 10,11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(3,85.9213, 19,16, zeroMode,oldDriveBase);
@@ -63,13 +71,13 @@ public class driveTrain {
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
-        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), 
+        odometry = new SwerveDrivePoseEstimator (kinematics, gyro.getRotation2d(), 
             new SwerveModulePosition[]{
                 rightFront.getPosition(),
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition(),    
-            });
+            },new Pose2d());
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
@@ -99,22 +107,56 @@ public class driveTrain {
           leftBack.movey(moduleStates[3].speedMetersPerSecond/2); 
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
+        updateOdometry();
+        updaterobotorientation();
     }
 
     void resetGyro()
     {
         gyro.reset();
     }
-
+    void updaterobotorientation() {
+        var doRejectUpdate = false;
+        LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        if(Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+          doRejectUpdate = true;
+        }
+        if(mt2.tagCount == 0)
+        {
+          doRejectUpdate = true;
+        }
+        if(!doRejectUpdate)
+        {
+            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+            odometry.addVisionMeasurement(
+              mt2.pose,
+              mt2.timestampSeconds);  
+              
+        }
+        else {
+            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+            odometry.addVisionMeasurement(
+              odometry.getEstimatedPosition(),
+              new Date().getTime()); 
+        }
+    }
     public void updateOdometry() {
-        odometry.update(
+      var pose = odometry.update(
             gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition()
-            });
+            }); 
+            dashboard.updatePose(
+                pose.getX(),
+                pose.getY(),
+                pose.getRotation().getDegrees()
+            );
+
       }
       RawFiducial GetAprilTagTelemotry(int aprilTag) {
         RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");

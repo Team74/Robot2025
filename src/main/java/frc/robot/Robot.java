@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
@@ -15,12 +16,16 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -37,7 +42,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -49,16 +56,16 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
   Dashboard dashboard = new Dashboard(); 
   SparkMax liftMotor = null;
-  SparkMax liftMotor2 = null;
+  SparkMax armMotor = null;
   double targetAngleArm = 0;
   double armOffset = 0;
-  
+  Field2d m_field = new Field2d();
   SparkMax cageLift = null;
 
   // Competition Bot and Old Base
@@ -119,11 +126,11 @@ public class Robot extends TimedRobot {
           10,11,
           zeroMode,oldDriveBase);*/ 
       liftMotor = new SparkMax(12, MotorType.kBrushed);
-      liftMotor2 = new SparkMax(3, MotorType.kBrushless);
+      armMotor = new SparkMax(3, MotorType.kBrushless);
  
 
       //cageLift = new SparkMax(140, MotorType.kBrushed);
-      cageLift.getEncoder().setPosition(0);
+      //cageLift.getEncoder().setPosition(0);
        // stringThingInput = new AnalogInput(0);
        // stringThing = new AnalogPotentiometer(stringThingInput, 1, 0);
 
@@ -153,6 +160,20 @@ public class Robot extends TimedRobot {
   }
   
   public void robotInit() {
+     var m_trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+
+            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+
+            new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
+
+            new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
+
+    m_field = new Field2d();
+    dashboard.updatefielddata (m_field); 
+
+    m_field.getObject("traj").setTrajectory(m_trajectory);
     CameraServer.startAutomaticCapture(); 
     time = 0;
 
@@ -468,11 +489,11 @@ if (controller.getLeftTriggerAxis() > 0.1){
     }
 
 
-    if (liftMotor2 != null) {
+    if (armMotor != null) {
 
 
 
-      double currentAngleArm = liftMotor2.getEncoder().getPosition();
+      double currentAngleArm = armMotor.getEncoder().getPosition();
 
       if (operatorController.getAButton()) {
         targetAngleArm = 15;
@@ -495,9 +516,12 @@ if (controller.getLeftTriggerAxis() > 0.1){
 System.out.println("currentAngleArm:" + currentAngleArm);
       PIDController pidArm = new PIDController(.1023, 0, 0);
       double armSpeed = pidArm.calculate(currentAngleArm, targetAngleArm);
-      liftMotor2.set(armSpeed);
+      armMotor.set(armSpeed);
     }
-  
+
+    m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
+    dashboard.updatefielddata (m_field);
+
 }
 
   @Override
