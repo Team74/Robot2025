@@ -279,12 +279,24 @@ public class Robot extends TimedRobot {
     var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
 
     System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+    
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
       double liftClampSpeed = 0.6;
 
       liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
+
+      //lower limit
+      if (driveTrain.liftMotor.getEncoder().getPosition() < 0){
+        liftMotorSpeed = 0;
+      } 
+      //Upper Limit
+      if (driveTrain.liftMotor.getEncoder().getPosition() > 444){
+        liftMotorSpeed = 0;
+      }
+
+      driveTrain.liftMotor.set(liftMotorSpeed);      
       
       if(operatorController.getLeftBumperButton()) {
 
@@ -345,33 +357,33 @@ public class Robot extends TimedRobot {
     
 
     //Controls for the Climber
-    if (driveTrain.cageLift != null) {
-      double cageSpeed = 0;
-      double cageHeight = 0;
+    if (driveTrain.climbMotor != null) {
+      double climbSpeed = 0;
+      double climbHeight = 0;
 
-      cageHeight = driveTrain.cageLift.getEncoder().getPosition();
+      climbHeight = driveTrain.climbMotor.getEncoder().getPosition();
 
       int pov = operatorController.getPOV();
       System.out.println("pov: " + pov);
 
       if (pov == -1) {
-        cageSpeed = 0;
+        climbSpeed = 0;
       }
       else if (pov >= 315 || pov <= 45) {
-        cageSpeed = 0.75;
+        climbSpeed = 0.75;
     
       }
       else if (pov >= 135 && pov <= 225) {
-        cageSpeed = -0.75;
+        climbSpeed = -0.75;
 
       }
 
-    System.out.println("cageHeight: " + cageHeight);
-    driveTrain.cageLift.set(cageSpeed);
+    System.out.println("climbHeight: " + climbHeight);
+    driveTrain.climbMotor.set(climbSpeed);
 
-    if (cageHeight > 115) {
-        cageSpeed = 0;
-    }
+    if (climbHeight > 115) {
+        climbSpeed = 0;
+    } 
   }
 
 
