@@ -43,7 +43,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -216,10 +216,11 @@ public class Robot extends TimedRobot {
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
-      double liftClampSpeed = 0.4;
+      double liftClampSpeed = 0.6;
 
       liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
       driveTrain.liftMotor.set(liftMotorSpeed);
+
     }
 
 
@@ -250,7 +251,7 @@ public class Robot extends TimedRobot {
 
     if (cageHeight > 115) {
         cageSpeed = 0;
-    }
+    } 
   }
 
 
