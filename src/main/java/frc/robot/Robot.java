@@ -210,7 +210,7 @@ public class Robot extends TimedRobot {
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       double armMotorSpeed = 0;
-      double armClampSpeed = 0.3;
+      double armClampSpeed = 0.6;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
       driveTrain.armMotor.set(armMotorSpeed);
@@ -219,7 +219,7 @@ public class Robot extends TimedRobot {
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
-      double liftClampSpeed = 0.4;
+      double liftClampSpeed = 0.6;
 
       liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
       driveTrain.liftMotor.set(liftMotorSpeed);
