@@ -217,9 +217,9 @@ public class Robot extends TimedRobot {
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
 
-      if(armPosition > 353 && armPosition < 553) {
-        armMotorSpeed = 0;
-      }
+      // if(armPosition > 353 && armPosition < 553) {
+      //   armMotorSpeed = 0;
+      // }
 
       if(operatorController.getLeftBumperButton()) {
 
