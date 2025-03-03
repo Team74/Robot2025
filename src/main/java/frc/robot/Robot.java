@@ -43,7 +43,7 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
