@@ -216,14 +216,24 @@ public class Robot extends TimedRobot {
       driveTrain.armMotor.set(armMotorSpeed);
     }
     System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+    
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
       double liftClampSpeed = 0.6;
 
       liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
-      driveTrain.liftMotor.set(liftMotorSpeed);
 
+      //lower limit
+      if (driveTrain.liftMotor.getEncoder().getPosition() < 0){
+        liftMotorSpeed = 0;
+      } 
+      //Upper Limit
+      if (driveTrain.liftMotor.getEncoder().getPosition() > 444){
+        liftMotorSpeed = 0;
+      }
+
+      driveTrain.liftMotor.set(liftMotorSpeed);      
     }
 
 
