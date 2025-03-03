@@ -194,10 +194,8 @@ public class driveTrain {
             );
 
       }
+
       RawFiducial GetAprilTagTelemotry(int aprilTag) {
-            });
-    }
-    RawFiducial GetAprilTagTelemotry(int aprilTag) {
         RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
             for (RawFiducial fiducial : fiducials) {
                     int id = fiducial.id;

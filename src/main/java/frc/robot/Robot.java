@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -46,17 +48,9 @@ public class Robot extends TimedRobot {
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
   Dashboard dashboard = new Dashboard(); 
-  SparkMax liftMotor = null;
-  SparkMax armMotor = null;
   double targetAngleArm = 0;
   double armOffset = 0;
   Field2d m_field = new Field2d();
-  SparkMax cageLift = null;
-
-  // Competition Bot and Old Base
-  AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  limeLightTest limelightcam = new limeLightTest(gyro);
-  Dashboard dashboard = new Dashboard();
 
   limeLightTest limelightcam;
   driveTrain driveTrain;
