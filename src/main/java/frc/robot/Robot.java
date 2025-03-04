@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //what the sigma
+    //auton climber feature
     if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
 
       RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
@@ -222,7 +222,7 @@ public class Robot extends TimedRobot {
       // }
 
       if(operatorController.getLeftBumperButton()) {
-
+        
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
           if(armPosition >= 0 && armPosition < 447.13) {
