@@ -124,7 +124,7 @@ public class driveTrain {
             VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
     }
 
-    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
+    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
         ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
@@ -138,17 +138,23 @@ public class driveTrain {
         rightBack.turny(moduleStates[2].angle.getDegrees());
         leftBack.turny(moduleStates[3].angle.getDegrees());
       
-        if (highSpeed)  {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
+        if (highSpeed) {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
       
-        }else {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
+        } else if (lowSpeed) {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.25);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.25);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.25);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.25);
+        
+        } else {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
         updateOdometry();

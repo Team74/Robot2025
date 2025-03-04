@@ -24,7 +24,7 @@ public class StartToReef {
         switch (state) {
             // first number in if statement is time in seconds
             case "start":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             if (time > 0*50) {
                 time = 0;
                 state = "move1";
@@ -32,7 +32,7 @@ public class StartToReef {
             }
 
             case "move1":
-            driveTrain.drive(0.2, 0, 0, false);   
+            driveTrain.drive(0.2, 0, 0, false, false);   
             if (time > 3*50) {
                 time = 0;
                 state = "lift";
@@ -40,7 +40,7 @@ public class StartToReef {
             }
 
             case "lift":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             driveTrain.liftLevelSet(4);
 
             if (time > 1*50) {
@@ -50,7 +50,7 @@ public class StartToReef {
             }
 
             case "dumpy":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             driveTrain.liftLevelSet(4);
             driveTrain.outTakeSet(1);
             if (time > .5*50) {
@@ -60,7 +60,7 @@ public class StartToReef {
             }
 
             case "down":
-            driveTrain.drive(0, 0, 0, false); 
+            driveTrain.drive(0, 0, 0, false, false); 
             driveTrain.liftLevelSet(1);
             driveTrain.outTakeSet(0);
             if (time > 1*50) {
@@ -70,7 +70,7 @@ public class StartToReef {
             }
 
             case "stop":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
                 state = "stop";
                 break;
             
@@ -84,7 +84,7 @@ public class StartToReef {
         switch (state) {
     
             case "start":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             if (time > 0) {
                 time = 0;
                 state = "move1";
@@ -92,7 +92,7 @@ public class StartToReef {
             }
 
             case "move1":
-            driveTrain.drive(0.2, 0, 0, false);
+            driveTrain.drive(0.2, 0, 0, false, false);
             if (time > 150) {
                 time = 0;
                 state = "lift";
@@ -100,7 +100,7 @@ public class StartToReef {
             }
 
             case "lift":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             if (time > 50) {
                 time = 0;
                 state = "dumpy";
@@ -108,7 +108,7 @@ public class StartToReef {
             }
 
             case "dumpy":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             if (time > 25) {
                 time = 0;
                 state = "down";
@@ -116,7 +116,7 @@ public class StartToReef {
             }
 
             case "down":
-            driveTrain.drive(0, 0, 0, false);
+            driveTrain.drive(0, 0, 0, false, false);
             if (time > 50) {
                 time = 0;
                 state = "stop";
@@ -124,7 +124,7 @@ public class StartToReef {
             }
 
             case "stop":
-            driveTrain.drive(0, 0, 0, false);                
+            driveTrain.drive(0, 0, 0, false, false);                
             state = "stop";
                 break; 
             

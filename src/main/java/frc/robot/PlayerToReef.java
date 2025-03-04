@@ -22,7 +22,7 @@ public class PlayerToReef {
         drive.resetGyro();
         drive.gyroOffset(36);
         turnSpeed = pidTurn.calculate(drive.getGyro(), 36);
-        drive.drive(0, 0, turnSpeed, false);
+        drive.drive(0, 0, turnSpeed, false, false);
         // drive.outTakeSet(0);
         // drive.liftLevelSet(1);
         // drive.armSet(310);
@@ -40,7 +40,7 @@ public class PlayerToReef {
 
             case "move1":
             turnSpeed = pidTurn.calculate(drive.getGyro(), 60);
-            drive.drive(0.577350538379/2, 1/2, turnSpeed, false);
+            drive.drive(0.577350538379/2, 1/2, turnSpeed, false, false);
             // drive.outTakeSet(0);
             // drive.liftLevelSet(1);
             if (time > 20){
@@ -53,7 +53,7 @@ public class PlayerToReef {
 
                 case "score":
             turnSpeed = pidTurn.calculate(drive.getGyro(), 60);
-            drive.drive(0, 0, turnSpeed, false);
+            drive.drive(0, 0, turnSpeed, false, false);
             // drive.liftLevelSet(4);
             // drive.armSet(45);
             if (time > 74 && time < 100) {
@@ -69,7 +69,7 @@ public class PlayerToReef {
 
                 case "move2":
                 turnSpeed = pidTurn.calculate(drive.getGyro(), 60);
-                drive.drive(-0.577350538379/2, -1/2, turnSpeed, false);
+                drive.drive(-0.577350538379/2, -1/2, turnSpeed, false, false);
                 // drive.outTakeSet(0);
                 
                 if (time > 20){
@@ -82,7 +82,7 @@ public class PlayerToReef {
                     break; }
                 
                 case "stop": 
-                    drive.drive(0, 0, 0, false);
+                    drive.drive(0, 0, 0, false, false);
                     // drive.armSet(310);
                     // drive.liftLevelSet(1);
                     // drive.outTakeSet(0);

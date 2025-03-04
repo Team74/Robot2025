@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
         // System.out.println("rot: " + Rotation);
         if (id == 14 || id == 15 || id == 5 || id == 4) {
           if (controller.getLeftY() != 0) {
-            driveTrain.drive(controller.getLeftX(), 0, Rotation, false);
+            driveTrain.drive(controller.getLeftX(), 0, Rotation, false, false);
           }
         }
       }
@@ -203,10 +203,10 @@ public class Robot extends TimedRobot {
 
     //Shortcut to align to the Apriltags
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
-      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton());
+      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
-          controller.getRightBumperButton());
+          controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
     var armPosition = driveTrain.armMotor.getEncoder().getPosition();
