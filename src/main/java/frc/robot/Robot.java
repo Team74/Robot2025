@@ -67,8 +67,11 @@ public class Robot extends TimedRobot {
 
   int time = 0;
 
+  DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
+
   public Robot() {
-    driveTrain = new driveTrain(dashboard);
+
+    driveTrain = new driveTrain(dashboard, alliancecolor);
     auton_2p = new Auton_2P(driveTrain, limelightcam);
 
     limelightcam = new limeLightTest(driveTrain.gyro);

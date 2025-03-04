@@ -20,8 +20,12 @@ import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
@@ -64,10 +68,13 @@ public class driveTrain {
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
 
-    driveTrain(Dashboard dash) {
+    DriverStation.Alliance alliancecolor;
+
+    driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
         dashboard = dash;
-        
+        alliancecolor = _alliancecolor;
+
         if (!oldDriveBase) {
             // competition base CAN IDs
             leftFront = new SwerveModule(0,66.3065, 6, 14, zeroMode,oldDriveBase);
@@ -112,7 +119,9 @@ public class driveTrain {
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition(),    
-            },new Pose2d());
+            },Pose2d.kZero,
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
@@ -154,38 +163,39 @@ public class driveTrain {
     }
 
     void updaterobotorientation() {
-        var acceptUpdate = false;
         LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        var mt2 = LimelightHelpers.getBotPose2d("limelight");
-        
-        
-        
-        if(acceptUpdate)
+        LimelightHelpers.PoseEstimate mt2;
+             
+        //Blue
+        if(alliancecolor == Alliance.Blue) {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
+        }
+        //Red
+        else {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        }
+
+        if(mt2.tagCount > 0)
         {
             odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
-            odometry.addVisionMeasurement(mt2, calendar.get(Calendar.SECOND));  
-              
-        }
-        else {
-            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            odometry.addVisionMeasurement(odometry.getEstimatedPosition(), calendar.get(Calendar.SECOND)); 
+            odometry.addVisionMeasurement(mt2.pose, Timer.getTimestamp());  
         }
     }
     public void updateOdometry() {
-      var pose = odometry.update(
+        var pose = odometry.update(
             gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition()
-            }); 
-            dashboard.updatePose(
-                pose.getX(),
-                pose.getY(),
-                pose.getRotation().getDegrees()
-            );
+        }); 
 
+        dashboard.updatePose(
+            pose.getX(),
+            pose.getY(),
+            pose.getRotation().getDegrees()
+        );
       }
 
       RawFiducial GetAprilTagTelemotry(int aprilTag) {
