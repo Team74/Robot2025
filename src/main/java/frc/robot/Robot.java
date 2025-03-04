@@ -194,6 +194,7 @@ public class Robot extends TimedRobot {
       driveTrain.gyro.reset();
       driveTrain.liftMotor.getEncoder().setPosition(0.0);
       driveTrain.armMotor.getEncoder().setPosition(0.0);
+      driveTrain.getEncoder().reset();
     }
 
     //test controls

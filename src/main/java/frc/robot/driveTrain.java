@@ -271,5 +271,9 @@ public class driveTrain {
         armSpeed = pidArm.calculate(currentAngleArm, targetAngle*125);
         armMotor.set(armSpeed);
     }
-    
+
+    public AHRS getEncoder() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getEncoder'");
+    }
 }
