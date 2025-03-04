@@ -192,6 +192,8 @@ public class Robot extends TimedRobot {
     //Button to resent the gyro
     if (controller.getYButton()) {
       driveTrain.gyro.reset();
+    }
+    if (operatorController.getYButton()) {
       driveTrain.liftMotor.getEncoder().setPosition(0.0);
       driveTrain.armMotor.getEncoder().setPosition(0.0);
       driveTrain.getEncoder().reset();
