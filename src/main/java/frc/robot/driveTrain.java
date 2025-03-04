@@ -1,19 +1,31 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import java.util.Calendar;
+import java.util.Date;
+
 import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
@@ -27,15 +39,17 @@ public class driveTrain {
 
     SwerveDriveKinematics kinematics;
 
-    SwerveDriveOdometry odometry;
+   SwerveDrivePoseEstimator odometry;
+    //SwerveDriveOdometry odometry;
 
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
     Dashboard dashboard;
 
     SparkMax liftMotor = null;
     SparkMax armMotor = null;
-    SparkMax outTakeMotor1 = null;
-    SparkMax outTakeMotor2 = null;
+    SparkMax outTakeMotorOuter = null;
+    SparkMax outTakeMotorInner = null;
+    SparkMax climbMotor = null;
 
     PIDController pidArm;
     double armSpeed;
@@ -47,22 +61,26 @@ public class driveTrain {
     double targetLiftHeight;
     double currentHeightLift = 0;
 
+    Calendar calendar = Calendar.getInstance();
 
 
     double powerMulti = 0.6;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
 
-    driveTrain(Dashboard dash) {
+    DriverStation.Alliance alliancecolor;
+
+    driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
         dashboard = dash;
-        
+        alliancecolor = _alliancecolor;
+
         if (!oldDriveBase) {
             // competition base CAN IDs
-            leftFront = new SwerveModule(0,66.3065, 14,6, zeroMode,oldDriveBase);
+            leftFront = new SwerveModule(0,66.3065, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,-134.8564, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,64.7032, 10,11, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(1,85.9213, 19,16, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,64.7032, 10, 11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(1,85.9213, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
             liftMotor.getEncoder().setPosition(0.0);
@@ -70,8 +88,11 @@ public class driveTrain {
             armMotor = new SparkMax(3, MotorType.kBrushless);
             armMotor.getEncoder().setPosition(625);
       
-            outTakeMotor1 = new SparkMax(5, MotorType.kBrushed);
-            outTakeMotor2 = new SparkMax(45, MotorType.kBrushed);
+            outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
+            outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
+
+            climbMotor = new SparkMax(12, MotorType.kBrushless);
+            climbMotor.getEncoder().setPosition(0.0);
       
             
 
@@ -92,13 +113,15 @@ public class driveTrain {
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
-        odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), 
+        odometry = new SwerveDrivePoseEstimator (kinematics, gyro.getRotation2d(), 
             new SwerveModulePosition[]{
                 rightFront.getPosition(),
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition(),    
-            });
+            },Pose2d.kZero,
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
@@ -128,6 +151,8 @@ public class driveTrain {
           leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
+        updateOdometry();
+        updaterobotorientation();
     }
 
     void resetGyro() {
@@ -140,17 +165,43 @@ public class driveTrain {
         gyro.setAngleAdjustment(offset);
     }
 
+    void updaterobotorientation() {
+        LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate mt2;
+             
+        //Blue
+        if(alliancecolor == Alliance.Blue) {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
+        }
+        //Red
+        else {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        }
+
+        if(mt2.tagCount > 0)
+        {
+            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
+            odometry.addVisionMeasurement(mt2.pose, Timer.getTimestamp());  
+        }
+    }
     public void updateOdometry() {
-        odometry.update(
+        var pose = odometry.update(
             gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition()
-            });
-    }
-    RawFiducial GetAprilTagTelemotry(int aprilTag) {
+        }); 
+
+        dashboard.updatePose(
+            pose.getX(),
+            pose.getY(),
+            pose.getRotation().getDegrees()
+        );
+      }
+
+      RawFiducial GetAprilTagTelemotry(int aprilTag) {
         RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
             for (RawFiducial fiducial : fiducials) {
                     int id = fiducial.id;
@@ -204,8 +255,8 @@ public class driveTrain {
     }
 
     void outTakeSet(double speed) {
-        outTakeMotor1.set(speed);
-        outTakeMotor2.set(speed);
+        outTakeMotorOuter.set(speed);
+        outTakeMotorInner.set(-speed);
     }
 
     void armSet(int targetAngle) {
