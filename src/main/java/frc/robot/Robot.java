@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -65,7 +66,6 @@ public class Robot extends TimedRobot {
   reeftoplayertoprocessor willsClass;
 
   DigitalInput proxSensor = new DigitalInput(4);
-  DigitalInput limitSensorBottom = new DigitalInput(8);
   DigitalInput limitSensorTop = new DigitalInput(9);
 
   int time = 0;
@@ -97,7 +97,13 @@ public class Robot extends TimedRobot {
     dashboard.updatefielddata (m_field); 
 
     m_field.getObject("traj").setTrajectory(m_trajectory);
-    CameraServer.startAutomaticCapture(); 
+    
+    var camera1 = CameraServer.startAutomaticCapture(0);
+    var camera2 = CameraServer.startAutomaticCapture(1);
+    var server = CameraServer.getServer();
+    camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+
     time = 0;
 
     for (int port = 5800; port <= 5809; port++) {
@@ -148,7 +154,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     //auton climber feature
-    if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
+    if (operatorController.getLeftBumperButton() && limelightcam != null && limelightcam.CanSee()) {
 
       RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
       for (RawFiducial fiducial : fiducials) {
@@ -205,6 +211,12 @@ public class Robot extends TimedRobot {
       driveTrain.gyro.reset();
     }
 
+      //Button to resent the gyro
+      if (operatorController.getRightBumperButton() && operatorController.getYButton()) {
+        driveTrain.liftMotor.getEncoder().setPosition(0.0);
+        driveTrain.armMotor.getEncoder().setPosition(0.0);
+        driveTrain.climbMotor.getEncoder().setPosition(0.0);
+      }
   
 
     //test controls
@@ -213,7 +225,7 @@ public class Robot extends TimedRobot {
     }
 
     //Shortcut to align to the Apriltags
-    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
+    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null && limelightcam.CanSee()) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
@@ -236,53 +248,57 @@ public class Robot extends TimedRobot {
       // }
 
       if(operatorController.getLeftBumperButton()) {
-        
+        System.out.println("armPosition: " + armPosition);
+
         //Human Player
+        //37.64
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(armPosition >= 0 && armPosition < 447.13) {
+          if(armPosition >= 0 && armPosition < 37.64) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 447.13) {
+          if(armPosition > 42) {
             armMotorSpeed = -0.5;
           }
         }
 
         //Trough
         if(operatorController.getAButton()) {
-          if(armPosition >= 0 && armPosition < 504.36) {
+          if(armPosition >= 0 && armPosition < 540.9) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 504.36) {
+          if(armPosition > 545.9) {
             armMotorSpeed = -0.5;
           }
         }
         
         //L2
         if(operatorController.getBButton()) {
-          if(armPosition >= 0 && armPosition < 452.82) {
+          if(armPosition >= 0 && armPosition < 540.9) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 452.82) {
+          if(armPosition > 545.9) {
             armMotorSpeed = -0.5;
           }
         }
         
         //L3
         if(operatorController.getXButton()) {
-          if(armPosition >= 0 && armPosition < 380.192) {
+          if(armPosition >= 0 && armPosition < 335.42) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 380.192) {
+          if(armPosition > 340) {
             armMotorSpeed = -0.5;
           }
         }
 
         //L4
+        //375.5
+        //lm: 541.60
         if(operatorController.getYButton()) {
-          if(armPosition >= 0 && armPosition < 353.255) {
+          if(armPosition >= 0 && armPosition < 335.42) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 353.255) {
+          if(armPosition > 340) {
             armMotorSpeed = -0.5;
           }
         }
@@ -312,58 +328,68 @@ public class Robot extends TimedRobot {
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
       
       if(operatorController.getLeftBumperButton()) {
-
+System.out.println("liftMotorPosition: " + liftMotorPosition);
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 0.21) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 0.21) {
+          if(liftMotorPosition > 1) {
             liftMotorSpeed = -0.5;
           }
         }
 
         //Trough
         if(operatorController.getAButton()) {
-          if(liftMotorPosition <= 0) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 18) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 0) {
+          if(liftMotorPosition > 20) {
             liftMotorSpeed = -0.5;
           }
         }
         
-        //L2
+        //L2 
+        //Arm:540.9
+        //lm: 18
         if(operatorController.getBButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 0.21) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 302) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 0.21) {
+          if(liftMotorPosition > 307) {
             liftMotorSpeed = -0.5;
           }
         }
         
         //L3
         if(operatorController.getXButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 0.21) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 0.21) {
+          if(liftMotorPosition > 1) {
             liftMotorSpeed = -0.5;
           }
         }
 
         //L4
         if(operatorController.getYButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 444.365) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 444.365) {
+          if(liftMotorPosition > 545.0) {
             liftMotorSpeed = -0.5;
           }
         }
       }
 
+      if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+        liftMotorSpeed = 0;
+        driveTrain.liftMotor.getEncoder().setPosition(0.0);
+
+        System.out.println("Bottom Limit Hit");
+      } 
+
+      System.out.println("liftMotorSpeed:" + liftMotorSpeed);
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
@@ -427,8 +453,8 @@ public class Robot extends TimedRobot {
       //Prox sensor
       
       if (hasPiece() == true){
-        driveTrain.outTakeSet(0);
-        System.out.println("Caught one!!!");
+        //driveTrain.outTakeSet(outTakeSpeed*0.1);
+        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
       }
 
     }

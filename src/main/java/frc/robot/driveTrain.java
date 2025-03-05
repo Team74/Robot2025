@@ -68,7 +68,8 @@ public class driveTrain {
     double currentHeightLift = 0;
 
     Calendar calendar = Calendar.getInstance();
-
+    
+    DigitalInput limitSensorBottom = new DigitalInput(5);
 
     double powerMulti = 0.6;
 
@@ -276,7 +277,8 @@ public class driveTrain {
     }
 
     void outTakeSet(double speed) {
-        outTakeMotorOuter.set(speed);
+        System.out.println("outTakeSet: " + speed);
+        outTakeMotorOuter.set(speed*.5);
         outTakeMotorInner.set(-speed);
     }
 
