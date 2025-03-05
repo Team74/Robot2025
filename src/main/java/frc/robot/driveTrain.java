@@ -199,11 +199,11 @@ public class driveTrain {
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         }
 
-        if(mt2.tagCount > 0)
+        /*if(mt2.tagCount > 0)
         {
             odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
             odometry.addVisionMeasurement(mt2.pose, Timer.getTimestamp());  
-        }
+        }*/
     }
     public void updateOdometry() {
         var pose = odometry.update(

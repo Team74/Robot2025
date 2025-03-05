@@ -20,18 +20,15 @@ public class AutonLeft_2P {
 
     @SuppressWarnings("unused")
     Object[] Run_2P(Object[] autoState) {
-        double trackSide = limelightcam.LimeTest();
-        double trackTurn = limelightcam.ReefCenter(); 
-        double trackPush = limelightcam.ReefPush();
+        
         String currentState = autoState[0].toString();
-        var April_22 = driveTrain.GetAprilTagTelemotry(22);
         
         System.out.println("current state: " + currentState);
 
         switch(currentState){
             
             case "Starting":
-            //driveTrain.resetGyro();
+            driveTrain.resetGyro();
             driveTrain.drive( 0, 0, 0, false, false);
             time = 0;
             currentState = "Move'nToReef";
@@ -45,25 +42,38 @@ public class AutonLeft_2P {
             if (time > 50){
                 driveTrain.drive(0, 0, 0, false);
             }*/
-            
-            if(time > 10 && time <= 35) {
-                driveTrain.drive(0, .6, 0, false, false);
+            //driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
+          //controller.getRightBumperButton(), controller.getLeftBumperButton());
+
+            if(time > 10 && time <= 60) {
+                driveTrain.drive(0.6, 0, 0, false, false);
             }
-            if(time > 40 && time <= 50) {
+            else if(time > 60 && time <= 70) {
                 driveTrain.drive( 0, 0, -1, false, false);
             }
-            if(time > 50 && time <= 60) {
-                driveTrain.drive(0, .6, 0, false, false);
+            else if(time > 70 && time <= 130) {
+                driveTrain.drive(0.6, 0, 0, false, false);
             }
-            if (time > 60) {
+            else if (time > 130) {
                 driveTrain.drive(0, 0, 0, false, false);
+                time = 0;
+                currentState = "April_22Turn";
             }
-            time = 0;
-            currentState = "April_22Turn";
             break;
 
-            case "April_22Turn":         
-                
+            case "April_22Turn": 
+            var April_22 = driveTrain.GetAprilTagTelemotry(22);
+        
+            double trackSide = 0;
+            double trackTurn = 0; 
+            double trackPush = 0;
+
+            if(limelightcam != null) {
+                trackSide = limelightcam.LimeTest();
+                trackTurn = limelightcam.ReefCenter(); 
+                trackPush = limelightcam.ReefPush();      
+            }
+
             if (April_22 != null){
                
                 var txnc_22 = April_22.txnc;
@@ -87,24 +97,24 @@ public class AutonLeft_2P {
 
             case "Adjust'n":
             if (time > 10) {
-                driveTrain.drive(0, 0.3, 0, false, false);
+                driveTrain.drive(0.3, 0, 0, false, false);
             }
             if (time > 15) {
                 driveTrain.drive(0, 0, 0, false, false);
             }
             time = 0;
-            /*currentState - "ToPlayerStation" */
+            currentState = "ToPlayerStation";
             break;
             
             case "ToPlayerStation":
             if (time > 10) {
-                driveTrain.drive(0, -0.3, 0, false, false);
+                driveTrain.drive(-0.3, 0, 0, false, false);
             }
             if (time > 35) {
-                driveTrain.drive(0, -.3 , -0.5 , false, false);
+                driveTrain.drive(-0.3, 0 , -0.5 , false, false);
             }
             if (time > 45) {
-                driveTrain.drive(0 , -.5, 0 , false, false);
+                driveTrain.drive(-0.5 , 0, 0 , false, false);
             }  
             if (time > 90) {
                 driveTrain.drive(0, 0, 0, false, false);
@@ -115,13 +125,13 @@ public class AutonLeft_2P {
             
             case "ToReef2":
             if (time > 10) {
-                driveTrain.drive(0, 0.3, 0, false, false);
+                driveTrain.drive(0.3, 0, 0, false, false);
             }
             if (time > 25) {
-                driveTrain.drive(0, 0.3, -0.35, false, false);
+                driveTrain.drive(0.3, 0, -0.35, false, false);
             }
             if (time > 50) {
-                driveTrain.drive(0 , .5, 0 , false, false);
+                driveTrain.drive(0.5 , 0, 0 , false, false);
             }
             if (time > 75) {
                 driveTrain.drive(0, 0, 0, false, false);
