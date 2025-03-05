@@ -6,6 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -20,6 +24,7 @@ import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
@@ -32,6 +37,7 @@ public class driveTrain {
     public SwerveModule rightBack;
     public SwerveModule leftBack;
 
+    //DigitalInput proxSensor = new DigitalInput(5);
 
     SwerveDriveKinematics kinematics;
 
@@ -70,16 +76,25 @@ public class driveTrain {
         
         if (!oldDriveBase) {
             // competition base CAN IDs
-            leftFront = new SwerveModule(0,66.3065, 6, 14, zeroMode,oldDriveBase);
-            rightFront = new SwerveModule(2,-134.8564, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,64.7032, 10, 11, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(1,85.9213, 19, 16, zeroMode,oldDriveBase);
+            //RF:-42.1665040541626, LF:157.98232294955807, RB:-52.49135831228398, LB:177.13350442833757
+            leftFront = new SwerveModule(0,157.98232294955807 + 90 - 180, 6, 14, zeroMode,oldDriveBase);
+            rightFront = new SwerveModule(2,-42.1665040541626 + 90 - 180, 33,4, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,-52.49135831228398 + 90, 10, 11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(1,177.13350442833757 + 90 - 180, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
             liftMotor.getEncoder().setPosition(0.0);
+            SparkBaseConfig zeroCoast = new SparkMaxConfig();
+            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
+            liftMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    
       
             armMotor = new SparkMax(3, MotorType.kBrushless);
             armMotor.getEncoder().setPosition(0.0);
+            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
+            armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    
+        
       
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
             outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);

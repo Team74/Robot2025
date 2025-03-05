@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import frc.robot.LimelightHelpers.RawFiducial;
 
-public class Auton_2P {
+public class AutonLeft_2P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
     
 
-    public Auton_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
+    public AutonLeft_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
 

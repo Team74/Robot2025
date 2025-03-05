@@ -37,15 +37,16 @@ public class SwerveModule {
         driveMotorID = initialDriveMotorID;
         oldDriveBase = initialoldDriveBase;
 
-        /*if(zeroMode){
+        if(zeroMode){
             encoderOffset = 0.0;
            initialEncoderOffset = 0.0;
-        }*/
+        }
 
         if (oldDriveBase){
             encoderA = new AnalogEncoder(initialEncoderPort,360.0,initialEncoderOffset);
         }
         else {
+
             encoder = new DutyCycleEncoder(initialEncoderPort,360.0,initialEncoderOffset-180.0);
         }
 

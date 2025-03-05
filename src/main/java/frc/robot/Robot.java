@@ -58,10 +58,13 @@ public class Robot extends TimedRobot {
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
-  Auton_2P auton_2p;
+  AutonLeft_2P auton_2p;
+  AutonMiddle_2P middle_2P;
+  AutonRight_2P right_2p;
 
   reeftoplayertoprocessor willsClass;
 
+  DigitalInput proxSensor = new DigitalInput(4);
   DigitalInput limitSensorBottom = new DigitalInput(8);
   DigitalInput limitSensorTop = new DigitalInput(9);
 
@@ -69,7 +72,9 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     driveTrain = new driveTrain(dashboard);
-    auton_2p = new Auton_2P(driveTrain, limelightcam);
+    //right_2p = new AutonRight_2P(driveTrain, limelightcam);
+    //middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
+    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
 
     limelightcam = new limeLightTest(driveTrain.gyro);
   }
@@ -114,6 +119,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
 
     autoState = auton_2p.Run_2P(autoState);
+    //autoState = middle_2P.Run_2P(autoState);
+    //autoState = right_2p.Run_2P(autoState);
 
   }
 
@@ -123,11 +130,15 @@ public class Robot extends TimedRobot {
     DriverStation.Alliance redcolor = Alliance.Red;
     DriverStation.Alliance bluecolor = Alliance.Blue;
     if (alliancecolor == redcolor) {
-      // does something
+     
     }
     if (alliancecolor == bluecolor) {
       // does something
     }
+  }
+
+  boolean hasPiece() {
+    return !proxSensor.get();
   }
 
   @Override
@@ -189,9 +200,9 @@ public class Robot extends TimedRobot {
     //Button to resent the gyro
     if (controller.getYButton()) {
       driveTrain.gyro.reset();
-      driveTrain.liftMotor.getEncoder().setPosition(0.0);
-      driveTrain.armMotor.getEncoder().setPosition(0.0);
     }
+
+  
 
     //test controls
     if (controller.getXButton()) {
@@ -208,14 +219,14 @@ public class Robot extends TimedRobot {
 
     var armPosition = driveTrain.armMotor.getEncoder().getPosition();
 
-    System.out.println("ARM: " + armPosition);
+    //System.out.println("ARM: " + armPosition);
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       double armMotorSpeed = 0;
       double armClampSpeed = 0.6;
 
-      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed;
+      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * -1;
 
       // if(armPosition > 353 && armPosition < 553) {
       //   armMotorSpeed = 0;
@@ -278,25 +289,24 @@ public class Robot extends TimedRobot {
     }
     var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
 
-    System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+    //System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
       double liftMotorSpeed = 0;
-      double liftClampSpeed = 0.6;
+      double liftClampSpeed = 1;
 
-      liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed;
+      liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
 
       //lower limit
-      if (driveTrain.liftMotor.getEncoder().getPosition() < 0){
-        liftMotorSpeed = 0;
-      } 
-      //Upper Limit
-      if (driveTrain.liftMotor.getEncoder().getPosition() > 444){
+      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() < 20 && liftMotorSpeed < 0){
         liftMotorSpeed = 0;
       }
-
-      driveTrain.liftMotor.set(liftMotorSpeed);      
+      //Upper Limit
+      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 484 && liftMotorSpeed > 0){
+        liftMotorSpeed = 0;
+      }
+     //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
       
       if(operatorController.getLeftBumperButton()) {
 
@@ -364,26 +374,30 @@ public class Robot extends TimedRobot {
       climbHeight = driveTrain.climbMotor.getEncoder().getPosition();
 
       int pov = operatorController.getPOV();
-      System.out.println("pov: " + pov);
+      //System.out.println("pov: " + pov);
 
       if (pov == -1) {
         climbSpeed = 0;
       }
       else if (pov >= 315 || pov <= 45) {
-        climbSpeed = 0.75;
+        climbSpeed = -0.75;
     
       }
       else if (pov >= 135 && pov <= 225) {
-        climbSpeed = -0.75;
+        climbSpeed = 0.75;
 
       }
 
-    System.out.println("climbHeight: " + climbHeight);
+    //System.out.println("climbHeight: " + climbHeight);
     driveTrain.climbMotor.set(climbSpeed);
 
-    if (climbHeight > 115) {
+    if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
         climbSpeed = 0;
     } 
+    if (!operatorController.getBButton() && climbHeight < 5 && climbSpeed < 0){
+      climbSpeed = 0;
+    } 
+
   }
 
 
@@ -396,20 +410,23 @@ public class Robot extends TimedRobot {
       if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = 1;
       } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = 0.5;
+        outTakeSpeed = 0.3;
       }
 
       if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = -1;
       } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = -0.5;
+        outTakeSpeed = -0.3;
       }
       
       driveTrain.outTakeSet(outTakeSpeed);
 
-      //Limiting statements
-      driveTrain.outTakeMotorInner.getOutputCurrent();
-      System.out.println(driveTrain.outTakeMotorInner.getOutputCurrent());
+      //Prox sensor
+      
+      if (hasPiece() == true){
+        driveTrain.outTakeSet(0);
+        System.out.println("Caught one!!!");
+      }
 
     }
 
