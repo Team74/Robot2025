@@ -27,7 +27,7 @@ public class AutonMiddle_2P {
 
             case "Starting":
                if (time > 0) {
-                    driveTrain.drive(0, 0, 0, false);
+                    driveTrain.drive(0, 0, 0, false, false);
                     driveTrain.resetGyro();
                     time = 0;
                     currentState = "Drive'nApril_22";
@@ -37,13 +37,13 @@ public class AutonMiddle_2P {
             case "Drive'nApril_22":
             
                 if (time > 10){
-                    driveTrain.drive(0, 0.5, 0, false);  
+                    driveTrain.drive(0, 0.5, 0, false, false);  
                 }
                 if (time > 50){
-                driveTrain.drive(0, 0, -0.5, false);
+                driveTrain.drive(0, 0, -0.5, false, false);
                 }
                 if (time > 55){
-                    driveTrain.drive(0, 0, 0, false);
+                    driveTrain.drive(0, 0, 0, false, false);
                 }
                 time = 0;
                 currentState = "April_22Align";
@@ -56,12 +56,12 @@ public class AutonMiddle_2P {
                 var ta_22 = April_22.ta;
 
                 if (txnc_22 != 0){
-                    driveTrain.drive(-trackSide, -trackTurn, -trackPush, false);
+                    driveTrain.drive(-trackSide, -trackTurn, -trackPush, false, false);
                 }
                 if (ta_22 != 55){
-                    driveTrain.drive(-trackSide, -trackTurn, -trackPush, false);
+                    driveTrain.drive(-trackSide, -trackTurn, -trackPush, false, false);
                 } else {
-                    driveTrain.drive(0, 0, 0, false);
+                    driveTrain.drive(0, 0, 0, false, false);
                 }
 
                 time = 0;
@@ -71,16 +71,16 @@ public class AutonMiddle_2P {
         
             case "ToPlayerStation":
             if (time > 10) {
-                driveTrain.drive(0, -0.3, 0, false);
+                driveTrain.drive(0, -0.3, 0, false, false);
             }
             if (time > 35) {
-                driveTrain.drive(0, -.3 , -0.5 , false);
+                driveTrain.drive(0, -.3 , -0.5 , false, false);
             }
             if (time > 45) {
-                driveTrain.drive(0 , -.5, 0 , false);
+                driveTrain.drive(0 , -.5, 0 , false, false);
             }  
             if (time > 90) {
-                driveTrain.drive(0, 0, 0, false);
+                driveTrain.drive(0, 0, 0, false, false);
             }
             time = 0;
             currentState = "ToReef2"; 
@@ -88,16 +88,16 @@ public class AutonMiddle_2P {
             
             case "ToReef2":
             if (time > 10) {
-                driveTrain.drive(0, 0.3, 0, false);
+                driveTrain.drive(0, 0.3, 0, false, false);
             }
             if (time > 25) {
-                driveTrain.drive(0, 0.3 , -0.35 , false);
+                driveTrain.drive(0, 0.3 , -0.35 , false, false);
             }
             if (time > 50) {
-                driveTrain.drive(0 , .5, 0 , false);
+                driveTrain.drive(0 , .5, 0 , false, false);
             }
             if (time > 75) {
-                driveTrain.drive(0, 0, 0, false);
+                driveTrain.drive(0, 0, 0, false, false);
             }
 
             time = 0;

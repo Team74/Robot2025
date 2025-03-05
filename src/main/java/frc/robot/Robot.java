@@ -75,8 +75,8 @@ public class Robot extends TimedRobot {
   public Robot() {
 
     driveTrain = new driveTrain(dashboard, alliancecolor);
-    //right_2p = new AutonRight_2P(driveTrain, limelightcam);
-    //middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
+    right_2p = new AutonRight_2P(driveTrain, limelightcam);
+    middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
 
     limelightcam = new limeLightTest(driveTrain.gyro);
