@@ -130,7 +130,7 @@ public class AutonLeft_2P {
         switch(currentState){
             
             case "Starting":
-            //driveTrain.resetGyro();
+            driveTrain.resetGyro();
             driveTrain.drive( 0, 0, 0, false, false);
             time = 0;
             currentState = "Move'nToReef";
@@ -198,7 +198,7 @@ public class AutonLeft_2P {
                 driveTrain.drive(0, 0, 0, false, false);
             }
             time = 0;
-            /*currentState - "ToPlayerStation" */
+            currentState = "ToPlayerStation";
             break;
             
             case "ToPlayerStation":
@@ -209,7 +209,7 @@ public class AutonLeft_2P {
                 driveTrain.drive(-0.3, 0 , -0.5 , false, false);
             }
             if (time > 45) {
-                driveTrain.drive(0 , -.5, 0 , false, false);
+                driveTrain.drive(-0.5 , 0, 0 , false, false);
             }  
             if (time > 90) {
                 driveTrain.drive(0, 0, 0, false, false);

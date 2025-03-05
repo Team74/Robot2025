@@ -97,13 +97,8 @@ public class Robot extends TimedRobot {
     dashboard.updatefielddata (m_field); 
 
     m_field.getObject("traj").setTrajectory(m_trajectory);
-    
-    var camera1 = CameraServer.startAutomaticCapture(0);
-    var camera2 = CameraServer.startAutomaticCapture(1);
-    var server = CameraServer.getServer();
-    camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-    camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-
+    CameraServer.startAutomaticCapture(); 
+    CameraServer.startAutomaticCapture(); 
     time = 0;
 
     for (int port = 5800; port <= 5809; port++) {
@@ -193,9 +188,9 @@ public class Robot extends TimedRobot {
         System.out.println("Tag: " + id);
       }
     }
-    trackSide = limelightcam.LimeTest();
+    /*trackSide = limelightcam.LimeTest();
     trackTurn = limelightcam.ReefCenter();
-    trackPush = limelightcam.ReefPush();
+    trackPush = limelightcam.ReefPush();*/
 
     if (zeroMode) {
       System.out.println(
@@ -232,12 +227,13 @@ public class Robot extends TimedRobot {
           controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
-    var armPosition = driveTrain.armMotor.getEncoder().getPosition();
 
     //System.out.println("ARM: " + armPosition);
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
+      var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+
       double armMotorSpeed = 0;
       double armClampSpeed = 0.6;
 
@@ -306,12 +302,12 @@ public class Robot extends TimedRobot {
 
       driveTrain.armMotor.set(armMotorSpeed);
     }
-    var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
 
     //System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
+      var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
       double liftMotorSpeed = 0;
       double liftClampSpeed = 1;
 
