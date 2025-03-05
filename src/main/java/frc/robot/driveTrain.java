@@ -27,6 +27,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
@@ -70,10 +73,13 @@ public class driveTrain {
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
 
-    driveTrain(Dashboard dash) {
+    DriverStation.Alliance alliancecolor;
+
+    driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
         dashboard = dash;
-        
+        alliancecolor = _alliancecolor;
+
         if (!oldDriveBase) {
             // competition base CAN IDs
             //RF:-42.1665040541626, LF:157.98232294955807, RB:-52.49135831228398, LB:177.13350442833757
@@ -127,10 +133,12 @@ public class driveTrain {
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition(),    
-            },new Pose2d());
+            },Pose2d.kZero,
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
     }
 
-    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed) {
+    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
         ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
@@ -144,17 +152,23 @@ public class driveTrain {
         rightBack.turny(moduleStates[2].angle.getDegrees());
         leftBack.turny(moduleStates[3].angle.getDegrees());
       
-        if (highSpeed)  {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
+        if (highSpeed) {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
       
-        }else {
-          rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
-          leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
-          rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
-          leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
+        } else if (lowSpeed) {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.25);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.25);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.25);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.25);
+        
+        } else {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
         updateOdometry();
@@ -167,40 +181,44 @@ public class driveTrain {
     double getGyro() {
         return (gyro.getAngle() % 360);
     }
+    void gyroOffset(double offset) {
+        gyro.setAngleAdjustment(offset);
+    }
 
     void updaterobotorientation() {
-        var acceptUpdate = false;
         LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        var mt2 = LimelightHelpers.getBotPose2d("limelight");
-        
-        
-        
-        if(acceptUpdate)
+        LimelightHelpers.PoseEstimate mt2;
+             
+        //Blue
+        if(alliancecolor == Alliance.Blue) {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
+        }
+        //Red
+        else {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        }
+
+        if(mt2.tagCount > 0)
         {
             odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
-            odometry.addVisionMeasurement(mt2, calendar.get(Calendar.SECOND));  
-              
-        }
-        else {
-            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            odometry.addVisionMeasurement(odometry.getEstimatedPosition(), calendar.get(Calendar.SECOND)); 
+            odometry.addVisionMeasurement(mt2.pose, Timer.getTimestamp());  
         }
     }
     public void updateOdometry() {
-      var pose = odometry.update(
+        var pose = odometry.update(
             gyro.getRotation2d(),
             new SwerveModulePosition[] {
                 rightFront.getPosition(),
                 leftFront.getPosition(),
                 rightBack.getPosition(),
                 leftBack.getPosition()
-            }); 
-            dashboard.updatePose(
-                pose.getX(),
-                pose.getY(),
-                pose.getRotation().getDegrees()
-            );
+        }); 
 
+        dashboard.updatePose(
+            pose.getX(),
+            pose.getY(),
+            pose.getRotation().getDegrees()
+        );
       }
 
       RawFiducial GetAprilTagTelemotry(int aprilTag) {
@@ -266,5 +284,10 @@ public class driveTrain {
         pidArm = new PIDController(.1023, 0, 0);
         armSpeed = pidArm.calculate(currentAngleArm, targetAngle*125);
         armMotor.set(armSpeed);
+    }
+
+    public AHRS getEncoder() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getEncoder'");
     }
 }

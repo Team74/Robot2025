@@ -70,8 +70,11 @@ public class Robot extends TimedRobot {
 
   int time = 0;
 
+  DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
+
   public Robot() {
-    driveTrain = new driveTrain(dashboard);
+
+    driveTrain = new driveTrain(dashboard, alliancecolor);
     //right_2p = new AutonRight_2P(driveTrain, limelightcam);
     //middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
@@ -144,7 +147,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //what the sigma
+    //auton climber feature
     if (operatorController.getLeftBumperButton() && limelightcam.CanSee()) {
 
       RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
@@ -161,7 +164,7 @@ public class Robot extends TimedRobot {
         // System.out.println("rot: " + Rotation);
         if (id == 14 || id == 15 || id == 5 || id == 4) {
           if (controller.getLeftY() != 0) {
-            driveTrain.drive(controller.getLeftX(), 0, Rotation, false);
+            driveTrain.drive(controller.getLeftX(), 0, Rotation, false, false);
           }
         }
       }
@@ -211,10 +214,10 @@ public class Robot extends TimedRobot {
 
     //Shortcut to align to the Apriltags
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam.CanSee()) {
-      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton());
+      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
-          controller.getRightBumperButton());
+          controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
     var armPosition = driveTrain.armMotor.getEncoder().getPosition();
@@ -233,7 +236,7 @@ public class Robot extends TimedRobot {
       // }
 
       if(operatorController.getLeftBumperButton()) {
-
+        
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
           if(armPosition >= 0 && armPosition < 447.13) {
