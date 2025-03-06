@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.driveTrain.ShortcutType;
+import frc.robot.limeLightTest;
 
 public class AutonLeft_2P {
     int time;
@@ -16,9 +17,6 @@ public class AutonLeft_2P {
     public AutonLeft_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
-
-        
-
     }
 
     Object[] Run_2P(Object[] autoState) {
@@ -146,7 +144,7 @@ public class AutonLeft_2P {
     }
 
     @SuppressWarnings("unused")
-    Object[] Run_2P1(Object[] autoState) {
+    Object[] Run_2P1(Object[] autoState, double currPeriod) {
         String currentState = autoState[0].toString();
         
         System.out.println("current state: " + currentState);
@@ -190,28 +188,39 @@ public class AutonLeft_2P {
   
     
             if (April_22 != null){
-               
-                double trackSide = limelightcam.LimeTest();
-                double trackTurn = limelightcam.ReefCenter(); 
-                double trackPush = limelightcam.ReefPush();
-    
-                System.out.println("ts: " + trackSide + " tt: " + trackTurn + " tp: " + trackPush);
+                final var rot_limelight = limelightcam.limelight_aim_proportional(0.3);
+                var rot = rot_limelight;
+
+                final var forward_limelight = limelightcam.limelight_range_proportional(0.3);
+                var xSpeed = forward_limelight;
+                var ySpeed = 0.0;
+
+                //while using Limelight, turn off field-relative driving.
+                var fieldRelative = false;
                 
-                var txnc_22 = April_22.txnc;
-                var ta_22 = April_22.ta;
+                
+                // var txnc_22 = April_22.txnc;
+                // var ta_22 = April_22.ta;
 
-                if (time > 25){
-                    if (txnc_22 != 0){
-                        driveTrain.drive(-1*trackPush, 0, 0, false, false);
-                    }
-                    else{
-                        driveTrain.drive(0, 0, 0, false, false);
-                    }
+                if(time > 0 && time <= 25) {
+                    driveTrain.driveLL(xSpeed, ySpeed, rot, fieldRelative, currPeriod);
+
+                    System.out.println("xSpeed: " + xSpeed + " ySpeed: " + ySpeed + " rot: " + rot);
+                    // if (txnc_22 != 0){
+                    //     driveTrain.drive(-1*trackPush, 0, 0, false, false);
+                    // }
+                    // else{
+                    //     driveTrain.drive(0, 0, 0, false, false);
+                    // }
                 }
-            } 
+                if (time > 25) {
+                    driveTrain.drive(0, 0, 0, false, false);
 
-            time = 0;
-            currentState = "Adjust'n";
+                    time = 0;
+                    currentState = "Adjust'n";
+                }
+   
+            } 
             break;
 
             case "Adjust'n":

@@ -182,25 +182,35 @@ public class driveTrain {
         updateOdometry();
     }
 
-    // double kMaxSpeed = 3.0;//
-    // void driveLL(double xSpeed, double ySpeed, double rot, boolean fieldRelative, double periodSeconds) {
-    //     ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+    double kMaxSpeed = 3.0;//
+    void driveLL(double xSpeed, double ySpeed, double rot, boolean fieldRelative, double periodSeconds) {
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
 
-    //     if(!fieldRelative) {
-    //         control = new ChassisSpeeds(xSpeed, ySpeed, rot);
-    //     }
+        if(!fieldRelative) {
+            control = new ChassisSpeeds(xSpeed, ySpeed, rot);
+        }
 
-    //     control = ChassisSpeeds.discretize(control, periodSeconds);
+        control = ChassisSpeeds.discretize(control, periodSeconds);
 
-    //     var swerveModuleStates = kinematics.toSwerveModuleStates(control);
+        var moduleStates = kinematics.toSwerveModuleStates(control);
 
-    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxSpeed);
 
-    //     rightFront.setDesiredState(swerveModuleStates[0]);
-    //     leftFront.setDesiredState(swerveModuleStates[1]);
-    //     rightBack.setDesiredState(swerveModuleStates[2]);
-    //     leftBack.setDesiredState(swerveModuleStates[3]);
-    // }
+        moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
+        moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
+        moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
+        moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
+
+        rightFront.turny(moduleStates[0].angle.getDegrees());
+        leftFront.turny(moduleStates[1].angle.getDegrees());
+        rightBack.turny(moduleStates[2].angle.getDegrees());
+        leftBack.turny(moduleStates[3].angle.getDegrees());
+
+        rightFront.movey(moduleStates[0].speedMetersPerSecond*0.25);
+        leftFront.movey(moduleStates[1].speedMetersPerSecond*0.25);
+        rightBack.movey(moduleStates[2].speedMetersPerSecond*0.25);
+        leftBack.movey(moduleStates[3].speedMetersPerSecond*0.25);
+    }
 
     void resetGyro() {
         gyro.reset();

@@ -128,6 +128,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
 
     autoState = auton_2p.Run_2P(autoState);
+    //autoState = auton_2p.Run_2P1(autoState, getPeriod());
     //autoState = middle_2P.Run_2P(autoState);
     //autoState = right_2p.Run_2P(autoState);
 
@@ -152,7 +153,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
     //auton climber feature
     if (operatorController.getLeftBumperButton() && limelightcam != null && limelightcam.CanSee()) {
 
