@@ -9,6 +9,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
@@ -126,6 +127,31 @@ public class SwerveModule {
             return new SwerveModulePosition(encoder.get(), new Rotation2d(encoder.get()));
         }
     }
+
+    // public void setDesiredState(SwerveModuleState desiredState) {
+    //     var encoderRotation = new Rotation2d(getRotation());
+    
+    //     // Optimize the reference state to avoid spinning further than 90 degrees
+    //     desiredState.optimize(encoderRotation);
+    
+    //     // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
+    //     // direction of travel that can occur when modules change directions. This results in smoother
+    //     // driving.
+    //     desiredState.speedMetersPerSecond *= desiredState.angle.minus(encoderRotation).getCos();
+    
+    //     // Calculate the drive output from the drive PID controller.
+    //     final double driveOutput = m_drivePIDController.calculate(m_driveEncoder.getRate(), desiredState.speedMetersPerSecond);
+    
+    //     final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
+    
+    //     // Calculate the turning motor output from the turning PID controller.
+    //     final double turnOutput = m_turningPIDController.calculate(m_turningEncoder.getDistance(), state.angle.getRadians());
+    
+    //     final double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
+    
+    //     driveMotor.setVoltage(driveOutput);
+    //     m_turningMotor.setVoltage(turnOutput + turnFeedforward);
+    //   }
 }
 
 
