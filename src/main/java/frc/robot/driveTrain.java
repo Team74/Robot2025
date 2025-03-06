@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,6 +31,7 @@ import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
@@ -293,4 +295,142 @@ public class driveTrain {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getEncoder'");
     }
+
+    enum ShortcutType {
+        PLAYER, L1, L2, L3, L4
+    }
+    void ShortCut(ShortcutType shortcut) {
+        if (armMotor != null) {
+            var armPosition = armMotor.getEncoder().getPosition();
+
+            double armMotorSpeed = 0;
+            double armClampSpeed = 0.6;
+
+            System.out.println("armPosition: " + armPosition);
+
+            //Human Player
+            if(shortcut == ShortcutType.PLAYER) {
+                if(armPosition >= 0 && armPosition < 37.64) {
+                    armMotorSpeed = 0.5;
+                }
+                if(armPosition > 42) {
+                    armMotorSpeed = -0.5;
+                }
+            }
+
+            //Trough
+            if(shortcut == ShortcutType.L1) {
+                if(armPosition >= 0 && armPosition < 540.9) {
+                    armMotorSpeed = 0.5;
+                }
+                if(armPosition > 545.9) {
+                    armMotorSpeed = -0.5;
+                }
+            }
+            
+            //L2
+            if(shortcut == ShortcutType.L2) {
+                if(armPosition >= 0 && armPosition < 540.9) {
+                    armMotorSpeed = 0.5;
+                }
+                if(armPosition > 545.9) {
+                    armMotorSpeed = -0.5;
+                }
+            }
+            
+            //L3
+            if(shortcut == ShortcutType.L3) {
+                if(armPosition >= 0 && armPosition < 335.42) {
+                    armMotorSpeed = 0.5;
+                }
+                if(armPosition > 340) {
+                    armMotorSpeed = -0.5;
+                }
+            }
+
+            //L4
+            if(shortcut == ShortcutType.L4) {
+                if(armPosition >= 0 && armPosition < 335.42) {
+                    armMotorSpeed = 0.5;
+                }
+                if(armPosition > 340) {
+                    armMotorSpeed = -0.5;
+                }
+            }
+
+            armMotor.set(armMotorSpeed);
+        }
+
+        if (liftMotor != null) {
+            var liftMotorPosition = liftMotor.getEncoder().getPosition();
+            double liftMotorSpeed = 0;
+            double liftClampSpeed = 1;
+                    
+            //Human Player
+            if(shortcut == ShortcutType.PLAYER) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
+                liftMotorSpeed = 0.5;
+                }
+                if(liftMotorPosition > 1) {
+                liftMotorSpeed = -0.5;
+                }
+            }
+
+            //Trough
+            if(shortcut == ShortcutType.L1) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 18) {
+                liftMotorSpeed = 0.5;
+                }
+                if(liftMotorPosition > 20) {
+                liftMotorSpeed = -0.5;
+                }
+            }
+            
+            //L2 
+            //Arm:540.9
+            //lm: 18
+            if(shortcut == ShortcutType.L2) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 302) {
+                liftMotorSpeed = 0.5;
+                }
+                if(liftMotorPosition > 307) {
+                liftMotorSpeed = -0.5;
+                }
+            }
+            
+            //L3
+            if(shortcut == ShortcutType.L3) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
+                liftMotorSpeed = 0.5;
+                }
+                if(liftMotorPosition > 1) {
+                liftMotorSpeed = -0.5;
+                }
+            }
+    
+            //L4
+            if(shortcut == ShortcutType.L4) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
+                liftMotorSpeed = 0.5;
+                }
+                if(liftMotorPosition > 545.0) {
+                liftMotorSpeed = -0.5;
+                }
+            }
+    
+            if (!limitSensorBottom.get() && liftMotorSpeed > 0) {
+                liftMotorSpeed = 0;
+                liftMotor.getEncoder().setPosition(0.0);
+    
+                System.out.println("Bottom Limit Hit");
+            } 
+    
+            System.out.println("liftMotorSpeed:" + liftMotorSpeed);
+            
+            liftMotor.set(liftMotorSpeed);
+        }
+    
+    }
+
+
 }
