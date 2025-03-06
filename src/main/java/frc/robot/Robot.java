@@ -115,6 +115,11 @@ public class Robot extends TimedRobot {
     time = 0;
     driveTrain.gyro.reset();
     autoState = new Object[] { "Starting", 0 };
+
+    driveTrain.liftMotor.getEncoder().setPosition(0.0);
+    driveTrain.armMotor.getEncoder().setPosition(0.0);
+    driveTrain.climbMotor.getEncoder().setPosition(0.0);
+
   }
 
   Object[] autoState = new Object[] { "Starting", 0 };
@@ -318,7 +323,7 @@ public class Robot extends TimedRobot {
         liftMotorSpeed = 0;
       }
       //Upper Limit
-      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 484 && liftMotorSpeed > 0){
+      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 520 && liftMotorSpeed > 0){
         liftMotorSpeed = 0;
       }
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
