@@ -15,6 +15,7 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.controller.PIDController;
@@ -25,6 +26,7 @@ import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.LimelightHelpers.RawFiducial;
@@ -78,6 +80,8 @@ public class driveTrain {
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
 
     DriverStation.Alliance alliancecolor;
+    private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+    private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
@@ -138,8 +142,8 @@ public class driveTrain {
                 rightBack.getPosition(),
                 leftBack.getPosition(),    
             },Pose2d.kZero,
-            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+            stateStdDevs,
+            visionMeasurementStdDevs);
     }
 
     void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
@@ -176,8 +180,27 @@ public class driveTrain {
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
         updateOdometry();
-        updaterobotorientation();
     }
+
+    // double kMaxSpeed = 3.0;//
+    // void driveLL(double xSpeed, double ySpeed, double rot, boolean fieldRelative, double periodSeconds) {
+    //     ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+
+    //     if(!fieldRelative) {
+    //         control = new ChassisSpeeds(xSpeed, ySpeed, rot);
+    //     }
+
+    //     control = ChassisSpeeds.discretize(control, periodSeconds);
+
+    //     var swerveModuleStates = kinematics.toSwerveModuleStates(control);
+
+    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxSpeed);
+
+    //     rightFront.setDesiredState(swerveModuleStates[0]);
+    //     leftFront.setDesiredState(swerveModuleStates[1]);
+    //     rightBack.setDesiredState(swerveModuleStates[2]);
+    //     leftBack.setDesiredState(swerveModuleStates[3]);
+    // }
 
     void resetGyro() {
         gyro.reset();
@@ -189,26 +212,27 @@ public class driveTrain {
         gyro.setAngleAdjustment(offset);
     }
 
-    void updaterobotorientation() {
+    void updaterobotorientation1() {
         LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2;
              
         //Blue
         if(alliancecolor == Alliance.Blue) {
-            mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
         }
         //Red
         else {
-            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
         }
 
-        /*if(mt2.tagCount > 0)
+        if(mt2.tagCount > 0)
         {
-            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
-            odometry.addVisionMeasurement(mt2.pose, Timer.getTimestamp());  
-        }*/
+            odometry.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);  
+        }
     }
     public void updateOdometry() {
+        updaterobotorientation1();
+
         var pose = odometry.update(
             gyro.getRotation2d(),
             new SwerveModulePosition[] {
@@ -299,6 +323,21 @@ public class driveTrain {
     enum ShortcutType {
         PLAYER, L1, L2, L3, L4
     }
+    PIDController pidShortcutArm = new PIDController(0.2, 0, 0);
+    PIDController pidShortcutLift = new PIDController(0.2, 0, 0);
+
+    double armPlayerPosition = 37.64;
+    double armL1Position = 540.9;
+    double armL2Position = 540.9;
+    double armL3Position = 335.42;
+    double armL4Position = 335.42;
+
+    double liftPlayerHeight = 0;
+    double liftL1Height = 18;
+    double liftL2Height = 302;
+    double liftL3Height = 0;
+    double liftL4Height = 541.6;
+
     void ShortCut(ShortcutType shortcut) {
         if (armMotor != null) {
             var armPosition = armMotor.getEncoder().getPosition();
@@ -310,54 +349,65 @@ public class driveTrain {
 
             //Human Player
             if(shortcut == ShortcutType.PLAYER) {
-                if(armPosition >= 0 && armPosition < 37.64) {
+                // armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
+
+                if(armPosition >= 0 && armPosition < armPlayerPosition) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > 42) {
+                if(armPosition > armPlayerPosition+2) {
                     armMotorSpeed = -0.5;
                 }
             }
 
-            //Trough
+            //L1
             if(shortcut == ShortcutType.L1) {
-                if(armPosition >= 0 && armPosition < 540.9) {
+                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL1Position);
+
+                if(armPosition >= 0 && armPosition < armL1Position) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > 545.9) {
+                if(armPosition > armL1Position+5) {
                     armMotorSpeed = -0.5;
                 }
             }
             
             //L2
             if(shortcut == ShortcutType.L2) {
-                if(armPosition >= 0 && armPosition < 540.9) {
+                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL2Position);
+
+                if(armPosition >= 0 && armPosition < armL2Position) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > 545.9) {
+                if(armPosition > armL2Position+5) {
                     armMotorSpeed = -0.5;
                 }
             }
             
             //L3
             if(shortcut == ShortcutType.L3) {
-                if(armPosition >= 0 && armPosition < 335.42) {
+                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL3Position);
+
+                if(armPosition >= 0 && armPosition < armL3Position) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > 340) {
+                if(armPosition > armL3Position+5) {
                     armMotorSpeed = -0.5;
                 }
             }
 
             //L4
             if(shortcut == ShortcutType.L4) {
-                if(armPosition >= 0 && armPosition < 335.42) {
+                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
+                
+                if(armPosition >= 0 && armPosition < armL4Position) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > 340) {
+                if(armPosition > armL4Position+5) {
                     armMotorSpeed = -0.5;
                 }
             }
-
+            
+            //armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
             armMotor.set(armMotorSpeed);
         }
 
@@ -368,53 +418,61 @@ public class driveTrain {
                     
             //Human Player
             if(shortcut == ShortcutType.PLAYER) {
-                if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
-                liftMotorSpeed = 0.5;
+                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftPlayerHeight);
+
+                if(liftMotorPosition >= 0 && liftMotorPosition < liftPlayerHeight) {
+                    liftMotorSpeed = 0.5;
                 }
-                if(liftMotorPosition > 1) {
-                liftMotorSpeed = -0.5;
+                if(liftMotorPosition > liftPlayerHeight+2) {
+                    liftMotorSpeed = -0.5;
                 }
             }
 
-            //Trough
+            //L1
             if(shortcut == ShortcutType.L1) {
-                if(liftMotorPosition >= 0 && liftMotorPosition < 18) {
-                liftMotorSpeed = 0.5;
+                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL1Height);
+
+                if(liftMotorPosition >= 0 && liftMotorPosition < liftL1Height) {
+                    liftMotorSpeed = 0.5;
                 }
-                if(liftMotorPosition > 20) {
-                liftMotorSpeed = -0.5;
+                if(liftMotorPosition > liftL1Height+2) {
+                    liftMotorSpeed = -0.5;
                 }
             }
             
             //L2 
-            //Arm:540.9
-            //lm: 18
             if(shortcut == ShortcutType.L2) {
-                if(liftMotorPosition >= 0 && liftMotorPosition < 302) {
-                liftMotorSpeed = 0.5;
+                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL2Height);
+                
+                if(liftMotorPosition >= 0 && liftMotorPosition < liftL2Height) {
+                    liftMotorSpeed = 0.5;
                 }
-                if(liftMotorPosition > 307) {
-                liftMotorSpeed = -0.5;
+                if(liftMotorPosition > liftL2Height+5) {
+                    liftMotorSpeed = -0.5;
                 }
             }
             
             //L3
             if(shortcut == ShortcutType.L3) {
-                if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
-                liftMotorSpeed = 0.5;
+                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL3Height);
+
+                if(liftMotorPosition >= 0 && liftMotorPosition < liftL3Height) {
+                    liftMotorSpeed = 0.5;
                 }
-                if(liftMotorPosition > 1) {
-                liftMotorSpeed = -0.5;
+                if(liftMotorPosition > liftL3Height + 1) {
+                    liftMotorSpeed = -0.5;
                 }
             }
     
             //L4
             if(shortcut == ShortcutType.L4) {
-                if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
-                liftMotorSpeed = 0.5;
+                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
+
+                if(liftMotorPosition >= 0 && liftMotorPosition < liftL4Height) {
+                    liftMotorSpeed = 0.5;
                 }
-                if(liftMotorPosition > 545.0) {
-                liftMotorSpeed = -0.5;
+                if(liftMotorPosition > liftL4Height+5) {
+                    liftMotorSpeed = -0.5;
                 }
             }
     
@@ -426,7 +484,8 @@ public class driveTrain {
             } 
     
             System.out.println("liftMotorSpeed:" + liftMotorSpeed);
-            
+            //liftMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
+
             liftMotor.set(liftMotorSpeed);
         }
     

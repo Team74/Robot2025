@@ -394,8 +394,6 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
-    
-
     //Controls for the Climber
     if (driveTrain.climbMotor != null) {
       double climbSpeed = 0;
@@ -461,6 +459,7 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
     }
 
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
+
     dashboard.updatefielddata (m_field);
 
 }

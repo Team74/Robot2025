@@ -1,8 +1,11 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Second;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.driveTrain.ShortcutType;
 
 public class AutonLeft_2P {
     int time;
@@ -38,6 +41,9 @@ public class AutonLeft_2P {
             double liftMotorSpeed = 0;
 
             if(time > 0 && time <= 290) {
+                //???Could this work???
+                //driveTrain.ShortCut(ShortcutType.L4);
+                
                 if(armPosition >= 0 && armPosition < 330.42) {
                     armMotorSpeed = 1;
                 }
