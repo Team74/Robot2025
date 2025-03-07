@@ -78,6 +78,12 @@ public class Robot extends TimedRobot {
   private static final String auCenter_3P = "Center_3_Piece";*/
 
   DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
+  private static final String auto_AutonMiddle_1P = "Middle_1P";
+  private static final String auto_AutonMiddle_2P = "Middle_2P";
+  private static final String auto_AutonLeft_2P = "Left_2P";
+
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private String m_autoSelected;
 
   public Robot() {
 
@@ -87,6 +93,13 @@ public class Robot extends TimedRobot {
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
 
     limelightcam = new limeLightTest(driveTrain.gyro);
+
+    m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_1P);
+    m_chooser.addOption("Middle_1P", auto_AutonMiddle_1P);
+    m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
+    m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
+
+    SmartDashboard.putData("Auto choices", m_chooser);
   }
 
   public void robotInit() {
@@ -127,17 +140,35 @@ public class Robot extends TimedRobot {
     driveTrain.armMotor.getEncoder().setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
 
+    m_autoSelected = m_chooser.getSelected();
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    System.out.println("Auto selected: " + m_autoSelected);
+
   }
 
   Object[] autoState = new Object[] { "Starting", 0 };
 
   @Override
   public void autonomousPeriodic() {
+    switch (m_autoSelected) {
+      case auto_AutonMiddle_1P:
+        right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
+      break;
+      case auto_AutonMiddle_2P:
+        middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
+      break;
+      case auto_AutonLeft_2P:
+        auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+      break;
+      default:
+        auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+      break;
+    }
 
-    autoState = auton_2p.Run_2P(autoState);
-    //autoState = auton_2p.Run_2P1(autoState, getPeriod());
-    //autoState = middle_2P.Run_2P(autoState);
-    //autoState = right_2p.Run_2P(autoState);
+    // autoState = auton_2p.Run_2P(autoState);
+    // //autoState = auton_2p.Run_2P1(autoState, getPeriod());
+    // //autoState = middle_2P.Run_2P(autoState);
+    // //autoState = right_2p.Run_2P(autoState);
 
   }
 
