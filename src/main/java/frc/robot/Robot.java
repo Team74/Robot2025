@@ -265,6 +265,19 @@ public class Robot extends TimedRobot {
     //Shortcut to align to the Apriltags
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null && limelightcam.CanSee()) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
+
+      final var rot_limelight = limelightcam.limelight_aim_proportional(0.3);
+      var rot = rot_limelight;
+
+      final var forward_limelight = limelightcam.limelight_range_proportional(0.3);
+      var xSpeed = forward_limelight;
+
+      var ySpeed = MathUtil.applyDeadband(controller.getLeftX(), 0.02);
+            
+      System.out.println("Driver LL: xSpeed: " + xSpeed + " ySpeed:" + ySpeed + " rot:" + rot);
+
+      driveTrain.driveLL(xSpeed, ySpeed, rot, false, getPeriod());
+
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton(), controller.getLeftBumperButton());
