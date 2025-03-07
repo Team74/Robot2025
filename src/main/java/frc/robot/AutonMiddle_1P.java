@@ -1,12 +1,12 @@
 package frc.robot;
 
-public class AutonRight_2P {
+public class AutonMiddle_1P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
     
 
-    public AutonRight_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
+    public AutonMiddle_1P(driveTrain _driveTrain, limeLightTest _limelightcam){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
     }
@@ -35,13 +35,8 @@ public class AutonRight_2P {
                 var txnc_21 = April_21.txnc;
                 var ta_21 = April_21.ta;
 
-                if (txnc_21 != 0){
-                    driveTrain.drive(trackSide, trackTurn, trackPush, false, false);  
-                }
-                if (ta_21 != 55){
-                driveTrain.drive(trackSide, trackTurn, trackPush, false, false);
-                } else {
-                    driveTrain.drive(0, 0, 0, false, false);
+                if (time > 10 && time < 25){
+                    driveTrain.drive(-0.5, 0, 0, false, false);
                 }
 
                 time = 0;

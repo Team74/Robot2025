@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
 
   AutonLeft_2P auton_2p;
   AutonMiddle_2P middle_2P;
-  AutonRight_2P right_2p;
+  AutonMiddle_1P right_2p;
 
   reeftoplayertoprocessor willsClass;
 
@@ -70,12 +70,19 @@ public class Robot extends TimedRobot {
 
   int time = 0;
 
+  /*private static final String driveForwardAuton = "Default_Auton";
+  private static final String auAmp_2P = "Amp_2_Piece";
+  private static final String auSource_2P = "Source_2_Piece";
+  private static final String auShootMove = "Shoot_Move";
+  private static final String auCenter_2P = "Center_2_Piece";
+  private static final String auCenter_3P = "Center_3_Piece";*/
+
   DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
 
   public Robot() {
 
     driveTrain = new driveTrain(dashboard, alliancecolor);
-    right_2p = new AutonRight_2P(driveTrain, limelightcam);
+    right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
 
@@ -251,7 +258,7 @@ public class Robot extends TimedRobot {
       if(operatorController.getLeftBumperButton()) {
         System.out.println("armPosition: " + armPosition);
 
-        //Human Player
+        //Human Player (this mean player station or processer???)
         //37.64
         if(operatorController.getRightTriggerAxis() > 0) {
           if(armPosition >= 0 && armPosition < 37.64) {
