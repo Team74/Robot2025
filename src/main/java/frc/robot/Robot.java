@@ -263,7 +263,9 @@ public class Robot extends TimedRobot {
     }
 
     //Shortcut to align to the Apriltags
-    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null && limelightcam.CanSee()) {
+
+    System.out.println("llc:" + limelightcam + " can see: " + limelightcam.CanSee());
+    if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
 
       final var rot_limelight = limelightcam.limelight_aim_proportional(0.3);
@@ -305,7 +307,7 @@ public class Robot extends TimedRobot {
         //Human Player (this mean player station or processer???)
         //37.64
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(armPosition >= 0 && armPosition < 12.66) {
+          if(armPosition >= 0 && armPosition < 425.0636) {
             armMotorSpeed = 0.5;
           }
           if(armPosition > 18) {

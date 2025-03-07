@@ -47,20 +47,20 @@ public class AutonMiddle_1P {
 
                
 
-                if (time > 10 && time < 25){
+                if (time > 10 && time < 35){
                     driveTrain.drive(-0.5, 0, 0, false, false);
                 } 
-                if (time > 30){
+                if (time > 40){
                     driveTrain.drive(0, 0, 0, false, false);
+                    time = 0;
+                    currentState = "Score";
                 }
-
-            time = 0;
-            currentState = "Score";
+            
             break;
         
             case "Score":
                 
-            if (time > 10){
+            if (time > 10 && time < 250){
                 if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
                     liftMotorSpeed = 1;
                 }
@@ -70,20 +70,20 @@ public class AutonMiddle_1P {
                     armMotorSpeed = 1;
                 }
                 driveTrain.armMotor.set(armMotorSpeed);
-            }
 
-            if (liftMotorPosition >= 539.6 && armPosition >= 344.59){
+                if (liftMotorPosition >= 539.6 && armPosition >= 344.59){
                 driveTrain.outTakeSet(-1);
+                }
             }
 
-            if (hasPiece() != true && time >= 300){
+            if (time >= 250 && time < 300){
                 driveTrain.outTakeSet(0);
                 driveTrain.armMotor.set(0);
                 driveTrain.liftMotor.set(0);
+                time = 0;
+                //currentState = "Reset";
             }
-
-            time = 0;
-            //currentState = "Reset"; 
+             
             break;
 
             case "Reset":
@@ -98,12 +98,12 @@ public class AutonMiddle_1P {
                     armMotorSpeed = -1;
                 }
                 driveTrain.armMotor.set(armMotorSpeed);
+                time = 0; 
+                currentState = "ToReef2";
             }
-            time = 0; 
-            currentState = "ToReef2";
+            
             break;
         }
-        
         time++;
         return new Object[]{currentState, time};
     }
