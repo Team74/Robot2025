@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
   AutonLeft_2P auton_2p;
   AutonMiddle_2P middle_2P;
   AutonMiddle_1P right_2p;
+  AutonDriveForward autonDriveForward;
 
   reeftoplayertoprocessor willsClass;
 
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
   private static final String auto_AutonMiddle_1P = "Middle_1P";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
+  private static final String auto_DriveTowardDriver = "DriveTowardDriver";
 
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private String m_autoSelected;
@@ -91,6 +93,7 @@ public class Robot extends TimedRobot {
     right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
 
     limelightcam = new limeLightTest(driveTrain.gyro);
 
@@ -98,6 +101,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Middle_1P", auto_AutonMiddle_1P);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
+    m_chooser.addOption("DriveTowardDriver", auto_DriveTowardDriver);
 
     SmartDashboard.putData("Auto choices", m_chooser);
   }
@@ -148,6 +152,9 @@ public class Robot extends TimedRobot {
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
+
     autoState = new Object[] { "Starting", 0 };
   }
 
@@ -168,6 +175,10 @@ public class Robot extends TimedRobot {
       case auto_AutonLeft_2P:
         
         autoState = auton_2p.Run_2P(autoState);
+      break;
+      case auto_DriveTowardDriver:
+        
+        autoState = autonDriveForward.Run_2P(autoState);
       break;
       default:
         
@@ -274,7 +285,6 @@ public class Robot extends TimedRobot {
 
     //Shortcut to align to the Apriltags
 
-    System.out.println("llc:" + limelightcam + " can see: " + limelightcam.CanSee());
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
 
@@ -359,10 +369,10 @@ public class Robot extends TimedRobot {
         //375.5
         //lm: 541.60
         if(operatorController.getYButton()) {
-          if(armPosition >= 0 && armPosition < 346.59) {
+          if(armPosition >= 0 && armPosition < 333.59) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 350) {
+          if(armPosition > 338) {
             armMotorSpeed = -0.5;
           }
         }
@@ -386,7 +396,7 @@ public class Robot extends TimedRobot {
         liftMotorSpeed = 0;
       }
       //Upper Limit
-      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 243 && liftMotorSpeed > 0){
+      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 325 && liftMotorSpeed > 0){
         liftMotorSpeed = 0;
       }
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
@@ -406,10 +416,10 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
 
         //Trough
         if(operatorController.getAButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 2) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 15) {
             liftMotorSpeed = 1;
           }
-          if(liftMotorPosition > 1) {
+          if(liftMotorPosition > 20) {
             liftMotorSpeed = -1;
           }
         }
@@ -418,10 +428,10 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
         //Arm:540.9
         //lm: 18
         if(operatorController.getBButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 166) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 6) {
             liftMotorSpeed = 1;
           }
-          if(liftMotorPosition > 170) {
+          if(liftMotorPosition > 11) {
             liftMotorSpeed = -1;
           }
         }
@@ -438,21 +448,21 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
 
         //L4
         if(operatorController.getYButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 243.9) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 263) {
             liftMotorSpeed = 1;
           }
-          if(liftMotorPosition > 444) {
+          if(liftMotorPosition > 268) {
             liftMotorSpeed = -1;
           }
         }
       }
 
-      if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
-        liftMotorSpeed = 0;
-        driveTrain.liftMotor.getEncoder().setPosition(0.0);
+      // if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+      //   liftMotorSpeed = 0;
+      //   driveTrain.liftMotor.getEncoder().setPosition(0.0);
 
-        System.out.println("Bottom Limit Hit");
-      } 
+      //   System.out.println("Bottom Limit Hit");
+      // } 
 
       System.out.println("liftMotorSpeed:" + liftMotorSpeed);
       driveTrain.liftMotor.set(liftMotorSpeed);
@@ -502,13 +512,13 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
       if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = -1;
       } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = -0.3;
+        outTakeSpeed = -0.5;
       }
 
       if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = 1;
       } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = 0.3;
+        outTakeSpeed = 0.5;
       }
       
       driveTrain.outTakeSet(outTakeSpeed);

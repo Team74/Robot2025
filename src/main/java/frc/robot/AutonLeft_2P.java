@@ -42,12 +42,12 @@ public class AutonLeft_2P {
                 //???Could this work???
                 //driveTrain.ShortCut(ShortcutType.L4);
                 
-                if(armPosition >= 0 && armPosition < 330.42) {
+                if(armPosition >= 0 && armPosition <  540.9) {
                     armMotorSpeed = 1;
                 }
                 driveTrain.armMotor.set(armMotorSpeed);
 
-                if(liftMotorPosition >= 0 && liftMotorPosition < 500.6) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 15) {
                     liftMotorSpeed = 1;
                 }
                 driveTrain.liftMotor.set(liftMotorSpeed);

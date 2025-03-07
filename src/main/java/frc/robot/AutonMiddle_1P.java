@@ -61,7 +61,7 @@ System.out.println("cs: " +currentState);
             case "Score":
                 
             if (time > 1 && time < 250){
-                if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
+                if(liftMotorPosition >= 0 && liftMotorPosition < 15) {
                     liftMotorSpeed = 1;
                 }
                 driveTrain.liftMotor.set(liftMotorSpeed);
@@ -71,7 +71,7 @@ System.out.println("cs: " +currentState);
                 }
                 driveTrain.armMotor.set(armMotorSpeed);
 
-                if (liftMotorPosition >= 539.6 && armPosition >= 344.59){
+                if (liftMotorPosition >= 15 && armPosition >= 344.59){
                 driveTrain.outTakeSet(-1);
                 }
             }
