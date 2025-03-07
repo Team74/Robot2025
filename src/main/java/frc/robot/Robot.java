@@ -292,10 +292,10 @@ public class Robot extends TimedRobot {
         //Human Player (this mean player station or processer???)
         //37.64
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(armPosition >= 0 && armPosition < 37.64) {
+          if(armPosition >= 0 && armPosition < 12.66) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 42) {
+          if(armPosition > 18) {
             armMotorSpeed = -0.5;
           }
         }
@@ -334,10 +334,10 @@ public class Robot extends TimedRobot {
         //375.5
         //lm: 541.60
         if(operatorController.getYButton()) {
-          if(armPosition >= 0 && armPosition < 335.42) {
+          if(armPosition >= 0 && armPosition < 346.59) {
             armMotorSpeed = 0.5;
           }
-          if(armPosition > 340) {
+          if(armPosition > 350) {
             armMotorSpeed = -0.5;
           }
         }
@@ -368,12 +368,13 @@ public class Robot extends TimedRobot {
       
       if(operatorController.getLeftBumperButton()) {
 System.out.println("liftMotorPosition: " + liftMotorPosition);
+
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
+          if(liftMotorPosition >= 0 && liftMotorPosition < 265.957) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 1) {
+          if(liftMotorPosition > 271) {
             liftMotorSpeed = -0.5;
           }
         }
@@ -415,7 +416,7 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
           if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
             liftMotorSpeed = 0.5;
           }
-          if(liftMotorPosition > 545.0) {
+          if(liftMotorPosition > 542.0) {
             liftMotorSpeed = -0.5;
           }
         }

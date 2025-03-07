@@ -336,13 +336,13 @@ public class driveTrain {
     PIDController pidShortcutArm = new PIDController(0.2, 0, 0);
     PIDController pidShortcutLift = new PIDController(0.2, 0, 0);
 
-    double armPlayerPosition = 37.64;
+    double armPlayerPosition = 346.59;
     double armL1Position = 540.9;
     double armL2Position = 540.9;
     double armL3Position = 335.42;
-    double armL4Position = 335.42;
+    double armL4Position = 346.59;
 
-    double liftPlayerHeight = 0;
+    double liftPlayerHeight = 265.957;
     double liftL1Height = 18;
     double liftL2Height = 302;
     double liftL3Height = 0;

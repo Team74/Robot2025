@@ -1,9 +1,16 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 public class AutonMiddle_1P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
+    DigitalInput proxSensor = new DigitalInput(4);
+
+    boolean hasPiece() {
+        return !proxSensor.get();
+    }
     
 
     public AutonMiddle_1P(driveTrain _driveTrain, limeLightTest _limelightcam){
@@ -18,6 +25,10 @@ public class AutonMiddle_1P {
         String currentState = autoState[0].toString();
         var April_21 = driveTrain.GetAprilTagTelemotry(21);
         var April_12 = driveTrain.GetAprilTagTelemotry(12);
+        var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+        double armMotorSpeed = 0;
+        var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
+        double liftMotorSpeed = 0;
 
         switch(currentState){
 
@@ -26,86 +37,72 @@ public class AutonMiddle_1P {
                     driveTrain.drive(0, 0, 0, false, false);
                     driveTrain.resetGyro();
                     time = 0;
-                    currentState = "Drive'nApril_21";
+                    currentState = "Drive'nForward";
                }
             break;
 
-            case "Drive'nApril_21":
+            case "Drive'nForward":
 
-                var txnc_21 = April_21.txnc;
-                var ta_21 = April_21.ta;
+                //var txnc_21 = April_21.txnc;
+                //var ta_21 = April_21.ta;
+
+               
 
                 if (time > 10 && time < 25){
                     driveTrain.drive(-0.5, 0, 0, false, false);
-                }
-
-                time = 0;
-                currentState = "TurnToStation";
-            break;
-        
-            case "TurnToStation":
-                if (time > 10) {
-                    driveTrain.drive(0, -0.3, 0, false, false);
-                }
-                if (time > 35) {
-                    driveTrain.drive(0, 0, 0.5 , false, false);
-                }
-                if (time > 45) {
-                    driveTrain.drive(0 , 0.5, 0 , false, false);
-                }  
-                if (time > 90) {
+                } 
+                if (time > 30){
                     driveTrain.drive(0, 0, 0, false, false);
                 }
-                time = 0;
-                currentState = "DriveToApril_12"; 
+
+            time = 0;
+            currentState = "Score";
             break;
-
-            case "DriveToApril_12":
-
-                var txnc_12 = April_12.txnc;
-                var ta_12 = April_12.ta;
+        
+            case "Score":
                 
-                if (April_12 != null && time > 10){
-
-                    if (txnc_12 != 0){
-                        driveTrain.drive(trackSide, trackTurn, trackPush, false, false);
-                    }
-                    if (ta_12 != 55){
-                        driveTrain.drive(trackSide, trackTurn, trackPush, false, false);
-                    } else {
-                        driveTrain.drive(0, 0, 0, false, false);
-                    }
+            if (time > 10){
+                if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
+                    liftMotorSpeed = 1;
                 }
-                if (time > 75){
-                    driveTrain.outTakeSet(0.5);
+                driveTrain.liftMotor.set(liftMotorSpeed);
+
+                if(armPosition >= 0 && armPosition < 346.59) {
+                    armMotorSpeed = 1;
                 }
-                /*if (HasPiece == true){
-                    driveTrain.outTakeSet(0);
-                }*/
-                time = 0; 
-                currentState = "ToReef2";
-                break;
+                driveTrain.armMotor.set(armMotorSpeed);
+            }
 
+            if (liftMotorPosition >= 539.6 && armPosition >= 344.59){
+                driveTrain.outTakeSet(-1);
+            }
 
-            
-            case "ToReef2":
-            if (time > 10) {
-                driveTrain.drive(0, 0.3, 0, false, false);
-            }
-            if (time > 25) {
-                driveTrain.drive(0, 0.3 , -0.35 , false, false);
-            }
-            if (time > 50) {
-                driveTrain.drive(0 , .5, 0 , false, false);
-            }
-            if (time > 75) {
-                driveTrain.drive(0, 0, 0, false, false);
+            if (hasPiece() != true && time >= 300){
+                driveTrain.outTakeSet(0);
+                driveTrain.armMotor.set(0);
+                driveTrain.liftMotor.set(0);
             }
 
             time = 0;
+            //currentState = "Reset"; 
             break;
-            
 
+            case "Reset":
+                
+            if (time > 10 && time < 250){
+                if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
+                    liftMotorSpeed = -1;
+                }
+                driveTrain.liftMotor.set(liftMotorSpeed);
+
+                if(armPosition >= 0 && armPosition < 346.59) {
+                    armMotorSpeed = -1;
+                }
+                driveTrain.armMotor.set(armMotorSpeed);
+            }
+            time = 0; 
+            currentState = "ToReef2";
+            break;
         }
         
         time++;
