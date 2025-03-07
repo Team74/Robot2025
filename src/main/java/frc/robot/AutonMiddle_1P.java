@@ -6,10 +6,9 @@ public class AutonMiddle_1P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
-    DigitalInput proxSensor = new DigitalInput(4);
 
     boolean hasPiece() {
-        return !proxSensor.get();
+        return !driveTrain.proxSensor.get();
     }
     
 

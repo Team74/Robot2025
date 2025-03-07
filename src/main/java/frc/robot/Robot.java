@@ -65,8 +65,8 @@ public class Robot extends TimedRobot {
 
   reeftoplayertoprocessor willsClass;
 
-  DigitalInput proxSensor = new DigitalInput(4);
-  DigitalInput limitSensorTop = new DigitalInput(9);
+  //DigitalInput proxSensor = new DigitalInput(4);
+  //DigitalInput limitSensorTop = new DigitalInput(9);
 
   int time = 0;
 
@@ -186,7 +186,7 @@ public class Robot extends TimedRobot {
   }
 
   boolean hasPiece() {
-    return !proxSensor.get();
+    return !driveTrain.proxSensor.get();
   }
 
   @Override
@@ -372,20 +372,20 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
           if(liftMotorPosition >= 0 && liftMotorPosition < 265.957) {
-            liftMotorSpeed = 0.5;
+            liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 271) {
-            liftMotorSpeed = -0.5;
+            liftMotorSpeed = -1;
           }
         }
 
         //Trough
         if(operatorController.getAButton()) {
           if(liftMotorPosition >= 0 && liftMotorPosition < 18) {
-            liftMotorSpeed = 0.5;
+            liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 20) {
-            liftMotorSpeed = -0.5;
+            liftMotorSpeed = -1;
           }
         }
         
@@ -394,30 +394,30 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
         //lm: 18
         if(operatorController.getBButton()) {
           if(liftMotorPosition >= 0 && liftMotorPosition < 302) {
-            liftMotorSpeed = 0.5;
+            liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 307) {
-            liftMotorSpeed = -0.5;
+            liftMotorSpeed = -1;
           }
         }
         
         //L3
         if(operatorController.getXButton()) {
           if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
-            liftMotorSpeed = 0.5;
+            liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 1) {
-            liftMotorSpeed = -0.5;
+            liftMotorSpeed = -1;
           }
         }
 
         //L4
         if(operatorController.getYButton()) {
           if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
-            liftMotorSpeed = 0.5;
+            liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 542.0) {
-            liftMotorSpeed = -0.5;
+            liftMotorSpeed = -1;
           }
         }
       }

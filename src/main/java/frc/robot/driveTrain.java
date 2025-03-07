@@ -46,6 +46,7 @@ public class driveTrain {
     public SwerveModule leftBack;
 
     //DigitalInput proxSensor = new DigitalInput(5);
+    DigitalInput proxSensor = new DigitalInput(4);
 
     SwerveDriveKinematics kinematics;
 
