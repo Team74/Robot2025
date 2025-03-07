@@ -265,6 +265,19 @@ public class Robot extends TimedRobot {
     //Shortcut to align to the Apriltags
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null && limelightcam.CanSee()) {
       driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
+
+      final var rot_limelight = limelightcam.limelight_aim_proportional(0.3);
+      var rot = rot_limelight;
+
+      final var forward_limelight = limelightcam.limelight_range_proportional(0.3);
+      var xSpeed = forward_limelight;
+
+      var ySpeed = MathUtil.applyDeadband(controller.getLeftX(), 0.02);
+            
+      System.out.println("Driver LL: xSpeed: " + xSpeed + " ySpeed:" + ySpeed + " rot:" + rot);
+
+      driveTrain.driveLL(xSpeed, ySpeed, rot, false, getPeriod());
+
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton(), controller.getLeftBumperButton());
@@ -280,7 +293,7 @@ public class Robot extends TimedRobot {
       double armMotorSpeed = 0;
       double armClampSpeed = 0.6;
 
-      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * -1;
+      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
 
       // if(armPosition > 353 && armPosition < 553) {
       //   armMotorSpeed = 0;
@@ -475,15 +488,15 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
       double outTakeSpeed = 0;
 
       if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = 1;
+        outTakeSpeed = -1;
       } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = 0.3;
+        outTakeSpeed = -0.3;
       }
 
       if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = -1;
+        outTakeSpeed = 1;
       } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = -0.3;
+        outTakeSpeed = 0.3;
       }
       
       driveTrain.outTakeSet(outTakeSpeed);

@@ -60,7 +60,7 @@ public class AutonLeft_2P {
                 driveTrain.drive( 0, 0, 1, false, false);
             }
             if(time > 95 && time <= 135) {
-                driveTrain.drive(-0.5, 0.5, 0, false, false);
+                driveTrain.drive(-0.5, 0.7, 0, false, false);
             }
             if (time > 135 && time <= 290) {
                 driveTrain.drive(0, 0, 0, false, false);
