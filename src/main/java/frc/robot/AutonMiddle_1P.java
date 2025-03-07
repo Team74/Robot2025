@@ -18,17 +18,17 @@ public class AutonMiddle_1P {
     }
 
     Object[] Run_2P(Object[] autoState) {
-        double trackSide = limelightcam.LimeTest();
-        double trackTurn = limelightcam.ReefCenter(); 
-        double trackPush = limelightcam.ReefPush();
+        // double trackSide = limelightcam.LimeTest();
+        // double trackTurn = limelightcam.ReefCenter(); 
+        // double trackPush = limelightcam.ReefPush();
         String currentState = autoState[0].toString();
-        var April_21 = driveTrain.GetAprilTagTelemotry(21);
-        var April_12 = driveTrain.GetAprilTagTelemotry(12);
+        // var April_21 = driveTrain.GetAprilTagTelemotry(21);
+        // var April_12 = driveTrain.GetAprilTagTelemotry(12);
         var armPosition = driveTrain.armMotor.getEncoder().getPosition();
         double armMotorSpeed = 0;
         var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
         double liftMotorSpeed = 0;
-
+System.out.println("cs: " +currentState);
         switch(currentState){
 
             case "Starting":
@@ -47,7 +47,7 @@ public class AutonMiddle_1P {
 
                
 
-                if (time > 10 && time < 35){
+                if (time > 0 && time < 35){
                     driveTrain.drive(-0.5, 0, 0, false, false);
                 } 
                 if (time > 40){
@@ -60,13 +60,13 @@ public class AutonMiddle_1P {
         
             case "Score":
                 
-            if (time > 10 && time < 250){
+            if (time > 1 && time < 250){
                 if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
                     liftMotorSpeed = 1;
                 }
                 driveTrain.liftMotor.set(liftMotorSpeed);
 
-                if(armPosition >= 0 && armPosition < 346.59) {
+                if(armPosition >= 0 && armPosition < 540.9) {
                     armMotorSpeed = 1;
                 }
                 driveTrain.armMotor.set(armMotorSpeed);

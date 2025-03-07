@@ -144,6 +144,11 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
 
+    right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
+    middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
+    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    autoState = new Object[] { "Starting", 0 };
   }
 
   Object[] autoState = new Object[] { "Starting", 0 };
@@ -151,17 +156,22 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
+      
       case auto_AutonMiddle_1P:
-        right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
+        
+        autoState = right_2p.Run_2P(autoState);
       break;
       case auto_AutonMiddle_2P:
-        middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
+        
+        autoState = right_2p.Run_2P(autoState);
       break;
       case auto_AutonLeft_2P:
-        auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+        
+        autoState = auton_2p.Run_2P(autoState);
       break;
       default:
-        auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+        
+        autoState = auton_2p.Run_2P(autoState);
       break;
     }
 
@@ -372,11 +382,11 @@ public class Robot extends TimedRobot {
       liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
 
       //lower limit
-      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() < 20 && liftMotorSpeed < 0){
+      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() < 10 && liftMotorSpeed < 0){
         liftMotorSpeed = 0;
       }
       //Upper Limit
-      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 520 && liftMotorSpeed > 0){
+      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 243 && liftMotorSpeed > 0){
         liftMotorSpeed = 0;
       }
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
@@ -386,7 +396,7 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
 
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 265.957) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 146.28) {
             liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 271) {
@@ -396,10 +406,10 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
 
         //Trough
         if(operatorController.getAButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 18) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 2) {
             liftMotorSpeed = 1;
           }
-          if(liftMotorPosition > 20) {
+          if(liftMotorPosition > 1) {
             liftMotorSpeed = -1;
           }
         }
@@ -408,17 +418,17 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
         //Arm:540.9
         //lm: 18
         if(operatorController.getBButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 302) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 166) {
             liftMotorSpeed = 1;
           }
-          if(liftMotorPosition > 307) {
+          if(liftMotorPosition > 170) {
             liftMotorSpeed = -1;
           }
         }
         
         //L3
         if(operatorController.getXButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 0) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 0) {
             liftMotorSpeed = 1;
           }
           if(liftMotorPosition > 1) {
@@ -428,10 +438,10 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
 
         //L4
         if(operatorController.getYButton()) {
-          if(liftMotorPosition >= 0 && liftMotorPosition < 541.6) {
+          if(liftMotorPosition >= 5 && liftMotorPosition < 243.9) {
             liftMotorSpeed = 1;
           }
-          if(liftMotorPosition > 542.0) {
+          if(liftMotorPosition > 444) {
             liftMotorSpeed = -1;
           }
         }
