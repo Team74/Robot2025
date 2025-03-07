@@ -236,7 +236,7 @@ public class driveTrain {
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
         }
 
-        if(mt2.tagCount > 0)
+        if(mt2 != null && mt2.tagCount > 0)
         {
             odometry.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);  
         }
@@ -347,7 +347,7 @@ public class driveTrain {
     double liftL1Height = 18;
     double liftL2Height = 302;
     double liftL3Height = 0;
-    double liftL4Height = 541.6;
+    double liftL4Height = 443.45;
 
     void ShortCut(ShortcutType shortcut) {
         if (armMotor != null) {
