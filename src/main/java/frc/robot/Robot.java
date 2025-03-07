@@ -242,7 +242,7 @@ public class Robot extends TimedRobot {
       double armMotorSpeed = 0;
       double armClampSpeed = 0.6;
 
-      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * -1;
+      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
 
       // if(armPosition > 353 && armPosition < 553) {
       //   armMotorSpeed = 0;
@@ -436,15 +436,15 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
       double outTakeSpeed = 0;
 
       if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = 1;
+        outTakeSpeed = -1;
       } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = 0.3;
+        outTakeSpeed = -0.3;
       }
 
       if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = -1;
+        outTakeSpeed = 1;
       } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = -0.3;
+        outTakeSpeed = 0.3;
       }
       
       driveTrain.outTakeSet(outTakeSpeed);
