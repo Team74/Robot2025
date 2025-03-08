@@ -47,10 +47,10 @@ System.out.println("cs: " +currentState);
 
                
 
-                if (time > 0 && time < 35){
+                if (time > 0 && time < 60){
                     driveTrain.drive(-0.5, 0, 0, false, false);
                 } 
-                if (time > 40){
+                if (time > 61){
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
                     currentState = "Score";

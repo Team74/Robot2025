@@ -92,7 +92,7 @@ public class driveTrain {
         if (!oldDriveBase) {
             // competition base CAN IDs
             //RF:-42.1665040541626, LF:157.98232294955807, RB:-52.49135831228398, LB:177.13350442833757
-            leftFront = new SwerveModule(0,157.98232294955807 + 90 - 180, 6, 14, zeroMode,oldDriveBase);
+            leftFront = new SwerveModule(0,76.23000190575004, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,-42.1665040541626 + 90 - 180, 33,4, zeroMode,oldDriveBase);
             rightBack = new SwerveModule(3,-52.49135831228398 + 90, 10, 11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,177.13350442833757 + 90 - 180, 19, 16, zeroMode,oldDriveBase);
