@@ -28,7 +28,7 @@ public class AutonMiddle_1P {
         double armMotorSpeed = 0;
         var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
         double liftMotorSpeed = 0;
-System.out.println("cs: " +currentState);
+System.out.println("cs: " +currentState + " time: " + time + " Armposition: " + armPosition + " liftposition" + liftMotorPosition);
         switch(currentState){
 
             case "Starting":
@@ -47,36 +47,38 @@ System.out.println("cs: " +currentState);
 
                
 
-                if (time > 0 && time < 60){
-                    driveTrain.drive(-0.5, 0, 0, false, false);
+                if (time > 0 && time < 175){
+                    driveTrain.drive(-0.3, 0, 0, false, false);
                 } 
-                if (time > 61){
+                if (time > 176){
                     driveTrain.drive(0, 0, 0, false, false);
-                    time = 0;
-                    currentState = "Score";
+                }    
+                if (time > 1 && time < 176){
+                    if(liftMotorPosition >= -0.5 && liftMotorPosition < 15) {
+                        liftMotorSpeed = 1;
+                    }
+                    driveTrain.liftMotor.set(liftMotorSpeed);
+
+                    if(armPosition >= -0.5 && armPosition < 540.9) {
+                        armMotorSpeed = 1;
+                    }
+                    driveTrain.armMotor.set(armMotorSpeed);
+
+                    if (armPosition >= 540.9 && time > 203){
+                        driveTrain.armMotor.set(0);
+                        driveTrain.liftMotor.set(0);
+                        driveTrain.outTakeSet(1);
+                        time = 0;
+                        currentState = "Score";
+                    }
                 }
+               
             
             break;
         
             case "Score":
-                
-            if (time > 1 && time < 250){
-                if(liftMotorPosition >= 0 && liftMotorPosition < 15) {
-                    liftMotorSpeed = 1;
-                }
-                driveTrain.liftMotor.set(liftMotorSpeed);
 
-                if(armPosition >= 0 && armPosition < 540.9) {
-                    armMotorSpeed = 1;
-                }
-                driveTrain.armMotor.set(armMotorSpeed);
-
-                if (liftMotorPosition >= 15 && armPosition >= 344.59){
-                driveTrain.outTakeSet(-1);
-                }
-            }
-
-            if (time >= 250 && time < 300){
+            if (time >= 0 && time < 10){
                 driveTrain.outTakeSet(0);
                 driveTrain.armMotor.set(0);
                 driveTrain.liftMotor.set(0);

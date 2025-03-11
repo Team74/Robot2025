@@ -286,7 +286,7 @@ public class Robot extends TimedRobot {
     //Shortcut to align to the Apriltags
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
-      driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
+      //driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
 
       final var rot_limelight = limelightcam.limelight_aim_proportional(0.3);
       var rot = rot_limelight;
