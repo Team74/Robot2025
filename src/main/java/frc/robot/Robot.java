@@ -67,8 +67,9 @@ public class Robot extends TimedRobot {
 
   reeftoplayertoprocessor willsClass;
 
-  //DigitalInput proxSensor = new DigitalInput(4);
-  //DigitalInput limitSensorTop = new DigitalInput(9);
+  DigitalInput limitSensorBottom = new DigitalInput(8);
+  DigitalInput armLimitTop = new DigitalInput(7);
+  DigitalInput armLimitBottom = new DigitalInput(9);
 
   int time = 0;
 
@@ -311,14 +312,11 @@ public class Robot extends TimedRobot {
     }
 
 
-    //System.out.println("ARM: " + armPosition);
-
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       var armPosition = driveTrain.armMotor.getEncoder().getPosition();
-
-      double armMotorSpeed = 0;
       double armClampSpeed = 0.6;
+      Double armMotorSpeed =0.0;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
 
@@ -382,7 +380,14 @@ public class Robot extends TimedRobot {
           }
         }
       }
+ //Arm protecton
 
+ if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
+  armMotorSpeed = 0.0;
+}
+if (armLimitBottom.get() == true  && operatorController.getRightY() > 0){
+  armMotorSpeed = 0.0;
+}
       driveTrain.armMotor.set(armMotorSpeed);
     }
 
@@ -536,7 +541,6 @@ public class Robot extends TimedRobot {
       }
 
     }
-
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);

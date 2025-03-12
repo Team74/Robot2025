@@ -24,12 +24,13 @@ public class SwerveModule {
     DutyCycleEncoder encoder;
     AnalogEncoder encoderA;
     Boolean oldDriveBase = false;
+boolean zeroMode = false;
 
     SwerveModule(int initialEncoderPort, 
                 double initialEncoderOffset, 
                 int initialTurningMotorID, 
                 int initialDriveMotorID,
-                boolean zeroMode,
+                boolean _zeroMode,
                 boolean initialoldDriveBase) {
         
         encoderPort = initialEncoderPort;
@@ -37,6 +38,7 @@ public class SwerveModule {
         turningMotorID = initialTurningMotorID;
         driveMotorID = initialDriveMotorID;
         oldDriveBase = initialoldDriveBase;
+        zeroMode = _zeroMode;
 
         if(zeroMode){
             encoderOffset = 0.0;
@@ -89,7 +91,12 @@ public class SwerveModule {
                 return (encoderA.get())-(2*(encoderA.get()-180));
             }
         }
-        return encoder.get()-180;
+        if (zeroMode) {
+            return encoder.get();
+        }
+        else {
+            return encoder.get()-180;
+        }
     }
 
     void turny(double targetAngle){

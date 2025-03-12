@@ -91,11 +91,11 @@ public class driveTrain {
 
         if (!oldDriveBase) {
             // competition base CAN IDs
-            //RF:-42.1665040541626, LF:157.98232294955807, RB:-52.49135831228398, LB:177.13350442833757
-            leftFront = new SwerveModule(0,76.23000190575004, 6, 14, zeroMode,oldDriveBase);
-            rightFront = new SwerveModule(2,-42.1665040541626 + 90 - 180, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,-52.49135831228398 + 90, 10, 11, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(1,177.13350442833757 + 90 - 180, 19, 16, zeroMode,oldDriveBase);
+            //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
+            leftFront = new SwerveModule(0,76.40100191002506, 6, 14, zeroMode,oldDriveBase);
+            rightFront = new SwerveModule(2,45.88528614713215-180, 33,4, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,-159.65606199140154-180, 10, 11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(1,-96.41761441044036-180, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
             liftMotor.getEncoder().setPosition(0.0);
