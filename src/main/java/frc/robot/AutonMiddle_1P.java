@@ -47,13 +47,13 @@ System.out.println("cs: " +currentState + " time: " + time + " Armposition: " + 
 
                
 
-                if (time > 0 && time < 175){
+                if (time > 0 && time < 75){
                     driveTrain.drive(-0.3, 0, 0, false, false);
                 } 
-                if (time > 176){
+                if (time > 76){
                     driveTrain.drive(0, 0, 0, false, false);
                 }    
-                if (time > 1 && time < 176){
+                if (time > 1 && time < 76){
                     if(liftMotorPosition >= -0.5 && liftMotorPosition < 15) {
                         liftMotorSpeed = 1;
                     }
@@ -61,6 +61,8 @@ System.out.println("cs: " +currentState + " time: " + time + " Armposition: " + 
 
                     if(armPosition >= -0.5 && armPosition < 540.9) {
                         armMotorSpeed = 1;
+                    } else {
+                        armMotorSpeed = 0;
                     }
                     driveTrain.armMotor.set(armMotorSpeed);
 
