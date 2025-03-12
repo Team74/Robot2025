@@ -120,12 +120,14 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
+        System.out.println("Encoder" + driveMotor.getEncoder().getPosition() + " Position" + encoder.get());
         if (oldDriveBase){
             return new SwerveModulePosition(encoderA.get(), new Rotation2d(encoderA.get()));
         }
         else {
-            return new SwerveModulePosition(encoder.get(), new Rotation2d(encoder.get()));
+            return new SwerveModulePosition(driveMotor.getEncoder().getPosition(), new Rotation2d(encoder.get()));
         }
+        
     }
 
     // public void setDesiredState(SwerveModuleState desiredState) {

@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -146,7 +147,7 @@ public class Robot extends TimedRobot {
 
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    //System.out.println("Auto selected: " + m_autoSelected);
 
     right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
@@ -162,6 +163,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    if (zeroMode == true){
+      System.out.println("System disabled"); 
+      return; 
+    }
+
     switch (m_autoSelected) {
       
       case auto_AutonMiddle_1P:
@@ -209,7 +215,6 @@ public class Robot extends TimedRobot {
   boolean hasPiece() {
     return !driveTrain.proxSensor.get();
   }
-
   @Override
   public void teleopPeriodic() {
     //auton climber feature
@@ -249,7 +254,7 @@ public class Robot extends TimedRobot {
         double distToCamera = fiducial.distToCamera;
         double distToRobot = fiducial.distToRobot;
         double ambiguity = fiducial.ambiguity;
-        System.out.println("Tag: " + id);
+        //System.out.println("Tag: " + id);
       }
     }
     /*trackSide = limelightcam.LimeTest();
@@ -280,7 +285,7 @@ public class Robot extends TimedRobot {
 
     //test controls
     if (controller.getXButton()) {
-      System.out.println(driveTrain.gyro.getAngle());
+      //System.out.println(driveTrain.gyro.getAngle());
     }
 
     //Shortcut to align to the Apriltags
@@ -296,7 +301,7 @@ public class Robot extends TimedRobot {
 
       var ySpeed = MathUtil.applyDeadband(controller.getLeftX(), 0.02);
             
-      System.out.println("Driver LL: xSpeed: " + xSpeed + " ySpeed:" + ySpeed + " rot:" + rot);
+      //System.out.println("Driver LL: xSpeed: " + xSpeed + " ySpeed:" + ySpeed + " rot:" + rot);
 
       driveTrain.driveLL(xSpeed, ySpeed, rot, false, getPeriod());
 
@@ -402,7 +407,7 @@ public class Robot extends TimedRobot {
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
       
       if(operatorController.getLeftBumperButton()) {
-System.out.println("liftMotorPosition: " + liftMotorPosition);
+//System.out.println("liftMotorPosition: " + liftMotorPosition);
 
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
@@ -464,7 +469,7 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
       //   System.out.println("Bottom Limit Hit");
       // } 
 
-      System.out.println("liftMotorSpeed:" + liftMotorSpeed);
+      //System.out.println("liftMotorSpeed:" + liftMotorSpeed);
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
@@ -527,7 +532,7 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
       
       if (hasPiece() == true){
         //driveTrain.outTakeSet(outTakeSpeed*0.1);
-        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
+        //System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
       }
 
     }
@@ -549,9 +554,13 @@ System.out.println("liftMotorPosition: " + liftMotorPosition);
   @Override
   public void testInit() {
   }
+  AnalogPotentiometer pot = new AnalogPotentiometer(0,90, 270);
 
   @Override
   public void testPeriodic() {
+        var potval = pot.get();
+    System.out.println("potval: "+ potval);
+
   }
 
   @Override

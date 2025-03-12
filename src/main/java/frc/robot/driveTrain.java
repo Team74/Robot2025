@@ -108,12 +108,12 @@ public class driveTrain {
             armMotor.getEncoder().setPosition(0.0);
             zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
             armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    
-        
       
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
             outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
-
+            outTakeMotorOuter.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            outTakeMotorInner.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            
             climbMotor = new SparkMax(12, MotorType.kBrushless);
             climbMotor.getEncoder().setPosition(0.0);
       
@@ -178,6 +178,7 @@ public class driveTrain {
             leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
             rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
             leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
+            boolean zeroMode = false;
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
         updateOdometry();
@@ -283,7 +284,7 @@ public class driveTrain {
                     if(ta == aprilTag){
                         return fiducial;
                     }
-                System.out.println("Tag: " + id);
+                //System.out.println("Tag: " + id);
             }
             return null;
     }
@@ -314,7 +315,7 @@ public class driveTrain {
     }
 
     void outTakeSet(double speed) {
-        System.out.println("outTakeSet: " + speed);
+        //System.out.println("outTakeSet: " + speed);
         outTakeMotorOuter.set(speed*.5);
         outTakeMotorInner.set(-speed);
     }
@@ -356,7 +357,7 @@ public class driveTrain {
             double armMotorSpeed = 0;
             double armClampSpeed = 0.6;
 
-            System.out.println("armPosition: " + armPosition);
+            //System.out.println("armPosition: " + armPosition);
 
             //Human Player
             if(shortcut == ShortcutType.PLAYER) {
@@ -491,10 +492,10 @@ public class driveTrain {
                 liftMotorSpeed = 0;
                 liftMotor.getEncoder().setPosition(0.0);
     
-                System.out.println("Bottom Limit Hit");
+                //System.out.println("Bottom Limit Hit");
             } 
     
-            System.out.println("liftMotorSpeed:" + liftMotorSpeed);
+            //System.out.println("liftMotorSpeed:" + liftMotorSpeed);
             //liftMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
 
             liftMotor.set(liftMotorSpeed);
