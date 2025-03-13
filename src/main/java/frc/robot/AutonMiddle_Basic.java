@@ -28,7 +28,7 @@ public class AutonMiddle_Basic {
         double armMotorSpeed = 0;
         var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
         double liftMotorSpeed = 0;
-System.out.println("cs: " +currentState + " time: " + time + " Armposition: " + armPosition + " liftposition" + liftMotorPosition);
+        //System.out.println("cs: " +currentState + " time: " + time + " Armposition: " + armPosition + " liftposition" + liftMotorPosition);
         switch(currentState){
 
             case "Starting":

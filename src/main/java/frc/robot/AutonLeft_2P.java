@@ -13,13 +13,14 @@ public class AutonLeft_2P {
     driveTrain driveTrain;
     limeLightTest limelightcam;
     
-
     public AutonLeft_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
+
     }
 
     Object[] Run_2P(Object[] autoState) {
+        
         String currentState = autoState[0].toString();
         
         System.out.println("current state: " + currentState);
@@ -33,15 +34,16 @@ public class AutonLeft_2P {
             break;
 
             case "Move'nToReef":
+            var April_22 = driveTrain.GetAprilTagTelemotry(22);
             var armPosition = driveTrain.armMotor.getEncoder().getPosition();
             double armMotorSpeed = 0;
             var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
             double liftMotorSpeed = 0;
 
-            if(time > 0 && time <= 290) {
+            if(time > 0 && time <= 290&& April_22 !=null) {
                 //???Could this work???
                 //driveTrain.ShortCut(ShortcutType.L4);
-                
+                                
                 if(armPosition >= 0 && armPosition <  540.9) {
                     armMotorSpeed = 1;
                 }

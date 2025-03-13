@@ -65,14 +65,14 @@ public class Robot extends TimedRobot {
   AutonMiddle_Basic right_2p;
   AutonDriveForward autonDriveForward;
 
+
   reeftoplayertoprocessor willsClass;
 
   DigitalInput limitSensorBottom = new DigitalInput(8);
   DigitalInput armLimitTop = new DigitalInput(7);
   DigitalInput stringLiftLimit = new DigitalInput(9);
 
-  private final PIDController rotationPID;
-  private final PIDController rangePID;
+  
 
   int time = 0;
 
@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private String m_autoSelected;
 
+
   public Robot() {
 
     driveTrain = new driveTrain(dashboard, alliancecolor);
@@ -100,7 +101,7 @@ public class Robot extends TimedRobot {
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
 
-    limelightcam = new limeLightTest(driveTrain.gyro);
+    limelightcam = new limeLightTest(driveTrain);
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_1P);
     m_chooser.addOption("Middle_1P", auto_AutonMiddle_1P);
@@ -110,17 +111,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    // Tune these PID values for your robot
-    //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
-    rotationPID = new PIDController(.05, 0.0, 0.001);
-    rangePID = new PIDController(0.3, 0.0, 0.01);
-
-    // Set tolerance for both controllers
-    rotationPID.setTolerance(0.3); // 1 degree tolerance
-    rangePID.setTolerance(0.01); // 5cm tolerance
     
-    rotationPID.enableContinuousInput(-180.0, 180.0);
-    rangePID.enableContinuousInput(-180.0, 180.0);
   }
 
   public void robotInit() {
@@ -303,32 +294,14 @@ public class Robot extends TimedRobot {
     if (controller.getXButton()) {
       //System.out.println(driveTrain.gyro.getAngle());
     }
-
+   
     //Shortcut to align to the Apriltags
-
+    if(controller.getBButton()) {
+      //System.out.println("X value: " + tag.getRotation().getX() + "Y Value: " + tag.getRotation().getY() + "Z Value: " + tag.getRotation().getZ());
+      System.out.println("odo X value: " + driveTrain.odometry.getEstimatedPosition().getRotation().getDegrees());
+    }
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
-      double ty = LimelightHelpers.getTY("limelight");
-        
-      // Get distance from target using 3D pose data
-      double currentRange = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getZ();
-      
-      var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
-      double dist = tag.getTranslation().getNorm();
-      System.out.println("X value: " + tag.getRotation().getX() + "Y Value: " + tag.getRotation().getY() + "Z Value: " + tag.getRotation().getZ());
-
-      // Calculate control outputs
-      double rotationOutput = rotationPID.calculate(ty, 0.0);
-      double rangeOutput = rangePID.calculate(dist, 0.2);
-      rangeOutput *= 4;
-
-      rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
-
-      // Apply control outputs to robot
-      // Forward/backward movement for range control
-      // Left/right movement is zero
-      // Rotation is for horizontal alignment
-      //driveTrain.driveLL(-rangeOutput, 0, -rotationOutput, true);
-      driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod());
+      limelightcam.LimeTarget(getPeriod());
 
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
