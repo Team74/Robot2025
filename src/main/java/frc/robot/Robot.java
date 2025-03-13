@@ -314,11 +314,12 @@ public class Robot extends TimedRobot {
       
       var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
       double dist = tag.getTranslation().getNorm();
+      System.out.println("X value: " + tag.getRotation().getX() + "Y Value: " + tag.getRotation().getY() + "Z Value: " + tag.getRotation().getZ());
 
       // Calculate control outputs
       double rotationOutput = rotationPID.calculate(ty, 0.0);
       double rangeOutput = rangePID.calculate(dist, 0.2);
-      rangeOutput *= 2;
+      rangeOutput *= 4;
 
       rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
 
