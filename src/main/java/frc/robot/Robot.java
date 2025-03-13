@@ -71,6 +71,9 @@ public class Robot extends TimedRobot {
   DigitalInput armLimitTop = new DigitalInput(7);
   DigitalInput stringLiftLimit = new DigitalInput(9);
 
+  private final PIDController rotationPID;
+  private final PIDController rangePID;
+
   int time = 0;
 
   /*private static final String driveForwardAuton = "Default_Auton";
@@ -106,6 +109,18 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("DriveTowardDriver", auto_DriveTowardDriver);
 
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    // Tune these PID values for your robot
+    //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
+    rotationPID = new PIDController(.05, 0.0, 0.001);
+    rangePID = new PIDController(0.3, 0.0, 0.01);
+
+    // Set tolerance for both controllers
+    rotationPID.setTolerance(0.3); // 1 degree tolerance
+    rangePID.setTolerance(0.01); // 5cm tolerance
+    
+    rotationPID.enableContinuousInput(-180.0, 180.0);
+    rangePID.enableContinuousInput(-180.0, 180.0);
   }
 
   public void robotInit() {
@@ -292,19 +307,27 @@ public class Robot extends TimedRobot {
     //Shortcut to align to the Apriltags
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
-      //driveTrain.drive(trackPush, trackSide, trackTurn, controller.getRightBumperButton(), controller.getLeftBumperButton());
+      double ty = LimelightHelpers.getTY("limelight");
+        
+      // Get distance from target using 3D pose data
+      double currentRange = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getZ();
+      
+      var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+      double dist = tag.getTranslation().getNorm();
 
-      final var rot_limelight = limelightcam.limelight_aim_proportional(0.3);
-      var rot = rot_limelight;
+      // Calculate control outputs
+      double rotationOutput = rotationPID.calculate(ty, 0.0);
+      double rangeOutput = rangePID.calculate(dist, 0.2);
+      rangeOutput *= 2;
 
-      final var forward_limelight = limelightcam.limelight_range_proportional(0.3);
-      var xSpeed = forward_limelight;
+      rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
 
-      var ySpeed = MathUtil.applyDeadband(controller.getLeftX(), 0.02);
-            
-      //System.out.println("Driver LL: xSpeed: " + xSpeed + " ySpeed:" + ySpeed + " rot:" + rot);
-
-      driveTrain.driveLL(xSpeed, ySpeed, rot, false, getPeriod());
+      // Apply control outputs to robot
+      // Forward/backward movement for range control
+      // Left/right movement is zero
+      // Rotation is for horizontal alignment
+      //driveTrain.driveLL(-rangeOutput, 0, -rotationOutput, true);
+      driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod());
 
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
