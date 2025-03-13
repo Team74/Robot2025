@@ -62,14 +62,14 @@ public class Robot extends TimedRobot {
 
   AutonLeft_2P auton_2p;
   AutonMiddle_2P middle_2P;
-  AutonMiddle_1P right_2p;
+  AutonMiddle_Basic right_2p;
   AutonDriveForward autonDriveForward;
 
   reeftoplayertoprocessor willsClass;
 
   DigitalInput limitSensorBottom = new DigitalInput(8);
   DigitalInput armLimitTop = new DigitalInput(7);
-  DigitalInput armLimitBottom = new DigitalInput(9);
+  DigitalInput stringLiftLimit = new DigitalInput(9);
 
   int time = 0;
 
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
   public Robot() {
 
     driveTrain = new driveTrain(dashboard, alliancecolor);
-    right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
+    right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     //System.out.println("Auto selected: " + m_autoSelected);
 
-    right_2p = new AutonMiddle_1P(driveTrain, limelightcam);
+    right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
@@ -311,6 +311,12 @@ public class Robot extends TimedRobot {
           controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
+    var potval = driveTrain.potLift.get();
+
+    if(operatorController.getLeftBumperButton()) {
+      System.out.println("potval: "+ potval);
+    }
+
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
@@ -380,16 +386,23 @@ public class Robot extends TimedRobot {
           }
         }
       }
- //Arm protecton
+      //Arm protecton
+      /*if (driveTrain.armMotor != null){
+        if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
+          armMotorSpeed = 0.0;
+        }
+      }
 
- if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
-  armMotorSpeed = 0.0;
-}
-if (armLimitBottom.get() == true  && operatorController.getRightY() > 0){
-  armMotorSpeed = 0.0;
-}
+      if (driveTrain.liftMotor != null){
+        
+        if (stringLiftLimit.get() ==  0 && operatorController.getRightY() > 0){
+        armMotorSpeed = 0.0;
+        }
+      }
       driveTrain.armMotor.set(armMotorSpeed);
+    */
     }
+  
 
     //System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     
@@ -558,12 +571,9 @@ if (armLimitBottom.get() == true  && operatorController.getRightY() > 0){
   @Override
   public void testInit() {
   }
-  AnalogPotentiometer pot = new AnalogPotentiometer(0,90, 270);
 
   @Override
   public void testPeriodic() {
-        var potval = pot.get();
-    System.out.println("potval: "+ potval);
 
   }
 

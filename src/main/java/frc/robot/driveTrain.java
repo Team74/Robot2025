@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -75,6 +76,7 @@ public class driveTrain {
     Calendar calendar = Calendar.getInstance();
     
     DigitalInput limitSensorBottom = new DigitalInput(5);
+    AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
 
     double powerMulti = 0.6;
 

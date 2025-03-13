@@ -2,7 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class AutonMiddle_1P {
+public class AutonMiddle_Basic {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
@@ -12,7 +12,7 @@ public class AutonMiddle_1P {
     }
     
 
-    public AutonMiddle_1P(driveTrain _driveTrain, limeLightTest _limelightcam){
+    public AutonMiddle_Basic(driveTrain _driveTrain, limeLightTest _limelightcam){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
     }
@@ -47,13 +47,13 @@ System.out.println("cs: " +currentState + " time: " + time + " Armposition: " + 
 
                
 
-                if (time > 0 && time < 75){
+                if (time > 0 && time < 150){
                     driveTrain.drive(-0.3, 0, 0, false, false);
                 } 
-                if (time > 76){
+                if (time > 151){
                     driveTrain.drive(0, 0, 0, false, false);
                 }    
-                if (time > 1 && time < 76){
+                if (time > 1 && time < 151){
                     if(liftMotorPosition >= -0.5 && liftMotorPosition < 15) {
                         liftMotorSpeed = 1;
                     }
