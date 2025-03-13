@@ -127,7 +127,7 @@ boolean zeroMode = false;
     }
 
     public SwerveModulePosition getPosition() {
-        System.out.println("Encoder" + driveMotor.getEncoder().getPosition() + " Position" + encoder.get());
+        //System.out.println("Encoder" + driveMotor.getEncoder().getPosition() + " Position" + encoder.get());
         if (oldDriveBase){
             return new SwerveModulePosition(encoderA.get(), new Rotation2d(encoderA.get()));
         }
