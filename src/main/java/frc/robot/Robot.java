@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
     autoState = new Object[] { "Starting", 0 };
 
     driveTrain.liftMotor.getEncoder().setPosition(0.0);
-    driveTrain.armMotor.getEncoder().setPosition(0.0);
+    //driveTrain.armMotor.getEncoder().setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
 
     m_autoSelected = m_chooser.getSelected();
@@ -285,7 +285,7 @@ public class Robot extends TimedRobot {
       //Button to resent the gyro
       if (operatorController.getRightBumperButton() && operatorController.getYButton()) {
         driveTrain.liftMotor.getEncoder().setPosition(0.0);
-        driveTrain.armMotor.getEncoder().setPosition(0.0);
+        //driveTrain.armMotor.getEncoder().setPosition(0.0);
         driveTrain.climbMotor.getEncoder().setPosition(0.0);
       }
   
@@ -317,8 +317,8 @@ public class Robot extends TimedRobot {
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
-      var armPosition = driveTrain.armMotor.getEncoder().getPosition();
-      double armClampSpeed = 0.6;
+      //var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+      double armClampSpeed = 0.01;
       Double armMotorSpeed =0.0;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
@@ -327,63 +327,63 @@ public class Robot extends TimedRobot {
       //   armMotorSpeed = 0;
       // }
 
-      if(operatorController.getLeftBumperButton()) {
-        System.out.println("armPosition: " + armPosition);
+      // if(operatorController.getLeftBumperButton()) {
+      //   System.out.println("armPosition: " + armPosition);
 
-        //Human Player (this mean player station or processer???)
-        //37.64
-        if(operatorController.getRightTriggerAxis() > 0) {
-          if(armPosition >= 0 && armPosition < 425.0636) {
-            armMotorSpeed = 0.5;
-          }
-          if(armPosition > 18) {
-            armMotorSpeed = -0.5;
-          }
-        }
+      //   //Human Player (this mean player station or processer???)
+      //   //37.64
+      //   if(operatorController.getRightTriggerAxis() > 0) {
+      //     if(armPosition >= 0 && armPosition < 425.0636) {
+      //       armMotorSpeed = 0.5;
+      //     }
+      //     if(armPosition > 18) {
+      //       armMotorSpeed = -0.5;
+      //     }
+      //   }
 
-        //Trough
-        if(operatorController.getAButton()) {
-          if(armPosition >= 0 && armPosition < 540.9) {
-            armMotorSpeed = 0.5;
-          }
-          if(armPosition > 545.9) {
-            armMotorSpeed = -0.5;
-          }
-        }
+      //   //Trough
+      //   if(operatorController.getAButton()) {
+      //     if(armPosition >= 0 && armPosition < 540.9) {
+      //       armMotorSpeed = 0.5;
+      //     }
+      //     if(armPosition > 545.9) {
+      //       armMotorSpeed = -0.5;
+      //     }
+      //   }
         
-        //L2
-        if(operatorController.getBButton()) {
-          if(armPosition >= 0 && armPosition < 540.9) {
-            armMotorSpeed = 0.5;
-          }
-          if(armPosition > 545.9) {
-            armMotorSpeed = -0.5;
-          }
-        }
+      //   //L2
+      //   if(operatorController.getBButton()) {
+      //     if(armPosition >= 0 && armPosition < 540.9) {
+      //       armMotorSpeed = 0.5;
+      //     }
+      //     if(armPosition > 545.9) {
+      //       armMotorSpeed = -0.5;
+      //     }
+      //   }
         
-        //L3
-        if(operatorController.getXButton()) {
-          if(armPosition >= 0 && armPosition < 335.42) {
-            armMotorSpeed = 0.5;
-          }
-          if(armPosition > 340) {
-            armMotorSpeed = -0.5;
-          }
-        }
+      //   //L3
+      //   if(operatorController.getXButton()) {
+      //     if(armPosition >= 0 && armPosition < 335.42) {
+      //       armMotorSpeed = 0.5;
+      //     }
+      //     if(armPosition > 340) {
+      //       armMotorSpeed = -0.5;
+      //     }
+      //   }
 
-        //L4
-        //375.5
-        //lm: 541.60
-        if(operatorController.getYButton()) {
-          if(armPosition >= 0 && armPosition < 333.59) {
-            armMotorSpeed = 0.5;
-          }
-          if(armPosition > 338) {
-            armMotorSpeed = -0.5;
-          }
-        }
-      }
-      //Arm protecton
+      //   //L4
+      //   //375.5
+      //   //lm: 541.60
+      //   if(operatorController.getYButton()) {
+      //     if(armPosition >= 0 && armPosition < 333.59) {
+      //       armMotorSpeed = 0.5;
+      //     }
+      //     if(armPosition > 338) {
+      //       armMotorSpeed = -0.5;
+      //     }
+      //   }
+      // }
+      // //Arm protecton
       /*if (driveTrain.armMotor != null){
         if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
           armMotorSpeed = 0.0;

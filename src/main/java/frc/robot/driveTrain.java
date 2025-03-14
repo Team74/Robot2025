@@ -361,12 +361,12 @@ public class driveTrain {
             //var armPosition = armMotor.getEncoder().getPosition();
 
             double armMotorSpeed = 0;
-            double armClampSpeed = 0.6;
+            double armClampSpeed = 0.05;
 
             //System.out.println("armPosition: " + armPosition);
 
             //Human Player
-            if(shortcut == ShortcutType.PLAYER) {
+            //if(shortcut == ShortcutType.PLAYER) {
                 // armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
 
              /* if(armPosition >= 0 && armPosition < armPlayerPosition) {
@@ -420,13 +420,13 @@ public class driveTrain {
                 if(armPosition >= 0 && armPosition < armL4Position) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > armL4Position+5) {*/
+                if(armPosition > armL4Position+5) {
                     armMotorSpeed = -0.5;
                }
-            }
+            }*/
             
-            //armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-          //  armMotor.set(armMotorSpeed);
+            armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
+           armMotor.set(armMotorSpeed);
         }
 
         if (liftMotor != null) {
