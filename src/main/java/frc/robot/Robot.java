@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
-
+import com.ctre.phoenix6.hardware.TalonFX; 
 /**
  * The methods in this class are called automatically corresponding to each
  * mode, as described in
@@ -546,8 +546,8 @@ public class Robot extends TimedRobot {
       //Prox sensor
       
       if (hasPiece() == true){
-        //driveTrain.outTakeSet(outTakeSpeed*0.1);
-        //System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
+        driveTrain.outTakeSet(0);
+        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
       }
 
     }

@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -58,7 +60,7 @@ public class driveTrain {
     Dashboard dashboard;
 
     SparkMax liftMotor = null;
-    SparkMax armMotor = null;
+    TalonFX armMotor = null;
     SparkMax outTakeMotorOuter = null;
     SparkMax outTakeMotorInner = null;
     SparkMax climbMotor = null;
@@ -106,10 +108,11 @@ public class driveTrain {
             liftMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
       
-            armMotor = new SparkMax(3, MotorType.kBrushless);
-            armMotor.getEncoder().setPosition(0.0);
+            armMotor = new TalonFX(3);
+            armMotor.setNeutralMode(NeutralModeValue.Brake);
+            //armMotor.getEncoder().setPosition(0.0);
             zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
-            armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            //armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
             outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
@@ -166,24 +169,17 @@ public class driveTrain {
         rightBack.turny(moduleStates[2].angle.getDegrees());
         leftBack.turny(moduleStates[3].angle.getDegrees());
       
-        if (highSpeed) {
-            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
-            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
-            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
-            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
-      
-        } else if (lowSpeed) {
+        if (lowSpeed) {
             rightFront.movey(moduleStates[0].speedMetersPerSecond*0.25);
             leftFront.movey(moduleStates[1].speedMetersPerSecond*0.25);
             rightBack.movey(moduleStates[2].speedMetersPerSecond*0.25);
             leftBack.movey(moduleStates[3].speedMetersPerSecond*0.25);
         
         } else {
-            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
-            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
-            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
-            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
-            boolean zeroMode = false;
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
         }          
         dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
         updateOdometry();
@@ -331,7 +327,7 @@ public class driveTrain {
         drive(0, 0, targetAngletest, false, false);
     }
     void armSet(int targetAngle) {
-        currentAngleArm = armMotor.getEncoder().getPosition();
+        //currentAngleArm = armMotor.getEncoder().getPosition();
         pidArm = new PIDController(.1023, 0, 0);
         armSpeed = pidArm.calculate(currentAngleArm, targetAngle*125);
         armMotor.set(armSpeed);
@@ -362,7 +358,7 @@ public class driveTrain {
 
     void ShortCut(ShortcutType shortcut) {
         if (armMotor != null) {
-            var armPosition = armMotor.getEncoder().getPosition();
+            //var armPosition = armMotor.getEncoder().getPosition();
 
             double armMotorSpeed = 0;
             double armClampSpeed = 0.6;
@@ -373,7 +369,7 @@ public class driveTrain {
             if(shortcut == ShortcutType.PLAYER) {
                 // armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
 
-                if(armPosition >= 0 && armPosition < armPlayerPosition) {
+             /* if(armPosition >= 0 && armPosition < armPlayerPosition) {
                     armMotorSpeed = 0.5;
                 }
                 if(armPosition > armPlayerPosition+2) {
@@ -424,13 +420,13 @@ public class driveTrain {
                 if(armPosition >= 0 && armPosition < armL4Position) {
                     armMotorSpeed = 0.5;
                 }
-                if(armPosition > armL4Position+5) {
+                if(armPosition > armL4Position+5) {*/
                     armMotorSpeed = -0.5;
-                }
+               }
             }
             
             //armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-            armMotor.set(armMotorSpeed);
+          //  armMotor.set(armMotorSpeed);
         }
 
         if (liftMotor != null) {
