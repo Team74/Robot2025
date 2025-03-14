@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = false;
+    boolean oldDriveBase = true;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -62,7 +62,7 @@ public class driveTrain {
     SparkMax outTakeMotorOuter = null;
     SparkMax outTakeMotorInner = null;
     SparkMax climbMotor = null;
-
+    PIDController pid;
     PIDController pidArm;
     double armSpeed;
     double currentAngleArm;
@@ -76,7 +76,7 @@ public class driveTrain {
     Calendar calendar = Calendar.getInstance();
     
     DigitalInput limitSensorBottom = new DigitalInput(5);
-    AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+ //AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
 
     double powerMulti = 0.6;
 
@@ -119,7 +119,8 @@ public class driveTrain {
             climbMotor = new SparkMax(12, MotorType.kBrushless);
             climbMotor.getEncoder().setPosition(0.0);
       
-            
+            pid = new PIDController(0.0025+0.0023889, 0, 0);
+            pid.enableContinuousInput(-180.0, 180.0);
 
          //   liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 
@@ -129,6 +130,8 @@ public class driveTrain {
             rightFront = new SwerveModule(1,70.1-270, 20,2, zeroMode,oldDriveBase);
             rightBack = new SwerveModule(2,2.31-180, 14,32, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(3,69.3-180, 29,15, zeroMode,oldDriveBase);
+            pid = new PIDController(0.0523889, 0, 0);
+            pid.enableContinuousInput(-180.0, 180.0);
         }
 
         Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
@@ -321,7 +324,12 @@ public class driveTrain {
         outTakeMotorOuter.set(speed*.5);
         outTakeMotorInner.set(-speed);
     }
-
+    void turny(double targetAngle){
+        double currentAngle = gyro.getAngle();
+        double targetAngletest = pid.calculate(currentAngle,targetAngle);
+        targetAngletest = MathUtil.clamp(targetAngletest,-0.3, 0.3);
+        drive(0, 0, targetAngletest, false, false);
+    }
     void armSet(int targetAngle) {
         currentAngleArm = armMotor.getEncoder().getPosition();
         pidArm = new PIDController(.1023, 0, 0);
@@ -502,7 +510,6 @@ public class driveTrain {
 
             liftMotor.set(liftMotorSpeed);
         }
-    
     }
 
 

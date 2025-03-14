@@ -45,7 +45,7 @@ import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -308,10 +308,10 @@ public class Robot extends TimedRobot {
           controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
-    var potval = driveTrain.potLift.get();
+    //var potval = driveTrain.potLift.get();
 
     if(operatorController.getLeftBumperButton()) {
-      System.out.println("potval: "+ potval);
+      //System.out.println("potval: "+ potval);
     }
 
 
@@ -554,7 +554,10 @@ public class Robot extends TimedRobot {
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);
-
+  if(controller.getAButton()){
+    driveTrain.turny(-90.0);
+    System.out.println("TargetAngle" + 90 + "GyroAngle" + driveTrain.gyro.getAngle());
+  }
 }
 
   @Override
