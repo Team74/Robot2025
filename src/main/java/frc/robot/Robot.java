@@ -487,7 +487,7 @@ public class Robot extends TimedRobot {
       //   System.out.println("Bottom Limit Hit");
       // } 
 
-      System.out.println("liftMotorSpeed:" + liftMotorSpeed + driveTrain.liftMotor.getOutputCurrent());
+      System.out.println("liftMotorSpeed:" + liftMotorSpeed + "lm current: " + driveTrain.liftMotor.getOutputCurrent());
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
