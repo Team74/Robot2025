@@ -534,17 +534,17 @@ public class Robot extends TimedRobot {
 
       }
 
-   // System.out.println("climbHeight: " + climbHeight);
-    driveTrain.climbMotor.set(climbSpeed);
+      //System.out.println("climbHeight: " + climbHeight);
+      
+      if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
+          climbSpeed = 0;
+      } 
+      if (!operatorController.getBButton() && climbHeight < 5 && climbSpeed < 0){
+        climbSpeed = 0;
+      }
 
-    // if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
-    //     climbSpeed = 0;
-    // } 
-    if (!operatorController.getBButton() && climbHeight < 5 && climbSpeed < 0){
-      climbSpeed = 0;
-    } 
-
-  }
+      driveTrain.climbMotor.set(climbSpeed);
+    }
 
 
     //Outake and intake controls 

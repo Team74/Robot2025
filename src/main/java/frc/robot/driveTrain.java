@@ -290,30 +290,30 @@ public class driveTrain {
             return null;
     }
 
-    void liftLevelSet(int level) {
-        currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
-        switch(level) {
-            case 1: 
-            targetLiftHeight = 0;
-            break;
+    // void liftLevelSet(int level) {
+    //     currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
+    //     switch(level) {
+    //         case 1: 
+    //         targetLiftHeight = 0;
+    //         break;
 
-            case 2:
-            targetLiftHeight = 0;
-            break;
+    //         case 2:
+    //         targetLiftHeight = 0;
+    //         break;
 
-            case 3:
-            targetLiftHeight = 0;
-            break;
+    //         case 3:
+    //         targetLiftHeight = 0;
+    //         break;
 
-            case 4:
-            targetLiftHeight = 431.8;
-            break;
+    //         case 4:
+    //         targetLiftHeight = 431.8;
+    //         break;
 
-        }
-        pidLift = new PIDController(.1,0 ,0 );
-        liftSpeed = pidLift.calculate(currentHeightLift, targetLiftHeight);
-        liftMotor.set(liftSpeed);
-    }
+    //     }
+    //     pidLift = new PIDController(.00001,0 ,0 );
+    //     liftSpeed = pidLift.calculate(currentHeightLift, targetLiftHeight);
+    //     liftMotor.set(liftSpeed);
+    // }
 
     void outTakeSet(double speed) {
         //System.out.println("outTakeSet: " + speed);
@@ -341,27 +341,34 @@ public class driveTrain {
     enum ShortcutType {
         PLAYER, L1, L2, L3, L4
     }
+    PIDController pidShortcutPot = new PIDController(0.2, 0, 0);
     PIDController pidShortcutArm = new PIDController(0.2, 0, 0);
     PIDController pidShortcutLift = new PIDController(0.2, 0, 0);
 
-    double armPlayerPosition = 346.59;
-    double armL1Position = 540.9;
-    double armL2Position = 540.9;
-    double armL3Position = 335.42;
-    double armL4Position = 346.59;
+    double armPlayerPosition = 0;
+    double armL1Position = -10;
+    double armL2Position = 0;
+    double armL3Position = -100;
+    double armL4Position = -92.8;
 
-    double liftPlayerHeight = 265.957;
-    double liftL1Height = 18;
-    double liftL2Height = 302;
-    double liftL3Height = 0;
-    double liftL4Height = 443.45;
+    double liftPlayerHeight = 152;
+    double liftL1Height = 152;
+    double liftL2Height = 273.8;
+    double liftL3Height = 7;
+    double liftL4Height = 300;
+
+    double potPlayer = 35;
+    double potL1 = 34.3;
+    double potL2 = 60.8;
+    double potL3 = 11.5;
+    double potL4 = 66.4;
 
     void ShortCut(ShortcutType shortcut) {
         if (armMotor != null) {
-            //var armPosition = armMotor.getEncoder().getPosition();
+            // var armPosition = armMotor.getEncoder().getPosition();
 
             double armMotorSpeed = 0;
-            double armClampSpeed = 0.05;
+            double armClampSpeed = 0.7;
 
             //System.out.println("armPosition: " + armPosition);
 
@@ -413,7 +420,7 @@ public class driveTrain {
                 }
             }
 
-            //L4
+            //L4 
             if(shortcut == ShortcutType.L4) {
                 //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
                 
