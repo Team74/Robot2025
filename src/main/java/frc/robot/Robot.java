@@ -318,7 +318,7 @@ public class Robot extends TimedRobot {
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       //var armPosition = driveTrain.armMotor.getEncoder().getPosition();
-      double armClampSpeed = 0.1;
+      double armClampSpeed = 0.35;
       Double armMotorSpeed =0.0;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
