@@ -1,0 +1,274 @@
+package frc.robot;
+
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import com.revrobotics.spark.SparkMax;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import frc.robot.LimelightHelpers.RawFiducial;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
+public class driveTrain {
+    boolean zeroMode = false;
+    boolean oldDriveBase = false;
+    
+    public SwerveModule leftFront;
+    public SwerveModule rightFront;
+    public SwerveModule rightBack;
+    public SwerveModule leftBack;
+
+
+    SwerveDriveKinematics kinematics;
+
+   SwerveDrivePoseEstimator odometry;
+    //SwerveDriveOdometry odometry;
+
+    AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    Dashboard dashboard;
+
+    SparkMax liftMotor = null;
+    SparkMax armMotor = null;
+    SparkMax outTakeMotorOuter = null;
+    SparkMax outTakeMotorInner = null;
+    SparkMax climbMotor = null;
+
+    PIDController pidArm;
+    double armSpeed;
+    double currentAngleArm;
+
+
+    PIDController pidLift;
+    double liftSpeed;
+    double targetLiftHeight;
+    double currentHeightLift = 0;
+
+    Calendar calendar = Calendar.getInstance();
+
+
+    double powerMulti = 0.6;
+
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
+
+    DriverStation.Alliance alliancecolor;
+
+    driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
+        gyro.reset();
+        dashboard = dash;
+        alliancecolor = _alliancecolor;
+
+        if (!oldDriveBase) {
+            // competition base CAN IDs
+            leftFront = new SwerveModule(0,66.3065, 6, 14, zeroMode,oldDriveBase);
+            rightFront = new SwerveModule(2,-134.8564, 33,4, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,64.7032, 10, 11, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(1,85.9213, 19, 16, zeroMode,oldDriveBase);
+
+            liftMotor = new SparkMax(46, MotorType.kBrushless);
+            liftMotor.getEncoder().setPosition(0.0);
+      
+            armMotor = new SparkMax(3, MotorType.kBrushless);
+            armMotor.getEncoder().setPosition(625);
+      
+            outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
+            outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
+
+            climbMotor = new SparkMax(12, MotorType.kBrushless);
+            climbMotor.getEncoder().setPosition(0.0);
+      
+            
+
+         //   liftMotor = new SparkMax(12, MotorType.kBrushed);
+        } 
+        else {
+            // old drive base CAN IDs
+            leftFront = new SwerveModule(0,348.0-90, 12,17, zeroMode,oldDriveBase);
+            rightFront = new SwerveModule(1,70.1-270, 20,2, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(2,2.31-180, 14,32, zeroMode,oldDriveBase);
+            leftBack = new SwerveModule(3,69.3-180, 29,15, zeroMode,oldDriveBase);
+        }
+
+        Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
+        Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
+        Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
+        Translation2d backLeft = new Translation2d(-0.33655, 0.33655);     
+  
+        kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
+
+        odometry = new SwerveDrivePoseEstimator (kinematics, gyro.getRotation2d(), 
+            new SwerveModulePosition[]{
+                rightFront.getPosition(),
+                leftFront.getPosition(),
+                rightBack.getPosition(),
+                leftBack.getPosition(),    
+            },Pose2d.kZero,
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+    }
+
+    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
+        ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
+    
+        moduleStates[0].optimize(Rotation2d.fromDegrees(rightFront.getRotation()));
+        moduleStates[1].optimize(Rotation2d.fromDegrees(leftFront.getRotation()));
+        moduleStates[2].optimize(Rotation2d.fromDegrees(rightBack.getRotation()));
+        moduleStates[3].optimize(Rotation2d.fromDegrees(leftBack.getRotation()));
+    
+        rightFront.turny(moduleStates[0].angle.getDegrees());
+        leftFront.turny(moduleStates[1].angle.getDegrees());
+        rightBack.turny(moduleStates[2].angle.getDegrees());
+        leftBack.turny(moduleStates[3].angle.getDegrees());
+      
+        if (highSpeed) {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.87);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.87);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.87);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.87);
+      
+        } else if (lowSpeed) {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.25);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.25);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.25);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.25);
+        
+        } else {
+            rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
+            leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
+            rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
+            leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5); 
+        }          
+        dashboard.updateDashboardSwerveModules(leftFront,rightFront,leftBack,rightBack);
+        updateOdometry();
+        updaterobotorientation();
+    }
+
+    void resetGyro() {
+        gyro.reset();
+    }
+    double getGyro() {
+        return (gyro.getAngle() % 360);
+    }
+    void gyroOffset(double offset) {
+        gyro.setAngleAdjustment(offset);
+    }
+
+    void updaterobotorientation() {
+        LimelightHelpers.SetRobotOrientation("limelight", odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate mt2;
+             
+        //Blue
+        if(alliancecolor == Alliance.Blue) {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
+        }
+        //Red
+        else {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        }
+
+        if(mt2.tagCount > 0)
+        {
+            odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.9,.9,9999999));
+            odometry.addVisionMeasurement(mt2.pose, Timer.getTimestamp());  
+        }
+    }
+    public void updateOdometry() {
+        var pose = odometry.update(
+            gyro.getRotation2d(),
+            new SwerveModulePosition[] {
+                rightFront.getPosition(),
+                leftFront.getPosition(),
+                rightBack.getPosition(),
+                leftBack.getPosition()
+        }); 
+
+        dashboard.updatePose(
+            pose.getX(),
+            pose.getY(),
+            pose.getRotation().getDegrees()
+        );
+      }
+
+      RawFiducial GetAprilTagTelemotry(int aprilTag) {
+        RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+            for (RawFiducial fiducial : fiducials) {
+                    int id = fiducial.id;
+                    double txnc = fiducial.txnc;
+                    double tync = fiducial.tync;
+                    double ta = fiducial.ta;
+                    double distToCamera = fiducial.distToCamera;
+                    double distToRobot = fiducial.distToRobot;
+                    double ambiguity = fiducial.ambiguity; 
+
+                    if(id == aprilTag) {
+                        return fiducial;
+                    }
+                    if(txnc == aprilTag){
+                        return fiducial;
+                    }
+                    if(tync == aprilTag){
+                        return fiducial;
+                    }
+                    if(ta == aprilTag){
+                        return fiducial;
+                    }
+                System.out.println("Tag: " + id);
+            }
+            return null;
+    }
+
+    void liftLevelSet(int level) {
+        currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
+        switch(level) {
+            case 1: 
+            targetLiftHeight = 0;
+            break;
+
+            case 2:
+            targetLiftHeight = 0;
+            break;
+
+            case 3:
+            targetLiftHeight = 0;
+            break;
+
+            case 4:
+            targetLiftHeight = 431.8;
+            break;
+
+        }
+        pidLift = new PIDController(.1,0 ,0 );
+        liftSpeed = pidLift.calculate(currentHeightLift, targetLiftHeight);
+        liftMotor.set(liftSpeed);
+    }
+
+    void outTakeSet(double speed) {
+        outTakeMotorOuter.set(speed);
+        outTakeMotorInner.set(-speed);
+    }
+
+    void armSet(int targetAngle) {
+        currentAngleArm = armMotor.getEncoder().getPosition();
+        pidArm = new PIDController(.1023, 0, 0);
+        armSpeed = pidArm.calculate(currentAngleArm, targetAngle*125);
+        armMotor.set(armSpeed);
+    }
+}
