@@ -22,9 +22,13 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -34,6 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import com.ctre.phoenix6.hardware.TalonFX; 
 /**
@@ -65,6 +70,10 @@ public class Robot extends TimedRobot {
   AutonMiddle_Basic right_2p;
   AutonDriveForward autonDriveForward;
 
+  UsbCamera fCamera;
+  UsbCamera rCamera;
+  //Joystick joy1Joystick = new Joystick(0);
+  NetworkTableEntry ftNetworkTableEntry;
 
   reeftoplayertoprocessor willsClass;
 
@@ -94,7 +103,9 @@ public class Robot extends TimedRobot {
 
 
   public Robot() {
-
+    fCamera = CameraServer.startAutomaticCapture(0);
+    rCamera = CameraServer.startAutomaticCapture(2);
+    ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     driveTrain = new driveTrain(dashboard, alliancecolor);
     right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
@@ -224,6 +235,14 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
+    //camera switching for driver's view
+    if (controller.getAButton()){
+      System.out.println("Setting rearcamera");
+      ftNetworkTableEntry.setString(rCamera.getName());
+    } else if (controller.getBButton()) {
+      System.out.println("Setting fCamera");
+      ftNetworkTableEntry.setString(fCamera.getName());
+    }
     //auton climber feature
     if (operatorController.getLeftBumperButton() && limelightcam != null && limelightcam.CanSee()) {
 
@@ -242,6 +261,7 @@ public class Robot extends TimedRobot {
         if (id == 14 || id == 15 || id == 5 || id == 4) {
           if (controller.getLeftY() != 0) {
             driveTrain.drive(controller.getLeftX(), 0, Rotation, false, false);
+            
           }
         }
       }

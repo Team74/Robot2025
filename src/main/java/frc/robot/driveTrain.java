@@ -76,7 +76,7 @@ public class driveTrain {
     double currentHeightLift = 0;
 
     Calendar calendar = Calendar.getInstance();
-    DigitalInput limitSensorTop = new DigitalInput(74);
+    //DigitalInput limitSensorTop = new DigitalInput(7);
     DigitalInput limitSensorBottom = new DigitalInput(5);
  //AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
 
@@ -498,9 +498,9 @@ public class driveTrain {
                 liftMotorSpeed = 0;
                 liftMotor.getEncoder().setPosition(0.0);
 
-            if (!limitSensorTop.get() && liftMotorSpeed > 0)
+            /*if (!limitSensorTop.get() && liftMotorSpeed > 0)
                     liftMotorSpeed = 0;
-                    liftMotor.getEncoder().setPosition(0.0);
+                    liftMotor.getEncoder().setPosition(0.0);*/
                 //System.out.println("Bottom Limit Hit");
     
             //System.out.println("liftMotorSpeed:" + liftMotorSpeed);
