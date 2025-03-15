@@ -45,7 +45,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
  */
 public class Robot extends TimedRobot {
   boolean zeroMode = false;
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -318,7 +318,7 @@ public class Robot extends TimedRobot {
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       //var armPosition = driveTrain.armMotor.getEncoder().getPosition();
-      double armClampSpeed = 0.01;
+      double armClampSpeed = 0.1;
       Double armMotorSpeed =0.0;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
@@ -396,8 +396,11 @@ public class Robot extends TimedRobot {
         armMotorSpeed = 0.0;
         }
       }
+        */
+        System.out.println("armMotorSpeed:" + armMotorSpeed);
+
       driveTrain.armMotor.set(armMotorSpeed);
-    */
+    
     }
   
 
@@ -484,7 +487,7 @@ public class Robot extends TimedRobot {
       //   System.out.println("Bottom Limit Hit");
       // } 
 
-      //System.out.println("liftMotorSpeed:" + liftMotorSpeed);
+      System.out.println("liftMotorSpeed:" + liftMotorSpeed);
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 

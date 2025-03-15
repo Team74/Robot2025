@@ -41,7 +41,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = true;
+    boolean oldDriveBase = false;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;

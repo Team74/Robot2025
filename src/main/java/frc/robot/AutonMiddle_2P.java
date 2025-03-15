@@ -24,7 +24,7 @@ public class AutonMiddle_2P {
         String currentState = autoState[0].toString();
         var April_21 = driveTrain.GetAprilTagTelemotry(21);
         var April_12 = driveTrain.GetAprilTagTelemotry(12);
-        var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+        var armPosition = 0;//driveTrain.armMotor.getEncoder().getPosition();
         double armMotorSpeed = 0;
         var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
         double liftMotorSpeed = 0;

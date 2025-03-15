@@ -35,7 +35,7 @@ public class AutonLeft_2P {
 
             case "Move'nToReef":
             var April_22 = driveTrain.GetAprilTagTelemotry(22);
-            var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+            var armPosition = 0;//driveTrain.armMotor.getEncoder().getPosition();
             double armMotorSpeed = 0;
             var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
             double liftMotorSpeed = 0;
