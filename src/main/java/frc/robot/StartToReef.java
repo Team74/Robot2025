@@ -3,6 +3,7 @@ package frc.robot;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.driveTrain.ShortcutType;
 import frc.robot.testrobotautonmovement.RobotMovement.Motor;
 
 public class StartToReef {
@@ -40,8 +41,9 @@ public class StartToReef {
             }
 
             case "lift":
+            driveTrain.ShortCut(ShortcutType.L4);
             driveTrain.drive(0, 0, 0, false, false);
-            driveTrain.liftLevelSet(4);
+            driveTrain.ShortCut(ShortcutType.L4);
 
             if (time > 1*50) {
                 time = 0;
@@ -51,7 +53,7 @@ public class StartToReef {
 
             case "dumpy":
             driveTrain.drive(0, 0, 0, false, false);
-            driveTrain.liftLevelSet(4);
+            driveTrain.ShortCut(ShortcutType.L4);
             driveTrain.outTakeSet(1);
             if (time > .5*50) {
                 time = 0;
@@ -61,7 +63,7 @@ public class StartToReef {
 
             case "down":
             driveTrain.drive(0, 0, 0, false, false); 
-            driveTrain.liftLevelSet(1);
+            driveTrain.ShortCut(ShortcutType.L1);
             driveTrain.outTakeSet(0);
             if (time > 1*50) {
                 time = 0;
