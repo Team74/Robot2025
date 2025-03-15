@@ -78,7 +78,7 @@ public class driveTrain {
     Calendar calendar = Calendar.getInstance();
     
     DigitalInput limitSensorBottom = new DigitalInput(5);
- //AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+ AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
 
     double powerMulti = 0.6;
 

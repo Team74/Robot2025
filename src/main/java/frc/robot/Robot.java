@@ -285,7 +285,7 @@ public class Robot extends TimedRobot {
       //Button to resent the gyro
       if (operatorController.getRightBumperButton() && operatorController.getYButton()) {
         driveTrain.liftMotor.getEncoder().setPosition(0.0);
-        //driveTrain.armMotor.getEncoder().setPosition(0.0);
+        driveTrain.armMotor.setPosition(0.0);
         driveTrain.climbMotor.getEncoder().setPosition(0.0);
       }
   
@@ -308,17 +308,17 @@ public class Robot extends TimedRobot {
           controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
-    //var potval = driveTrain.potLift.get();
+    var potval = driveTrain.potLift.get();
 
     if(operatorController.getLeftBumperButton()) {
-      //System.out.println("potval: "+ potval);
+      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     }
 
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
       //var armPosition = driveTrain.armMotor.getEncoder().getPosition();
-      double armClampSpeed = 0.35;
+      double armClampSpeed = 0.7;
       Double armMotorSpeed =0.0;
 
       armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
@@ -397,7 +397,7 @@ public class Robot extends TimedRobot {
         }
       }
         */
-        System.out.println("armMotorSpeed:" + armMotorSpeed);
+        //System.out.println("armMotorSpeed:" + armMotorSpeed);
 
       driveTrain.armMotor.set(armMotorSpeed);
     
@@ -487,7 +487,7 @@ public class Robot extends TimedRobot {
       //   System.out.println("Bottom Limit Hit");
       // } 
 
-      System.out.println("liftMotorSpeed:" + liftMotorSpeed + "lm current: " + driveTrain.liftMotor.getOutputCurrent());
+      //System.out.println("liftMotorSpeed:" + liftMotorSpeed + "lm current: " + driveTrain.liftMotor.getOutputCurrent());
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
@@ -513,12 +513,12 @@ public class Robot extends TimedRobot {
 
       }
 
-    //System.out.println("climbHeight: " + climbHeight);
+   // System.out.println("climbHeight: " + climbHeight);
     driveTrain.climbMotor.set(climbSpeed);
 
-    if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
-        climbSpeed = 0;
-    } 
+    // if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
+    //     climbSpeed = 0;
+    // } 
     if (!operatorController.getBButton() && climbHeight < 5 && climbSpeed < 0){
       climbSpeed = 0;
     } 
@@ -526,43 +526,57 @@ public class Robot extends TimedRobot {
   }
 
 
-    //Outake and intake controls
+    //Outake and intake controls 
     //if statements for the algae (it goes faster to fling the algae away)
     //if else statements for the coral intake and outake
     if (!oldDriveBase) {
       double outTakeSpeed = 0;
-
       if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = -1;
+        enableIntakeControls = buttonStates.Pressed;
       } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
         outTakeSpeed = -0.5;
+        enableIntakeControls = buttonStates.Pressed;
       }
 
       if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
         outTakeSpeed = 1;
+        enableIntakeControls = buttonStates.Pressed;
       } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
         outTakeSpeed = 0.5;
+        enableIntakeControls = buttonStates.Pressed;
       }
+
+      if(MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) == 0 && MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) == 0) {
+        enableIntakeControls = buttonStates.Released;
+      }
+
+      //System.out.println("enableIntakeControls: " + enableIntakeControls);
+
       
       driveTrain.outTakeSet(outTakeSpeed);
 
-      //Prox sensor
+      //Prox sensor lol
       
-      if (hasPiece() == true){
+      if (hasPiece() == true && enableIntakeControls != buttonStates.Pressed){
         driveTrain.outTakeSet(0);
-        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
+        
+        //System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
       }
-
     }
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);
   if(controller.getAButton()){
     driveTrain.turny(-90.0);
-    System.out.println("TargetAngle" + 90 + "GyroAngle" + driveTrain.gyro.getAngle());
+   // System.out.println("TargetAngle" + 90 + "GyroAngle" + driveTrain.gyro.getAngle());
   }
 }
+buttonStates enableIntakeControls = buttonStates.NotPressed;
 
+enum buttonStates {
+  NotPressed, Pressed, Released
+}
   @Override
   public void disabledInit() {
   }
