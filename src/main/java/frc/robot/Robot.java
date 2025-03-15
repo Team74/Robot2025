@@ -489,6 +489,7 @@ public class Robot extends TimedRobot {
 
       System.out.println("liftMotorSpeed:" + liftMotorSpeed + driveTrain.liftMotor.getOutputCurrent());
       driveTrain.liftMotor.set(liftMotorSpeed);
+      if (liftMotorSpeed > 0);
     }
 
     //Controls for the Climber
