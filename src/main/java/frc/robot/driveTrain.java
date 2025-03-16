@@ -412,4 +412,8 @@ public class driveTrain {
         liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
         liftMotor.set(liftMotorSpeed);
     }
+
+    double LLGetY() {
+        return -1;
+    }
 }

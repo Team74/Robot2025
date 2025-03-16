@@ -156,31 +156,29 @@ public class limeLightTest {
     }
 
     void LimeTarget(double getPeriod){
-    double ty = LimelightHelpers.getTY("limelight");
-    
+        double rotationOutput = LLGetRotation();
+        double rangeOutput = LLGetRangeOutput();
+        driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+    }
+
+    double LLGetRangeOutput() {
+        var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+        double dist = tag.getTranslation().getNorm();
         
-    // Get distance from target using 3D pose data
-    double currentRange = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getZ();
-    var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
-    var bla = LimelightHelpers.getBotPose2d("limelight");
-    double dist = tag.getTranslation().getNorm();
+        // Calculate control outputs
+        double rangeOutput = rangePID.calculate(dist, 0.2);
+        rangeOutput *= 4;
     
-      
-   
+        rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
+        
+        return rangeOutput;
+    }
 
-    // Calculate control outputs
-    double rotationOutput = rotationPID.calculate(ty, 0.0);
-    double rangeOutput = rangePID.calculate(dist, 0.2);
-    rangeOutput *= 4;
-    
+    double LLGetRotation() {
+        double ty = LimelightHelpers.getTY("limelight");
+        
+        double rotationOutput = rotationPID.calculate(ty, 0.0);
 
-    rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
-
-    // Apply control outputs to robot
-    // Forward/backward movement for range control
-    // Left/right movement is zero
-    // Rotation is for horizontal alignment
-    //driveTrain.driveLL(-rangeOutput, 0, -rotationOutput, true);
-    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+        return rotationOutput;
     }
 }

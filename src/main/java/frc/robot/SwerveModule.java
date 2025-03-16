@@ -1,8 +1,12 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
@@ -10,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
@@ -25,6 +30,17 @@ public class SwerveModule {
     AnalogEncoder encoderA;
     Boolean oldDriveBase = false;
 boolean zeroMode = false;
+
+public static final int kDrivingMotorCurrentLimit = 50; // amps
+public static final int kTurningMotorCurrentLimit = 20; // amps
+//From https://swervedrivespecialties.com/collections/kits/products/mk3-swerve-module
+// 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 14 teeth on the bevel pinion
+public static final double kDrivingMotorReduction = (45.0 * 22) / (14 * 15);
+public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
+public static final double kTurningEncoderPositionFactor = (2 * Math.PI); // radians
+
+double drivingFactor = kWheelDiameterMeters * Math.PI / kDrivingMotorReduction;
+double turningFactor = kTurningEncoderPositionFactor;
 
     SwerveModule(int initialEncoderPort, 
                 double initialEncoderOffset, 
@@ -56,6 +72,28 @@ boolean zeroMode = false;
         turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
 
+        SparkMaxConfig drivingConfig = new SparkMaxConfig();
+        SparkMaxConfig turningConfig = new SparkMaxConfig();
+
+        drivingConfig
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(kDrivingMotorCurrentLimit);
+        
+        drivingConfig.encoder
+                .positionConversionFactor(drivingFactor) // meters
+                .velocityConversionFactor(drivingFactor/60); // meters per second
+        
+        turningConfig
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(kTurningMotorCurrentLimit);
+        
+        turningConfig.absoluteEncoder
+                .positionConversionFactor(turningFactor) // radians
+                .velocityConversionFactor(turningFactor / 60.0); //q radians per second
+
+        driveMotor.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         if (oldDriveBase){
             pid = new PIDController(0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
@@ -63,16 +101,7 @@ boolean zeroMode = false;
         else {
             pid = new PIDController(0.0025+0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
-        }
-
-        
-        SparkBaseConfig zeroCoast = new SparkMaxConfig();
-        if (zeroMode){
-            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kCoast);
-        } else {
-            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
-        }
-        
+        }        
     }
     
     double returnRotation(){
