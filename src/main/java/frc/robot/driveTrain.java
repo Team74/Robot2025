@@ -320,7 +320,7 @@ public class driveTrain {
 
     void outTakeSet(double speed) {
         //System.out.println("outTakeSet: " + speed);
-        outTakeMotorOuter.set(speed*.5);
+        outTakeMotorOuter.set(speed);
         outTakeMotorInner.set(-speed);
     }
     void turny(double targetAngle){
