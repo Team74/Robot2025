@@ -85,6 +85,7 @@ public class Robot extends TimedRobot {
   
 
   int time = 0;
+  int intakeTime = 0;
 
   /*private static final String driveForwardAuton = "Default_Auton";
   private static final String auAmp_2P = "Amp_2_Piece";
@@ -232,6 +233,7 @@ public class Robot extends TimedRobot {
   }
 
   boolean hasPiece() {
+    intakeTime = 0;
     return !driveTrain.proxSensor.get();
   }
   @Override
@@ -486,39 +488,46 @@ public class Robot extends TimedRobot {
     //if else statements for the coral intake and outake
     if (!oldDriveBase) {
       double outTakeSpeed = 0;
-      if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = -1;
-        enableIntakeControls = buttonStates.Pressed;
-      } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = -0.5;
-        enableIntakeControls = buttonStates.Pressed;
-      }
 
-      if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = 1;
-        enableIntakeControls = buttonStates.Pressed;
-      } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = 0.5;
-        enableIntakeControls = buttonStates.Pressed;
-      }
+      if (!operatorController.getLeftBumper()){
 
-      if(MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) == 0 && MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) == 0) {
-        enableIntakeControls = buttonStates.Released;
+        if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
+          outTakeSpeed = -1;
+          enableIntakeControls = buttonStates.Pressed;
+        } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
+          outTakeSpeed = -0.5;
+          enableIntakeControls = buttonStates.Pressed;
+        }
+
+        if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
+          outTakeSpeed = 1;
+          enableIntakeControls = buttonStates.Pressed;
+        } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
+          outTakeSpeed = 0.5;
+          enableIntakeControls = buttonStates.Pressed;
+        }
+
+        if(MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) == 0 && MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) == 0) {
+          enableIntakeControls = buttonStates.Released;
+        }
+        
       }
 
       //System.out.println("enableIntakeControls: " + enableIntakeControls);
 
       
-      driveTrain.outTakeSet(outTakeSpeed);
+      
 
       //Prox sensor lol
+
+      if (hasPiece() == true && intakeTime < 100 ){
+        outTakeSpeed = 0; 
       
-      if (hasPiece() == true && enableIntakeControls != buttonStates.Pressed){
-        driveTrain.outTakeSet(0);
-        
-        //System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
+        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
       }
+    driveTrain.outTakeSet(outTakeSpeed);
     }
+
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);
@@ -526,6 +535,7 @@ public class Robot extends TimedRobot {
     driveTrain.turny(-90.0);
    // System.out.println("TargetAngle" + 90 + "GyroAngle" + driveTrain.gyro.getAngle());
   }
+  intakeTime++;
 }
 buttonStates enableIntakeControls = buttonStates.NotPressed;
 
