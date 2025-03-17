@@ -348,18 +348,9 @@ public class Robot extends TimedRobot {
       // }
 
       if(operatorController.getLeftBumperButton()) {
-      //   System.out.println("armPosition: " + armPosition);
-
-      //   //Human Player (this mean player station or processer???)
-      //   //37.64
          if(operatorController.getRightTriggerAxis() > 0) {
           armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.PLAYER);
-      //     if(armPosition >= 0 && armPosition < 425.0636) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 18) {
-      //       armMotorSpeed = -0.5;
-          }
+        }
          
 
 
@@ -455,8 +446,6 @@ public class Robot extends TimedRobot {
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
       
       if(operatorController.getLeftBumperButton()) {
-//System.out.println("liftMotorPosition: " + liftMotorPosition);
-
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
           liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.PLAYER);
@@ -465,63 +454,42 @@ public class Robot extends TimedRobot {
 
         //Trough
         if(operatorController.getAButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 15) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 20) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
         }
         
         //L2 
-        //Arm:540.9
-        //lm: 18
         if(operatorController.getBButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 6) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 11) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L2);
         }
         
         //L3
         if(operatorController.getXButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 0) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 1) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L3);
         }
 
         //L4
         if(operatorController.getYButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 263) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 268) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L4);
         }
       }
-else {
-  liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
+      else {
+        liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
+      }
 
+      if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+        liftMotorSpeed = 0;
+        driveTrain.liftMotor.getEncoder().setPosition(0.0);
 
-}
-driveTrain.liftMotor.set(liftMotorSpeed);
+        System.out.println("Bottom Limit Hit");
+      } 
 
-      // if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+      // if(!liftMotorPosition < 0 || liftMotorPosition > 40) {
       //   liftMotorSpeed = 0;
-      //   driveTrain.liftMotor.getEncoder().setPosition(0.0);
-
       //   System.out.println("Bottom Limit Hit");
-      // } 
+      // }
 
       //System.out.println("liftMotorSpeed:" + liftMotorSpeed + "lm current: " + driveTrain.liftMotor.getOutputCurrent());
       driveTrain.liftMotor.set(liftMotorSpeed);
-      if (liftMotorSpeed > 0);
     }
 
     //Controls for the Climber
