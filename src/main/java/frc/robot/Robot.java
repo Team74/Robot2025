@@ -338,94 +338,46 @@ public class Robot extends TimedRobot {
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
-      //var armPosition = driveTrain.armMotor.getEncoder().getPosition();
+  
       double armClampSpeed = 0.7;
-      Double armMotorSpeed =0.0;
-
-
-      // if(armPosition > 353 && armPosition < 553) {
-      //   armMotorSpeed = 0;
-      // }
+      Double armMotorSpeed = 0.0;
 
       if(operatorController.getLeftBumperButton()) {
+
+        //player Station
          if(operatorController.getRightTriggerAxis() > 0) {
           armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.PLAYER);
         }
-         
 
+        //Trough
+        if(operatorController.getAButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
+        } 
 
-      //   //Trough
-      //   if(operatorController.getAButton()) {
-      //     if(armPosition >= 0 && armPosition < 540.9) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 545.9) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
+        //Level 2
+        if(operatorController.getBButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L2);
+        } 
+
+        //Level 3
+        if(operatorController.getXButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L3);
+        } 
+
+        //Level 4
+        if(operatorController.getYButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L4);
+        } 
         
-      //   //L2
-      //   if(operatorController.getBButton()) {
-      //     if(armPosition >= 0 && armPosition < 540.9) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 545.9) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-        
-      //   //L3
-      //   if(operatorController.getXButton()) {
-      //     if(armPosition >= 0 && armPosition < 335.42) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 340) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-
-      //   //L4
-      //   //375.5
-      //   //lm: 541.60
-      //   if(operatorController.getYButton()) {
-      //     if(armPosition >= 0 && armPosition < 333.59) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 338) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-      // }
-
-        }
-        else {
-          armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
-
-        }
-        //driveTrain.armMotor.set(armMotorSpeed);
-
-      // //Arm protecton
-      /*if (driveTrain.armMotor != null){
-        if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
-          armMotorSpeed = 0.0;
-        }
+      } else {
+        armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
       }
 
-      if (driveTrain.liftMotor != null){
-        
-        if (stringLiftLimit.get() ==  0 && operatorController.getRightY() > 0){
-        armMotorSpeed = 0.0;
-        }
-      }
-        */
-        //System.out.println("armMotorSpeed:" + armMotorSpeed);
-
-     // driveTrain.armMotor.set(armMotorSpeed);
-    
+      
     }
   
 
-    //System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+    
     
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
