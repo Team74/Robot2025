@@ -339,7 +339,7 @@ public class Robot extends TimedRobot {
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
   
-      double armClampSpeed = 0.7;
+      double armClampSpeed = 0.1;
       Double armMotorSpeed = 0.0;
 
       if(operatorController.getLeftBumperButton()) {
@@ -369,9 +369,11 @@ public class Robot extends TimedRobot {
           armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L4);
         } 
         
-      } else {
+      } 
+      else {
         armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
       }
+      driveTrain.armMotor.set(armMotorSpeed);
 
       
     }

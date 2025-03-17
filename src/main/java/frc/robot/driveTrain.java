@@ -468,12 +468,12 @@ public class driveTrain {
             liftMotor.getEncoder().setPosition(0.0);
         }
 
-        // armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
+        armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
         // armMotor.set(armMotorSpeed);
 
         System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
 
-        liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
+        //armMotorSpeed = MathUtil.clamp(armMotorSpeed, -liftClampSpeed, liftClampSpeed);
         return armMotorSpeed;
         
         //liftMotor.set(liftMotorSpeed);
