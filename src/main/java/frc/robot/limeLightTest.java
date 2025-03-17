@@ -144,7 +144,7 @@ public class limeLightTest {
     }
 
     // simple proportional ranging control with Limelight's "ty" value
-    // this works best if your Limelight's mount height and target mount height are different.
+    // this works best if your Limelight's mount height and target mount height are different.  
     // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
     public double limelight_range_proportional(double kMaxSpeed)
     {    

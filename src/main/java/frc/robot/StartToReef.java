@@ -41,9 +41,9 @@ public class StartToReef {
             }
 
             case "lift":
-            driveTrain.ShortCut(ShortcutType.L4);
+            //driveTrain.ShortCut(ShortcutType.L4);
             driveTrain.drive(0, 0, 0, false, false);
-            driveTrain.ShortCut(ShortcutType.L4);
+            //driveTrain.ShortCut(ShortcutType.L4);
 
             if (time > 1*50) {
                 time = 0;
@@ -53,7 +53,7 @@ public class StartToReef {
 
             case "dumpy":
             driveTrain.drive(0, 0, 0, false, false);
-            driveTrain.ShortCut(ShortcutType.L4);
+            //driveTrain.ShortCut(ShortcutType.L4);
             driveTrain.outTakeSet(1);
             if (time > .5*50) {
                 time = 0;
@@ -63,7 +63,7 @@ public class StartToReef {
 
             case "down":
             driveTrain.drive(0, 0, 0, false, false); 
-            driveTrain.ShortCut(ShortcutType.L1);
+           // driveTrain.ShortCut(ShortcutType.L1);
             driveTrain.outTakeSet(0);
             if (time > 1*50) {
                 time = 0;

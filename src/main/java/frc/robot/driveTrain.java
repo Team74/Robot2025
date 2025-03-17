@@ -357,19 +357,20 @@ public class driveTrain {
     double liftL3Height = 11.5;
     double liftL4Height = 66.4;
 
-    void ShortCut(ShortcutType shortcut) {
+    double ShortCutLift(ShortcutType shortcut) {
         if (armMotor == null || liftMotor == null) {
             System.out.println("Lift/Arm Motor Issue--Abort---");
-            return;
+            return 0;
         }
 
         var armPosition = armMotor.getPosition().getValueAsDouble();
         var liftMotorPosition = potLift.get();
 
+
         double armMotorSpeed = 0;
-        double armClampSpeed = 0.7;
+        double armClampSpeed = 0.2;
         double liftMotorSpeed = 0;
-        double liftClampSpeed = 1;
+        double liftClampSpeed = .5;
 
         //Human Player
         if(shortcut == ShortcutType.PLAYER) {
@@ -406,12 +407,78 @@ public class driveTrain {
             liftMotor.getEncoder().setPosition(0.0);
         }
 
-        armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-        armMotor.set(armMotorSpeed);
+        // armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
+        // armMotor.set(armMotorSpeed);
+
+        System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
 
         liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
-        liftMotor.set(liftMotorSpeed);
+        return liftMotorSpeed;
+        
+        //liftMotor.set(liftMotorSpeed);
     }
+
+    double ShortCutArm(ShortcutType shortcut) {
+        if (armMotor == null || liftMotor == null) {
+            System.out.println("Lift/Arm Motor Issue--Abort---");
+            return 0;
+        }
+
+        var armPosition = armMotor.getPosition().getValueAsDouble();
+        var liftMotorPosition = potLift.get();
+
+
+        double armMotorSpeed = 0;
+        double armClampSpeed = 0.2;
+        double liftMotorSpeed = 0;
+        double liftClampSpeed = .5;
+
+        //Human Player
+        if(shortcut == ShortcutType.PLAYER) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftPlayerHeight);
+        }
+
+        //L1
+        if(shortcut == ShortcutType.L1) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL1Position);
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL1Height);
+        }
+
+        //L2
+        if(shortcut == ShortcutType.L2) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL2Position);
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL2Height);
+        }
+        
+        //L3
+        if(shortcut == ShortcutType.L3) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL3Position);
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL3Height);
+        }
+
+        //L4 
+        if(shortcut == ShortcutType.L4) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
+        }
+            
+        if (!limitSensorBottom.get() && liftMotorSpeed > 0) {
+            liftMotorSpeed = 0;
+            liftMotor.getEncoder().setPosition(0.0);
+        }
+
+        // armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
+        // armMotor.set(armMotorSpeed);
+
+        System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
+
+        liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
+        return armMotorSpeed;
+        
+        //liftMotor.set(liftMotorSpeed);
+    }
+
 
     double LLGetY() {
         return -1;

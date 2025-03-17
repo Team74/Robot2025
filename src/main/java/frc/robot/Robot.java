@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.driveTrain.ShortcutType;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
@@ -103,9 +104,9 @@ public class Robot extends TimedRobot {
 
 
   public Robot() {
-    fCamera = CameraServer.startAutomaticCapture(0);
-    rCamera = CameraServer.startAutomaticCapture(2);
-    ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
+    // fCamera = CameraServer.startAutomaticCapture(0);
+    // rCamera = CameraServer.startAutomaticCapture(2);
+    // ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     driveTrain = new driveTrain(dashboard, alliancecolor);
     right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
@@ -140,8 +141,8 @@ public class Robot extends TimedRobot {
     dashboard.updatefielddata (m_field); 
 
     m_field.getObject("traj").setTrajectory(m_trajectory);
-    CameraServer.startAutomaticCapture(); 
-    CameraServer.startAutomaticCapture(); 
+    // CameraServer.startAutomaticCapture(); 
+    // CameraServer.startAutomaticCapture(); 
     time = 0;
 
     for (int port = 5800; port <= 5809; port++) {
@@ -236,13 +237,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //camera switching for driver's view
-    if (controller.getAButton()){
-      System.out.println("Setting rearcamera");
-      ftNetworkTableEntry.setString(rCamera.getName());
-    } else if (controller.getBButton()) {
-      System.out.println("Setting fCamera");
-      ftNetworkTableEntry.setString(fCamera.getName());
-    }
+    // if (controller.getAButton()){
+    //   System.out.println("Setting rearcamera");
+    //   ftNetworkTableEntry.setString(rCamera.getName());
+    // } else if (controller.getBButton()) {
+    //   System.out.println("Setting fCamera");
+    //   ftNetworkTableEntry.setString(fCamera.getName());
+    // }
     //auton climber feature
     if (operatorController.getLeftBumperButton() && limelightcam != null && limelightcam.CanSee()) {
 
@@ -331,7 +332,7 @@ public class Robot extends TimedRobot {
     var potval = driveTrain.potLift.get();
 
     if(operatorController.getLeftBumperButton()) {
-      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+      //System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition());
     }
 
 
@@ -341,25 +342,26 @@ public class Robot extends TimedRobot {
       double armClampSpeed = 0.7;
       Double armMotorSpeed =0.0;
 
-      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
 
       // if(armPosition > 353 && armPosition < 553) {
       //   armMotorSpeed = 0;
       // }
 
-      // if(operatorController.getLeftBumperButton()) {
+      if(operatorController.getLeftBumperButton()) {
       //   System.out.println("armPosition: " + armPosition);
 
       //   //Human Player (this mean player station or processer???)
       //   //37.64
-      //   if(operatorController.getRightTriggerAxis() > 0) {
+         if(operatorController.getRightTriggerAxis() > 0) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.PLAYER);
       //     if(armPosition >= 0 && armPosition < 425.0636) {
       //       armMotorSpeed = 0.5;
       //     }
       //     if(armPosition > 18) {
       //       armMotorSpeed = -0.5;
-      //     }
-      //   }
+          }
+         
+
 
       //   //Trough
       //   if(operatorController.getAButton()) {
@@ -403,6 +405,14 @@ public class Robot extends TimedRobot {
       //     }
       //   }
       // }
+
+        }
+        else {
+          armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
+
+        }
+        //driveTrain.armMotor.set(armMotorSpeed);
+
       // //Arm protecton
       /*if (driveTrain.armMotor != null){
         if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
@@ -419,7 +429,7 @@ public class Robot extends TimedRobot {
         */
         //System.out.println("armMotorSpeed:" + armMotorSpeed);
 
-      driveTrain.armMotor.set(armMotorSpeed);
+     // driveTrain.armMotor.set(armMotorSpeed);
     
     }
   
@@ -449,12 +459,8 @@ public class Robot extends TimedRobot {
 
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 146.28) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 271) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.PLAYER);
+          
         }
 
         //Trough
@@ -499,6 +505,12 @@ public class Robot extends TimedRobot {
           }
         }
       }
+else {
+  liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
+
+
+}
+driveTrain.liftMotor.set(liftMotorSpeed);
 
       // if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
       //   liftMotorSpeed = 0;
