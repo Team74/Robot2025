@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.GotoPose.FieldPose;
 import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.driveTrain.ShortcutType;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -82,7 +83,7 @@ public class Robot extends TimedRobot {
   DigitalInput armLimitTop = new DigitalInput(7);
   DigitalInput stringLiftLimit = new DigitalInput(9);
 
-  
+  GotoPose gotoPose;
 
   int time = 0;
   int intakeTime = 0;
@@ -113,7 +114,7 @@ public class Robot extends TimedRobot {
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
-
+    gotoPose = new GotoPose(driveTrain);
     limelightcam = new limeLightTest(driveTrain);
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_1P);
@@ -294,14 +295,14 @@ public class Robot extends TimedRobot {
     var potArmVal = driveTrain.potArm.get();
     
     if(operatorController.getLeftBumperButton()) {
-      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
+      //System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
     }
 
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
   
-      double armClampSpeed = 0.1;
+      double armClampSpeed = 0.5;
       Double armMotorSpeed = 0.0;
 
       if(operatorController.getLeftBumperButton()) {
@@ -496,22 +497,25 @@ public class Robot extends TimedRobot {
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);
+
   if(controller.getAButton()){
-    if(desiredAngle == 0) {
-      desiredAngle = 90;
-    }
-    if(desiredAngle == 90) {
-      desiredAngle = 120;
-    }
-    if(desiredAngle == 120) {
-      desiredAngle = 180;
-    }
-    if(desiredAngle == 180) {
-      desiredAngle = -90;
-    }
-    if(desiredAngle == -90) {
-      desiredAngle = 0;
-    }
+    //gotoPose.execute(FieldPose.BLUE_22);
+
+    // if(desiredAngle == 0) {
+       desiredAngle = 90;
+    // }
+    // if(desiredAngle == 90) {
+    //   desiredAngle = 120;
+    // }
+    // if(desiredAngle == 120) {
+    //   desiredAngle = 180;
+    // }
+    // if(desiredAngle == 180) {
+    //   desiredAngle = -90;
+    // }
+    // if(desiredAngle == -90) {
+    //   desiredAngle = 0;
+    // }
 
     driveTrain.turnBotToAngle(desiredAngle);
   }

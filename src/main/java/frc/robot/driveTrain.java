@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
@@ -89,7 +91,7 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    PIDController pidShortcutArm = new PIDController(0.1, 0, 0);
+    PIDController pidShortcutArm = new PIDController(0.01, 0, 0);
     PIDController pidShortcutLift = new PIDController(0.1, 0, 0);
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
@@ -113,7 +115,20 @@ public class driveTrain {
     
       
             armMotor = new TalonFX(3);
+
+            TalonFXConfiguration toConfigure = new TalonFXConfiguration();
+            CurrentLimitsConfigs m_currentLimits = new CurrentLimitsConfigs();
+
+            m_currentLimits.SupplyCurrentLimit = 10; // Limit to 1 amps
+            m_currentLimits.SupplyCurrentLimitEnable = true; // And enable it
+            m_currentLimits.StatorCurrentLimit = 10; // Limit stator to 20 amps
+            m_currentLimits.StatorCurrentLimitEnable = true; // And enable it
+
+            toConfigure.CurrentLimits = m_currentLimits;
+
+            armMotor.getConfigurator().apply(toConfigure);
             armMotor.setNeutralMode(NeutralModeValue.Brake);
+
             //armMotor.getEncoder().setPosition(0.0);
             zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
             //armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -158,8 +173,10 @@ public class driveTrain {
             stateStdDevs,
             visionMeasurementStdDevs);
     }
-
-    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
+        /**
+         * Field Relative Drive.
+         */
+      void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
         ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
@@ -327,7 +344,7 @@ public class driveTrain {
     void turnBotToAngle(double targetAngle){
         double currentAngle = gyro.getAngle();
         double rotationVal = pid.calculate(currentAngle,targetAngle);
-        rotationVal = MathUtil.clamp(rotationVal,-0.1, 0.1);
+        rotationVal = MathUtil.clamp(rotationVal,-0.3, 0.3);
         drive(0, 0, rotationVal, false, false);
     }
     void armSet(int targetAngle) {
@@ -358,48 +375,47 @@ public class driveTrain {
     double liftL3Height = 11.5;
     double liftL4Height = 66.4;
 
+    double armClampSpeed = 0.5;
+    double liftClampSpeed = 0.7;
+
+    double armMotorSpeed = 0;
+    double liftMotorSpeed = 0.0;
+
+    double liftMotorPosition = 0.0;
+    double armPosition = 0.0;
+
     double ShortCutLift(ShortcutType shortcut) {
+        liftMotorSpeed = 0.0;
+
         if (armMotor == null || liftMotor == null) {
             System.out.println("Lift/Arm Motor Issue--Abort---");
             return 0;
         }
 
-        var armPosition = armMotor.getPosition().getValueAsDouble();
-        var liftMotorPosition = potLift.get();
-
-
-        double armMotorSpeed = 0;
-        double armClampSpeed = 0.2;
-        double liftMotorSpeed = 0;
-        double liftClampSpeed = .5;
+        liftMotorPosition = potLift.get();
 
         //Human Player
         if(shortcut == ShortcutType.PLAYER) {
-            armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftPlayerHeight);
         }
 
         //L1
         if(shortcut == ShortcutType.L1) {
-            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL1Position);
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL1Height);
         }
 
         //L2
         if(shortcut == ShortcutType.L2) {
-            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL2Position);
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL2Height);
         }
         
         //L3
         if(shortcut == ShortcutType.L3) {
-            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL3Position);
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL3Height);
         }
 
         //L4 
         if(shortcut == ShortcutType.L4) {
-            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
         }
             
@@ -408,76 +424,51 @@ public class driveTrain {
             liftMotor.getEncoder().setPosition(0.0);
         }
 
-        // armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-        // armMotor.set(armMotorSpeed);
-
-        System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
-
         liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
+
         return liftMotorSpeed;
-        
-        //liftMotor.set(liftMotorSpeed);
     }
 
     double ShortCutArm(ShortcutType shortcut) {
+        armMotorSpeed = 0;
+
         if (armMotor == null || liftMotor == null) {
             System.out.println("Lift/Arm Motor Issue--Abort---");
             return 0;
         }
 
-        var armPosition = armMotor.getPosition().getValueAsDouble();
-        var liftMotorPosition = potLift.get();
-
-
-        double armMotorSpeed = 0;
-        double armClampSpeed = 0.2;
-        double liftMotorSpeed = 0;
-        double liftClampSpeed = .5;
+        armPosition = armMotor.getPosition().getValueAsDouble();
 
         //Human Player
         if(shortcut == ShortcutType.PLAYER) {
             armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
-            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftPlayerHeight);
         }
 
         //L1
         if(shortcut == ShortcutType.L1) {
             armMotorSpeed = pidShortcutArm.calculate(armPosition, armL1Position);
-            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL1Height);
         }
 
         //L2
         if(shortcut == ShortcutType.L2) {
             armMotorSpeed = pidShortcutArm.calculate(armPosition, armL2Position);
-            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL2Height);
         }
         
         //L3
         if(shortcut == ShortcutType.L3) {
             armMotorSpeed = pidShortcutArm.calculate(armPosition, armL3Position);
-            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL3Height);
         }
 
         //L4 
         if(shortcut == ShortcutType.L4) {
             armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
-            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
         }
             
-        if (!limitSensorBottom.get() && liftMotorSpeed > 0) {
-            liftMotorSpeed = 0;
-            liftMotor.getEncoder().setPosition(0.0);
-        }
-
         armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-        // armMotor.set(armMotorSpeed);
 
         System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
 
-        //armMotorSpeed = MathUtil.clamp(armMotorSpeed, -liftClampSpeed, liftClampSpeed);
         return armMotorSpeed;
-        
-        //liftMotor.set(liftMotorSpeed);
     }
 
 

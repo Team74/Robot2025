@@ -109,7 +109,7 @@ double turningFactor = kTurningEncoderPositionFactor;
             // return encoderA.get() - 180 + encoderOffset;
             return encoderA.get();
         }
-        return encoder.get() - 180 + encoderOffset;
+        return turningMotor.getAbsoluteEncoder().getPosition() - 180 + encoderOffset;
     }
     
     double getRotation() {
@@ -161,7 +161,7 @@ double turningFactor = kTurningEncoderPositionFactor;
             return new SwerveModulePosition(encoderA.get(), new Rotation2d(encoderA.get()));
         }
         else {
-            return new SwerveModulePosition(driveMotor.getEncoder().getPosition(), new Rotation2d(encoder.get()));
+            return new SwerveModulePosition(driveMotor.getEncoder().getVelocity(), new Rotation2d(turningMotor.getAbsoluteEncoder().getPosition()));
         }
         
     }
