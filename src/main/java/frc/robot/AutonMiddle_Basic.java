@@ -7,18 +7,20 @@ public class AutonMiddle_Basic {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
+    LimelightHelpers Limehelp;
 
     boolean hasPiece() {
         return !driveTrain.proxSensor.get();
     }
     
 
-    public AutonMiddle_Basic(driveTrain _driveTrain, limeLightTest _limelightcam){
+    public AutonMiddle_Basic(driveTrain _driveTrain, limeLightTest _limelightcam, LimelightHelpers _Limehelp){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
+        Limehelp = _Limehelp;
     }
 
-    Object[] Run_2P(Object[] autoState) {
+    Object[] Run_2P(Object[] autoState, double getPeriod) {
         // double trackSide = limelightcam.LimeTest();
         // double trackTurn = limelightcam.ReefCenter(); 
         // double trackPush = limelightcam.ReefPush();
@@ -26,6 +28,7 @@ public class AutonMiddle_Basic {
      
         var armPosition = 0;
         var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
+        var currentTargetId = LimelightHelpers.getFiducialID("limelight");
       
 
         switch(currentState){
@@ -35,23 +38,8 @@ public class AutonMiddle_Basic {
                     driveTrain.drive(0, 0, 0, false, false);
                     driveTrain.resetGyro();
                     time = 0;
-                    currentState = "Drive'nForward";
+                    currentState = "Score";
                }
-            break;
-
-            case "Drive'nForward":
-
-                //var txnc_21 = April_21.txnc;
-                //var ta_21 = April_21.ta;
-               
-
-                if (time > 0 && time < 150){
-                    driveTrain.drive(-0.3, 0, 0, false, false);
-                } 
-                if (time > 151){
-                    driveTrain.drive(0, 0, 0, false, false);
-                }    
-            
             break;
         
             case "Score":
@@ -73,6 +61,28 @@ public class AutonMiddle_Basic {
                 time = 0;
             }
              
+            break;
+
+            case "Drive'nForward":
+
+                var April_21 = driveTrain.GetAprilTagTelemotry(21);
+                var April_10 = driveTrain.GetAprilTagTelemotry(10);
+
+                var rangeOutput = limelightcam.LLGetRangeOutput();
+                var rotationOutput = limelightcam.LLGetRotation();
+
+                if (April_10 != null && currentTargetId == 10){
+                    if (time > 0 && time < 150){
+                        driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    }
+                }
+
+                if (April_21 != null && currentTargetId == 21){
+                    if (time > 0 && time < 150){
+                        driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    }
+                }
+            
             break;
 
         }

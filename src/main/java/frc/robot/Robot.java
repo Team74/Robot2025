@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
   private static final String auCenter_3P = "Center_3_Piece";*/
 
   DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
-  private static final String auto_AutonMiddle_1P = "Middle_1P";
+  private static final String auto_AutonMiddle_basic = "Middle_Basic";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
   private static final String auto_DriveTowardDriver = "DriveTowardDriver";
@@ -115,15 +115,15 @@ public class Robot extends TimedRobot {
     driveTrain = new driveTrain(dashboard, alliancecolor);
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
-    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     left_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
     gotoPose = new GotoPose(driveTrain);
     limelightcam = new limeLightTest(driveTrain);
 
-    m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_1P);
-    m_chooser.addOption("Middle_1P", auto_AutonMiddle_1P);
+    m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
+    m_chooser.addOption("Middle_1P", auto_AutonMiddle_basic);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
@@ -176,7 +176,7 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     //System.out.println("Auto selected: " + m_autoSelected);
 
-    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
@@ -197,9 +197,9 @@ public class Robot extends TimedRobot {
 
     switch (m_autoSelected) {
       
-      case auto_AutonMiddle_1P:
+      case auto_AutonMiddle_basic:
         
-        autoState = auton_Basic.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
       break;
       case auto_Auton_1P_SetUp:
 
@@ -218,7 +218,7 @@ public class Robot extends TimedRobot {
       break;
       default:
         
-        autoState = auton_Basic.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
       break;
     }
 
