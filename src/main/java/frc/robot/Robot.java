@@ -44,7 +44,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean zeroMode = false;
   boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
@@ -170,7 +169,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    if (zeroMode == true){
+    if (driveTrain.zeroMode == true){
       System.out.println("System disabled"); 
       return; 
     }
@@ -268,7 +267,7 @@ public class Robot extends TimedRobot {
     trackTurn = limelightcam.ReefCenter();
     trackPush = limelightcam.ReefPush();*/
 
-    if (zeroMode) {
+    if (driveTrain.zeroMode) {
       System.out.println(
           "RF:" + driveTrain.rightFront.getRotation()
               + ", LF:" + driveTrain.leftFront.getRotation()
