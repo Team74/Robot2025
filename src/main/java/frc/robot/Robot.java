@@ -63,13 +63,15 @@ public class Robot extends TimedRobot {
 
   limeLightTest limelightcam;
   driveTrain driveTrain;
+  LimelightHelpers LimeHelp;
 
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
-  AutonLeft_2P auton_2p;
+  Auton_1P_SetUp auton_SetUp;
+  AutonLeft_2P left_2p;
   AutonMiddle_2P middle_2P;
-  AutonMiddle_Basic right_2p;
+  AutonMiddle_Basic auton_Basic;
   AutonDriveForward autonDriveForward;
 
   UsbCamera fCamera;
@@ -100,6 +102,7 @@ public class Robot extends TimedRobot {
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
   private static final String auto_DriveTowardDriver = "DriveTowardDriver";
+  private static final String auto_Auton_1P_SetUp = "Auton_1P_SetUp";
 
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private String m_autoSelected;
@@ -110,15 +113,18 @@ public class Robot extends TimedRobot {
     // rCamera = CameraServer.startAutomaticCapture(2);
     // ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     driveTrain = new driveTrain(dashboard, alliancecolor);
-    right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
+    LimeHelp = new LimelightHelpers();
+    auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    left_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
     gotoPose = new GotoPose(driveTrain);
     limelightcam = new limeLightTest(driveTrain);
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_1P);
     m_chooser.addOption("Middle_1P", auto_AutonMiddle_1P);
+    m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
     m_chooser.addOption("DriveTowardDriver", auto_DriveTowardDriver);
@@ -170,11 +176,11 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     //System.out.println("Auto selected: " + m_autoSelected);
 
-    right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    left_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
 
     autoState = new Object[] { "Starting", 0 };
@@ -193,15 +199,18 @@ public class Robot extends TimedRobot {
       
       case auto_AutonMiddle_1P:
         
-        autoState = right_2p.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState);
       break;
+      case auto_Auton_1P_SetUp:
+
+        autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
       case auto_AutonMiddle_2P:
         
-        autoState = right_2p.Run_2P(autoState);
+        autoState = middle_2P.Run_2P(autoState);
       break;
       case auto_AutonLeft_2P:
         
-        autoState = auton_2p.Run_2P(autoState);
+        autoState = left_2p.Run_2P(autoState);
       break;
       case auto_DriveTowardDriver:
         
@@ -209,7 +218,7 @@ public class Robot extends TimedRobot {
       break;
       default:
         
-        autoState = auton_2p.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState);
       break;
     }
 
@@ -471,7 +480,7 @@ public class Robot extends TimedRobot {
         if(MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) == 0 && MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) == 0) {
           enableIntakeControls = buttonStates.Released;
         }
-        
+
       }
 
       //System.out.println("enableIntakeControls: " + enableIntakeControls);
