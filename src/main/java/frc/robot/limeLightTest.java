@@ -6,6 +6,8 @@ import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,24 +20,24 @@ public class limeLightTest {
     double currentTarget;
     PIDController PIDAngle = new PIDController(0.016667*2, 0, 0);
     PIDController PIDPush = new PIDController(0.016667*1.2, 0, 0);
-    private final PIDController rotationPID;
-    private final PIDController rangePID;
+    private final ProfiledPIDController rotationPID;
+    private final ProfiledPIDController rangePID;
     driveTrain driveTrain;
     limeLightTest(driveTrain _DriveTrain) {
         driveTrain = _DriveTrain;
         gyro = driveTrain.gyro;
 
         // Tune these PID values for your robot
-    //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
-    rotationPID = new PIDController(.05, 0.0, 0.0);
-    rangePID = new PIDController(0.3, 0.0, 0.0);
+        //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
+        rotationPID = new ProfiledPIDController(.05, 0.0, 0.0, new TrapezoidProfile.Constraints(5, 10));
+        rangePID = new ProfiledPIDController(0.3, 0.0, 0.0, new TrapezoidProfile.Constraints(5, 10));
 
-    // Set tolerance for both controllers
-    rotationPID.setTolerance(0.3); // 1 degree tolerance
-    rangePID.setTolerance(0.01); // 5cm tolerance
-    
-    rotationPID.enableContinuousInput(-180.0, 180.0);
-    rangePID.enableContinuousInput(-180.0, 180.0);
+        // Set tolerance for both controllers
+        rotationPID.setTolerance(0.3); // 1 degree tolerance
+        rangePID.setTolerance(0.01); // 5cm tolerance
+        
+        rotationPID.enableContinuousInput(-180.0, 180.0);
+        rangePID.enableContinuousInput(-180.0, 180.0);
     }
 
     public double LimeTest () {

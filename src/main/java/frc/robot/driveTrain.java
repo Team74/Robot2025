@@ -23,6 +23,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -31,6 +32,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -91,8 +93,8 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    PIDController pidShortcutArm = new PIDController(0.01, 0, 0);
-    PIDController pidShortcutLift = new PIDController(0.1, 0, 0);
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.01, 0, 0, new TrapezoidProfile.Constraints(20, 50));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(20, 50));
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
@@ -104,7 +106,7 @@ public class driveTrain {
             //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
             leftFront = new SwerveModule(0,76.40100191002506, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,45.88528614713215-180, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,-159.65606199140154-180, 10, 11, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,-173.11333482783334-180-10, 10, 11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,-96.41761441044036-180, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
@@ -369,13 +371,13 @@ public class driveTrain {
     double armL3Position = -100;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 35;
+    double liftPlayerHeight = 34;
     double liftL1Height = 34.3;
     double liftL2Height = 60.8;
     double liftL3Height = 11.5;
     double liftL4Height = 66.4;
 
-    double armClampSpeed = 0.5;
+    double armClampSpeed = 0.3;
     double liftClampSpeed = 0.7;
 
     double armMotorSpeed = 0;

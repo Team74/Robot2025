@@ -304,7 +304,7 @@ public class Robot extends TimedRobot {
     var potArmVal = driveTrain.potArm.get();
     
     if(operatorController.getLeftBumperButton()) {
-      //System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
+      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
     }
 
 
@@ -491,7 +491,10 @@ public class Robot extends TimedRobot {
       //Prox sensor lol
 
       if (hasPiece() == true) {
-        if(intakeTime < 100 ){
+        if(intakeTime < 10 ){
+          intakeTime++;
+        }
+        if(intakeTime >= 10 && intakeTime < 100 ){
           outTakeSpeed = 0; 
           intakeTime++;
         }
