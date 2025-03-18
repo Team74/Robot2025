@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -89,6 +90,7 @@ public class Robot extends TimedRobot {
   int time = 0;
   int intakeTime = 0;
 
+  double currentAngle;
   /*private static final String driveForwardAuton = "Default_Auton";
   private static final String auAmp_2P = "Amp_2_Piece";
   private static final String auSource_2P = "Source_2_Piece";
@@ -481,6 +483,15 @@ public class Robot extends TimedRobot {
         }
 
       }
+      currentAngle = driveTrain.potArm.get();
+            if (currentAngle > 0 && currentAngle < 25) {
+              if (operatorController.getRightTriggerAxis() > 0)
+                outTakeSpeed = 0;  
+            } 
+                
+            
+            
+            Timer.delay(0.02);  //
 
       //System.out.println("enableIntakeControls: " + enableIntakeControls);
 
