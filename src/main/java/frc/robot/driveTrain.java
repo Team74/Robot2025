@@ -78,7 +78,8 @@ public class driveTrain {
     Calendar calendar = Calendar.getInstance();
     //DigitalInput limitSensorTop = new DigitalInput(7);
     DigitalInput limitSensorBottom = new DigitalInput(5);
- AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+    AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+    AnalogPotentiometer potArm = new AnalogPotentiometer(1,90, 0);
 
     double powerMulti = 0.6;
 
@@ -88,8 +89,8 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    PIDController pidShortcutArm = new PIDController(0.2, 0, 0);
-    PIDController pidShortcutLift = new PIDController(0.2, 0, 0);
+    PIDController pidShortcutArm = new PIDController(0.1, 0, 0);
+    PIDController pidShortcutLift = new PIDController(0.1, 0, 0);
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
@@ -323,11 +324,11 @@ public class driveTrain {
         outTakeMotorOuter.set(speed);
         outTakeMotorInner.set(-speed);
     }
-    void turny(double targetAngle){
+    void turnBotToAngle(double targetAngle){
         double currentAngle = gyro.getAngle();
-        double targetAngletest = pid.calculate(currentAngle,targetAngle);
-        targetAngletest = MathUtil.clamp(targetAngletest,-0.3, 0.3);
-        drive(0, 0, targetAngletest, false, false);
+        double rotationVal = pid.calculate(currentAngle,targetAngle);
+        rotationVal = MathUtil.clamp(rotationVal,-0.1, 0.1);
+        drive(0, 0, rotationVal, false, false);
     }
     void armSet(int targetAngle) {
         //currentAngleArm = armMotor.getEncoder().getPosition();

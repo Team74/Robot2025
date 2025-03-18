@@ -27,8 +27,8 @@ public class limeLightTest {
 
         // Tune these PID values for your robot
     //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
-    rotationPID = new PIDController(.05, 0.0, 0.001);
-    rangePID = new PIDController(0.3, 0.0, 0.01);
+    rotationPID = new PIDController(.05, 0.0, 0.0);
+    rangePID = new PIDController(0.3, 0.0, 0.0);
 
     // Set tolerance for both controllers
     rotationPID.setTolerance(0.3); // 1 degree tolerance
