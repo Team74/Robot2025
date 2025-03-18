@@ -44,7 +44,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
-    boolean zeroMode = false;
+    boolean zeroMode = true;
     boolean oldDriveBase = false;
     
     public SwerveModule leftFront;

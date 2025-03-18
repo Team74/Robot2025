@@ -51,7 +51,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean zeroMode = false;
+  boolean zeroMode = true;
   boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
