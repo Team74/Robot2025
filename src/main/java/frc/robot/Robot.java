@@ -280,12 +280,6 @@ public class Robot extends TimedRobot {
         driveTrain.armMotor.setPosition(0.0);
         driveTrain.climbMotor.getEncoder().setPosition(0.0);
       }
-  
-
-    //test controls
-    if (controller.getXButton()) {
-      //System.out.println(driveTrain.gyro.getAngle());
-    }
    
     //Shortcut to align to the Apriltags
     if(controller.getBButton()) {
@@ -497,7 +491,7 @@ public class Robot extends TimedRobot {
           outTakeSpeed = 0; 
           intakeTime++;
         }
-        System.out.println("Caught one!!!: intakeTime: " + intakeTime);
+        //System.out.println("Caught one!!!: intakeTime: " + intakeTime);
       }
       else {
         intakeTime = 0;

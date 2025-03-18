@@ -44,7 +44,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
-    boolean zeroMode = true;
+    boolean zeroMode = false;
     boolean oldDriveBase = false;
     
     public SwerveModule leftFront;
@@ -93,8 +93,8 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.01, 0, 0, new TrapezoidProfile.Constraints(20, 50));
-    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(20, 50));
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.015, 0, 0, new TrapezoidProfile.Constraints(20, 50));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0,new TrapezoidProfile.Constraints(20, 50));
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
@@ -106,7 +106,7 @@ public class driveTrain {
             //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
             leftFront = new SwerveModule(0,76.40100191002506, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,45.88528614713215-180, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,-173.11333482783334-180-10, 10, 11, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,-173.11333482783334-180-17, 10, 11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,-96.41761441044036-180, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
@@ -468,7 +468,7 @@ public class driveTrain {
             
         armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
 
-        System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
+        //System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
 
         return armMotorSpeed;
     }
