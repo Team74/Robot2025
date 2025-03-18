@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
     driveTrain = new driveTrain(dashboard, alliancecolor);
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
-    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     left_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
@@ -176,7 +176,7 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     //System.out.println("Auto selected: " + m_autoSelected);
 
-    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
@@ -199,7 +199,7 @@ public class Robot extends TimedRobot {
       
       case auto_AutonMiddle_1P:
         
-        autoState = auton_Basic.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
       break;
       case auto_Auton_1P_SetUp:
 
@@ -218,7 +218,7 @@ public class Robot extends TimedRobot {
       break;
       default:
         
-        autoState = auton_Basic.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
       break;
     }
 
