@@ -480,10 +480,11 @@ public class Robot extends TimedRobot {
 
       //Prox sensor lol
 
-      if (hasPiece() == true && intakeTime < 100 ){
-        outTakeSpeed = 0; 
-        intakeTime++;
-
+      if (hasPiece() == true) {
+        if(intakeTime < 100 ){
+          outTakeSpeed = 0; 
+          intakeTime++;
+        }
         System.out.println("Caught one!!!: intakeTime: " + intakeTime);
       }
       else {
