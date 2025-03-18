@@ -22,9 +22,13 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -32,8 +36,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.GotoPose.FieldPose;
 import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.driveTrain.ShortcutType;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import com.ctre.phoenix6.hardware.TalonFX; 
 /**
@@ -55,15 +62,21 @@ public class Robot extends TimedRobot {
 
   limeLightTest limelightcam;
   driveTrain driveTrain;
+  LimelightHelpers LimeHelp;
 
   StartToReef startToReef;
   driveForwardAuton driveForward;
 
-  AutonLeft_2P auton_2p;
+  Auton_1P_SetUp auton_SetUp;
+  AutonLeft_2P left_2p;
   AutonMiddle_2P middle_2P;
-  AutonMiddle_Basic right_2p;
+  AutonMiddle_Basic auton_Basic;
   AutonDriveForward autonDriveForward;
 
+  UsbCamera fCamera;
+  UsbCamera rCamera;
+  //Joystick joy1Joystick = new Joystick(0);
+  NetworkTableEntry ftNetworkTableEntry;
 
   reeftoplayertoprocessor willsClass;
 
@@ -71,9 +84,10 @@ public class Robot extends TimedRobot {
   DigitalInput armLimitTop = new DigitalInput(7);
   DigitalInput stringLiftLimit = new DigitalInput(9);
 
-  
+  GotoPose gotoPose;
 
   int time = 0;
+  int intakeTime = 0;
 
   /*private static final String driveForwardAuton = "Default_Auton";
   private static final String auAmp_2P = "Amp_2_Piece";
@@ -83,27 +97,33 @@ public class Robot extends TimedRobot {
   private static final String auCenter_3P = "Center_3_Piece";*/
 
   DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
-  private static final String auto_AutonMiddle_1P = "Middle_1P";
+  private static final String auto_AutonMiddle_basic = "Middle_Basic";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
   private static final String auto_DriveTowardDriver = "DriveTowardDriver";
+  private static final String auto_Auton_1P_SetUp = "Auton_1P_SetUp";
 
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private String m_autoSelected;
 
 
   public Robot() {
-
+    // fCamera = CameraServer.startAutomaticCapture(0);
+    // rCamera = CameraServer.startAutomaticCapture(2);
+    // ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     driveTrain = new driveTrain(dashboard, alliancecolor);
-    right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
+    LimeHelp = new LimelightHelpers();
+    auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    left_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
-
+    gotoPose = new GotoPose(driveTrain);
     limelightcam = new limeLightTest(driveTrain);
 
-    m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_1P);
-    m_chooser.addOption("Middle_1P", auto_AutonMiddle_1P);
+    m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
+    m_chooser.addOption("Middle_1P", auto_AutonMiddle_basic);
+    m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
     m_chooser.addOption("DriveTowardDriver", auto_DriveTowardDriver);
@@ -128,8 +148,8 @@ public class Robot extends TimedRobot {
     dashboard.updatefielddata (m_field); 
 
     m_field.getObject("traj").setTrajectory(m_trajectory);
-    CameraServer.startAutomaticCapture(); 
-    CameraServer.startAutomaticCapture(); 
+    // CameraServer.startAutomaticCapture(); 
+    // CameraServer.startAutomaticCapture(); 
     time = 0;
 
     for (int port = 5800; port <= 5809; port++) {
@@ -155,11 +175,11 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     //System.out.println("Auto selected: " + m_autoSelected);
 
-    right_2p = new AutonMiddle_Basic(driveTrain, limelightcam);
+    auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
-    auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    left_2p = new AutonLeft_2P(driveTrain, limelightcam);
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
 
     autoState = new Object[] { "Starting", 0 };
@@ -176,17 +196,20 @@ public class Robot extends TimedRobot {
 
     switch (m_autoSelected) {
       
-      case auto_AutonMiddle_1P:
+      case auto_AutonMiddle_basic:
         
-        autoState = right_2p.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
       break;
+      case auto_Auton_1P_SetUp:
+
+        autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
       case auto_AutonMiddle_2P:
         
-        autoState = right_2p.Run_2P(autoState);
+        autoState = middle_2P.Run_2P(autoState);
       break;
       case auto_AutonLeft_2P:
         
-        autoState = auton_2p.Run_2P(autoState);
+        autoState = left_2p.Run_2P(autoState);
       break;
       case auto_DriveTowardDriver:
         
@@ -194,7 +217,7 @@ public class Robot extends TimedRobot {
       break;
       default:
         
-        autoState = auton_2p.Run_2P(autoState);
+        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
       break;
     }
 
@@ -216,6 +239,8 @@ public class Robot extends TimedRobot {
     if (alliancecolor == bluecolor) {
       // does something
     }
+
+    desiredAngle = 0;
   }
 
   boolean hasPiece() {
@@ -223,49 +248,17 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
+    //camera switching for driver's view
+    // if (controller.getAButton()){
+    //   System.out.println("Setting rearcamera");
+    //   ftNetworkTableEntry.setString(rCamera.getName());
+    // } else if (controller.getBButton()) {
+    //   System.out.println("Setting fCamera");
+    //   ftNetworkTableEntry.setString(fCamera.getName());
+    // }
     //auton climber feature
-    if (operatorController.getLeftBumperButton() && limelightcam != null && limelightcam.CanSee()) {
-
-      RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-      for (RawFiducial fiducial : fiducials) {
-        int id = fiducial.id;
-        double txnc = fiducial.txnc;
-        double tync = fiducial.tync;
-        double ta = fiducial.ta;
-        double distToCamera = fiducial.distToCamera;
-        double distToRobot = fiducial.distToRobot;
-        double ambiguity = fiducial.ambiguity;
-
-        double Rotation = limelightcam.calculaterotation(90.0);
-        // System.out.println("rot: " + Rotation);
-        if (id == 14 || id == 15 || id == 5 || id == 4) {
-          if (controller.getLeftY() != 0) {
-            driveTrain.drive(controller.getLeftX(), 0, Rotation, false, false);
-          }
-        }
-      }
-    }
-
+    
     dashboard.updateDashboard();
-    double trackSide = 0;
-    double trackTurn = 0;
-    double trackPush = 0;
-    if (controller.getLeftTriggerAxis() > 0.1) {
-      RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-      for (RawFiducial fiducial : fiducials) {
-        int id = fiducial.id;
-        double txnc = fiducial.txnc;
-        double tync = fiducial.tync;
-        double ta = fiducial.ta;
-        double distToCamera = fiducial.distToCamera;
-        double distToRobot = fiducial.distToRobot;
-        double ambiguity = fiducial.ambiguity;
-        //System.out.println("Tag: " + id);
-      }
-    }
-    /*trackSide = limelightcam.LimeTest();
-    trackTurn = limelightcam.ReefCenter();
-    trackPush = limelightcam.ReefPush();*/
 
     if (driveTrain.zeroMode) {
       System.out.println(
@@ -284,7 +277,7 @@ public class Robot extends TimedRobot {
       //Button to resent the gyro
       if (operatorController.getRightBumperButton() && operatorController.getYButton()) {
         driveTrain.liftMotor.getEncoder().setPosition(0.0);
-        //driveTrain.armMotor.getEncoder().setPosition(0.0);
+        driveTrain.armMotor.setPosition(0.0);
         driveTrain.climbMotor.getEncoder().setPosition(0.0);
       }
   
@@ -301,109 +294,63 @@ public class Robot extends TimedRobot {
     }
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
       limelightcam.LimeTarget(getPeriod());
-
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
-    //var potval = driveTrain.potLift.get();
-
+    var potval = driveTrain.potLift.get();
+    var potArmVal = driveTrain.potArm.get();
+    
     if(operatorController.getLeftBumperButton()) {
-      //System.out.println("potval: "+ potval);
+      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
     }
 
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
-      //var armPosition = driveTrain.armMotor.getEncoder().getPosition();
-      double armClampSpeed = 0.1;
-      Double armMotorSpeed =0.0;
+  
+      double armClampSpeed = 0.5;
+      Double armMotorSpeed = 0.0;
 
-      armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
+      if(operatorController.getLeftBumperButton()) {
 
-      // if(armPosition > 353 && armPosition < 553) {
-      //   armMotorSpeed = 0;
-      // }
-
-      // if(operatorController.getLeftBumperButton()) {
-      //   System.out.println("armPosition: " + armPosition);
-
-      //   //Human Player (this mean player station or processer???)
-      //   //37.64
-      //   if(operatorController.getRightTriggerAxis() > 0) {
-      //     if(armPosition >= 0 && armPosition < 425.0636) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 18) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-
-      //   //Trough
-      //   if(operatorController.getAButton()) {
-      //     if(armPosition >= 0 && armPosition < 540.9) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 545.9) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-        
-      //   //L2
-      //   if(operatorController.getBButton()) {
-      //     if(armPosition >= 0 && armPosition < 540.9) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 545.9) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-        
-      //   //L3
-      //   if(operatorController.getXButton()) {
-      //     if(armPosition >= 0 && armPosition < 335.42) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 340) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-
-      //   //L4
-      //   //375.5
-      //   //lm: 541.60
-      //   if(operatorController.getYButton()) {
-      //     if(armPosition >= 0 && armPosition < 333.59) {
-      //       armMotorSpeed = 0.5;
-      //     }
-      //     if(armPosition > 338) {
-      //       armMotorSpeed = -0.5;
-      //     }
-      //   }
-      // }
-      // //Arm protecton
-      /*if (driveTrain.armMotor != null){
-        if (armLimitTop.get() == true  && operatorController.getRightY() < 0){
-          armMotorSpeed = 0.0;
+        //player Station
+         if(operatorController.getRightTriggerAxis() > 0) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.PLAYER);
         }
-      }
 
-      if (driveTrain.liftMotor != null){
+        //Trough
+        if(operatorController.getAButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
+        } 
+
+        //Level 2
+        if(operatorController.getBButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L2);
+        } 
+
+        //Level 3
+        if(operatorController.getXButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L3);
+        } 
+
+        //Level 4
+        if(operatorController.getYButton()) {
+          armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L4);
+        } 
         
-        if (stringLiftLimit.get() ==  0 && operatorController.getRightY() > 0){
-        armMotorSpeed = 0.0;
-        }
+      } 
+      else {
+        armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
       }
-        */
-        System.out.println("armMotorSpeed:" + armMotorSpeed);
-
       driveTrain.armMotor.set(armMotorSpeed);
-    
+
+      
     }
   
 
-    //System.out.println("LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+    
     
     //Controls for the Scoring Lift
     if (driveTrain.liftMotor != null) {
@@ -424,69 +371,49 @@ public class Robot extends TimedRobot {
      //System.out.println(driveTrain.liftMotor.getEncoder().getPosition());
       
       if(operatorController.getLeftBumperButton()) {
-//System.out.println("liftMotorPosition: " + liftMotorPosition);
-
         //Human Player
         if(operatorController.getRightTriggerAxis() > 0) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 146.28) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 271) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.PLAYER);
+          
         }
 
         //Trough
         if(operatorController.getAButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 15) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 20) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
         }
         
         //L2 
-        //Arm:540.9
-        //lm: 18
         if(operatorController.getBButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 6) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 11) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L2);
         }
         
         //L3
         if(operatorController.getXButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 0) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 1) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L3);
         }
 
         //L4
         if(operatorController.getYButton()) {
-          if(liftMotorPosition >= 5 && liftMotorPosition < 263) {
-            liftMotorSpeed = 1;
-          }
-          if(liftMotorPosition > 268) {
-            liftMotorSpeed = -1;
-          }
+          liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L4);
         }
       }
+      else {
+        liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
+      }
 
-      // if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+      if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
+        liftMotorSpeed = 0;
+        driveTrain.liftMotor.getEncoder().setPosition(0.0);
+
+        System.out.println("Bottom Limit Hit");
+      } 
+
+      // if(!liftMotorPosition < 0 || liftMotorPosition > 40) {
       //   liftMotorSpeed = 0;
-      //   driveTrain.liftMotor.getEncoder().setPosition(0.0);
-
       //   System.out.println("Bottom Limit Hit");
-      // } 
+      // }
 
-      System.out.println("liftMotorSpeed:" + liftMotorSpeed);
+      //System.out.println("liftMotorSpeed:" + liftMotorSpeed + "lm current: " + driveTrain.liftMotor.getOutputCurrent());
       driveTrain.liftMotor.set(liftMotorSpeed);
     }
 
@@ -512,56 +439,107 @@ public class Robot extends TimedRobot {
 
       }
 
-    //System.out.println("climbHeight: " + climbHeight);
-    driveTrain.climbMotor.set(climbSpeed);
-
-    if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
+      //System.out.println("climbHeight: " + climbHeight);
+      
+      if (!operatorController.getBButton() && climbHeight > 115 && climbSpeed > 0){
+          climbSpeed = 0;
+      } 
+      if (!operatorController.getBButton() && climbHeight < 5 && climbSpeed < 0){
         climbSpeed = 0;
-    } 
-    if (!operatorController.getBButton() && climbHeight < 5 && climbSpeed < 0){
-      climbSpeed = 0;
-    } 
+      }
 
-  }
+      driveTrain.climbMotor.set(climbSpeed);
+    }
 
 
-    //Outake and intake controls
+    //Outake and intake controls 
     //if statements for the algae (it goes faster to fling the algae away)
     //if else statements for the coral intake and outake
     if (!oldDriveBase) {
       double outTakeSpeed = 0;
 
-      if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = -1;
-      } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = -0.5;
+      if (!operatorController.getLeftBumper()){
+
+        if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
+          outTakeSpeed = -1;
+          enableIntakeControls = buttonStates.Pressed;
+        } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
+          outTakeSpeed = -0.5;
+          enableIntakeControls = buttonStates.Pressed;
+        }
+
+        if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
+          outTakeSpeed = 1;
+          enableIntakeControls = buttonStates.Pressed;
+        } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
+          outTakeSpeed = 0.5;
+          enableIntakeControls = buttonStates.Pressed;
+        }
+
+        if(MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) == 0 && MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) == 0) {
+          enableIntakeControls = buttonStates.Released;
+        }
+
       }
 
-      if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-        outTakeSpeed = 1;
-      } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-        outTakeSpeed = 0.5;
-      }
+      //System.out.println("enableIntakeControls: " + enableIntakeControls);
+
       
+      
+
+      //Prox sensor lol
+
+      if (hasPiece() == true) {
+        if(intakeTime < 10 ){
+          intakeTime++;
+        }
+        if(intakeTime >= 10 && intakeTime < 100 ){
+          outTakeSpeed = 0; 
+          intakeTime++;
+        }
+        System.out.println("Caught one!!!: intakeTime: " + intakeTime);
+      }
+      else {
+        intakeTime = 0;
+      }
       driveTrain.outTakeSet(outTakeSpeed);
-
-      //Prox sensor
-      
-      if (hasPiece() == true){
-        driveTrain.outTakeSet(0);
-        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
-      }
-
     }
+
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);
+
   if(controller.getAButton()){
-    driveTrain.turny(-90.0);
-    System.out.println("TargetAngle" + 90 + "GyroAngle" + driveTrain.gyro.getAngle());
+    //gotoPose.execute(FieldPose.BLUE_22);
+
+    // if(desiredAngle == 0) {
+       desiredAngle = 90;
+    // }
+    // if(desiredAngle == 90) {
+    //   desiredAngle = 120;
+    // }
+    // if(desiredAngle == 120) {
+    //   desiredAngle = 180;
+    // }
+    // if(desiredAngle == 180) {
+    //   desiredAngle = -90;
+    // }
+    // if(desiredAngle == -90) {
+    //   desiredAngle = 0;
+    // }
+
+    driveTrain.turnBotToAngle(desiredAngle);
   }
+  intakeTime++;
 }
 
+int desiredAngle = 0;
+
+buttonStates enableIntakeControls = buttonStates.NotPressed;
+
+enum buttonStates {
+  NotPressed, Pressed, Released
+}
   @Override
   public void disabledInit() {
   }

@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
@@ -21,6 +23,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,6 +32,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -76,9 +80,10 @@ public class driveTrain {
     double currentHeightLift = 0;
 
     Calendar calendar = Calendar.getInstance();
-    
+    //DigitalInput limitSensorTop = new DigitalInput(7);
     DigitalInput limitSensorBottom = new DigitalInput(5);
- //AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+    AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+    AnalogPotentiometer potArm = new AnalogPotentiometer(1,90, 0);
 
     double powerMulti = 0.6;
 
@@ -87,6 +92,9 @@ public class driveTrain {
     DriverStation.Alliance alliancecolor;
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
+
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.01, 0, 0, new TrapezoidProfile.Constraints(20, 50));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(20, 50));
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
@@ -98,7 +106,7 @@ public class driveTrain {
             //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
             leftFront = new SwerveModule(0,76.40100191002506, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,45.88528614713215-180, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,-159.65606199140154-180, 10, 11, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,-173.11333482783334-180-10, 10, 11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,-96.41761441044036-180, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
@@ -109,7 +117,20 @@ public class driveTrain {
     
       
             armMotor = new TalonFX(3);
+
+            TalonFXConfiguration toConfigure = new TalonFXConfiguration();
+            CurrentLimitsConfigs m_currentLimits = new CurrentLimitsConfigs();
+
+            m_currentLimits.SupplyCurrentLimit = 10; // Limit to 1 amps
+            m_currentLimits.SupplyCurrentLimitEnable = true; // And enable it
+            m_currentLimits.StatorCurrentLimit = 10; // Limit stator to 20 amps
+            m_currentLimits.StatorCurrentLimitEnable = true; // And enable it
+
+            toConfigure.CurrentLimits = m_currentLimits;
+
+            armMotor.getConfigurator().apply(toConfigure);
             armMotor.setNeutralMode(NeutralModeValue.Brake);
+
             //armMotor.getEncoder().setPosition(0.0);
             zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
             //armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -124,7 +145,7 @@ public class driveTrain {
       
             pid = new PIDController(0.0025+0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
-
+        
          //   liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 
         else {
@@ -154,8 +175,10 @@ public class driveTrain {
             stateStdDevs,
             visionMeasurementStdDevs);
     }
-
-    void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
+        /**
+         * Field Relative Drive.
+         */
+      void drive(double xSpeed, double ySpeed, double rot, boolean highSpeed, boolean lowSpeed) {
         ChassisSpeeds control = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(control);
     
@@ -290,41 +313,41 @@ public class driveTrain {
             return null;
     }
 
-    void liftLevelSet(int level) {
-        currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
-        switch(level) {
-            case 1: 
-            targetLiftHeight = 0;
-            break;
+    // void liftLevelSet(int level) {
+    //     currentHeightLift = 2.66666666667*liftMotor.getEncoder().getPosition();
+    //     switch(level) {
+    //         case 1: 
+    //         targetLiftHeight = 0;
+    //         break;
 
-            case 2:
-            targetLiftHeight = 0;
-            break;
+    //         case 2:
+    //         targetLiftHeight = 0;
+    //         break;
 
-            case 3:
-            targetLiftHeight = 0;
-            break;
+    //         case 3:
+    //         targetLiftHeight = 0;
+    //         break;
 
-            case 4:
-            targetLiftHeight = 431.8;
-            break;
+    //         case 4:
+    //         targetLiftHeight = 431.8;
+    //         break;
 
-        }
-        pidLift = new PIDController(.1,0 ,0 );
-        liftSpeed = pidLift.calculate(currentHeightLift, targetLiftHeight);
-        liftMotor.set(liftSpeed);
-    }
+    //     }
+    //     pidLift = new PIDController(.00001,0 ,0 );
+    //     liftSpeed = pidLift.calculate(currentHeightLift, targetLiftHeight);
+    //     liftMotor.set(liftSpeed);
+    // }
 
     void outTakeSet(double speed) {
         //System.out.println("outTakeSet: " + speed);
-        outTakeMotorOuter.set(speed*.5);
+        outTakeMotorOuter.set(speed);
         outTakeMotorInner.set(-speed);
     }
-    void turny(double targetAngle){
+    void turnBotToAngle(double targetAngle){
         double currentAngle = gyro.getAngle();
-        double targetAngletest = pid.calculate(currentAngle,targetAngle);
-        targetAngletest = MathUtil.clamp(targetAngletest,-0.3, 0.3);
-        drive(0, 0, targetAngletest, false, false);
+        double rotationVal = pid.calculate(currentAngle,targetAngle);
+        rotationVal = MathUtil.clamp(rotationVal,-0.3, 0.3);
+        drive(0, 0, rotationVal, false, false);
     }
     void armSet(int targetAngle) {
         //currentAngleArm = armMotor.getEncoder().getPosition();
@@ -341,172 +364,117 @@ public class driveTrain {
     enum ShortcutType {
         PLAYER, L1, L2, L3, L4
     }
-    PIDController pidShortcutArm = new PIDController(0.2, 0, 0);
-    PIDController pidShortcutLift = new PIDController(0.2, 0, 0);
 
-    double armPlayerPosition = 346.59;
-    double armL1Position = 540.9;
-    double armL2Position = 540.9;
-    double armL3Position = 335.42;
-    double armL4Position = 346.59;
+    double armPlayerPosition = 0;
+    double armL1Position = -10;
+    double armL2Position = 0;
+    double armL3Position = -100;
+    double armL4Position = -92.8;
 
-    double liftPlayerHeight = 265.957;
-    double liftL1Height = 18;
-    double liftL2Height = 302;
-    double liftL3Height = 0;
-    double liftL4Height = 443.45;
+    double liftPlayerHeight = 34;
+    double liftL1Height = 34.3;
+    double liftL2Height = 60.8;
+    double liftL3Height = 11.5;
+    double liftL4Height = 66.4;
 
-    void ShortCut(ShortcutType shortcut) {
-        if (armMotor != null) {
-            //var armPosition = armMotor.getEncoder().getPosition();
+    double armClampSpeed = 0.3;
+    double liftClampSpeed = 0.7;
 
-            double armMotorSpeed = 0;
-            double armClampSpeed = 0.05;
+    double armMotorSpeed = 0;
+    double liftMotorSpeed = 0.0;
 
-            //System.out.println("armPosition: " + armPosition);
+    double liftMotorPosition = 0.0;
+    double armPosition = 0.0;
 
-            //Human Player
-            //if(shortcut == ShortcutType.PLAYER) {
-                // armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
+    double ShortCutLift(ShortcutType shortcut) {
+        liftMotorSpeed = 0.0;
 
-             /* if(armPosition >= 0 && armPosition < armPlayerPosition) {
-                    armMotorSpeed = 0.5;
-                }
-                if(armPosition > armPlayerPosition+2) {
-                    armMotorSpeed = -0.5;
-                }
-            }
-
-            //L1
-            if(shortcut == ShortcutType.L1) {
-                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL1Position);
-
-                if(armPosition >= 0 && armPosition < armL1Position) {
-                    armMotorSpeed = 0.5;
-                }
-                if(armPosition > armL1Position+5) {
-                    armMotorSpeed = -0.5;
-                }
-            }
-            
-            //L2
-            if(shortcut == ShortcutType.L2) {
-                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL2Position);
-
-                if(armPosition >= 0 && armPosition < armL2Position) {
-                    armMotorSpeed = 0.5;
-                }
-                if(armPosition > armL2Position+5) {
-                    armMotorSpeed = -0.5;
-                }
-            }
-            
-            //L3
-            if(shortcut == ShortcutType.L3) {
-                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL3Position);
-
-                if(armPosition >= 0 && armPosition < armL3Position) {
-                    armMotorSpeed = 0.5;
-                }
-                if(armPosition > armL3Position+5) {
-                    armMotorSpeed = -0.5;
-                }
-            }
-
-            //L4
-            if(shortcut == ShortcutType.L4) {
-                //armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
-                
-                if(armPosition >= 0 && armPosition < armL4Position) {
-                    armMotorSpeed = 0.5;
-                }
-                if(armPosition > armL4Position+5) {
-                    armMotorSpeed = -0.5;
-               }
-            }*/
-            
-            armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-           armMotor.set(armMotorSpeed);
+        if (armMotor == null || liftMotor == null) {
+            System.out.println("Lift/Arm Motor Issue--Abort---");
+            return 0;
         }
 
-        if (liftMotor != null) {
-            var liftMotorPosition = liftMotor.getEncoder().getPosition();
-            double liftMotorSpeed = 0;
-            double liftClampSpeed = 1;
-                    
-            //Human Player
-            if(shortcut == ShortcutType.PLAYER) {
-                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftPlayerHeight);
+        liftMotorPosition = potLift.get();
 
-                if(liftMotorPosition >= 0 && liftMotorPosition < liftPlayerHeight) {
-                    liftMotorSpeed = 0.5;
-                }
-                if(liftMotorPosition > liftPlayerHeight+2) {
-                    liftMotorSpeed = -0.5;
-                }
-            }
-
-            //L1
-            if(shortcut == ShortcutType.L1) {
-                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL1Height);
-
-                if(liftMotorPosition >= 0 && liftMotorPosition < liftL1Height) {
-                    liftMotorSpeed = 0.5;
-                }
-                if(liftMotorPosition > liftL1Height+2) {
-                    liftMotorSpeed = -0.5;
-                }
-            }
-            
-            //L2 
-            if(shortcut == ShortcutType.L2) {
-                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL2Height);
-                
-                if(liftMotorPosition >= 0 && liftMotorPosition < liftL2Height) {
-                    liftMotorSpeed = 0.5;
-                }
-                if(liftMotorPosition > liftL2Height+5) {
-                    liftMotorSpeed = -0.5;
-                }
-            }
-            
-            //L3
-            if(shortcut == ShortcutType.L3) {
-                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL3Height);
-
-                if(liftMotorPosition >= 0 && liftMotorPosition < liftL3Height) {
-                    liftMotorSpeed = 0.5;
-                }
-                if(liftMotorPosition > liftL3Height + 1) {
-                    liftMotorSpeed = -0.5;
-                }
-            }
-    
-            //L4
-            if(shortcut == ShortcutType.L4) {
-                // liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
-
-                if(liftMotorPosition >= 0 && liftMotorPosition < liftL4Height) {
-                    liftMotorSpeed = 0.5;
-                }
-                if(liftMotorPosition > liftL4Height+5) {
-                    liftMotorSpeed = -0.5;
-                }
-            }
-    
-            if (!limitSensorBottom.get() && liftMotorSpeed > 0) {
-                liftMotorSpeed = 0;
-                liftMotor.getEncoder().setPosition(0.0);
-    
-                //System.out.println("Bottom Limit Hit");
-            } 
-    
-            //System.out.println("liftMotorSpeed:" + liftMotorSpeed);
-            //liftMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
-
-            liftMotor.set(liftMotorSpeed);
+        //Human Player
+        if(shortcut == ShortcutType.PLAYER) {
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftPlayerHeight);
         }
+
+        //L1
+        if(shortcut == ShortcutType.L1) {
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL1Height);
+        }
+
+        //L2
+        if(shortcut == ShortcutType.L2) {
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL2Height);
+        }
+        
+        //L3
+        if(shortcut == ShortcutType.L3) {
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL3Height);
+        }
+
+        //L4 
+        if(shortcut == ShortcutType.L4) {
+            liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
+        }
+            
+        if (!limitSensorBottom.get() && liftMotorSpeed > 0) {
+            liftMotorSpeed = 0;
+            liftMotor.getEncoder().setPosition(0.0);
+        }
+
+        liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
+
+        return liftMotorSpeed;
+    }
+
+    double ShortCutArm(ShortcutType shortcut) {
+        armMotorSpeed = 0;
+
+        if (armMotor == null || liftMotor == null) {
+            System.out.println("Lift/Arm Motor Issue--Abort---");
+            return 0;
+        }
+
+        armPosition = armMotor.getPosition().getValueAsDouble();
+
+        //Human Player
+        if(shortcut == ShortcutType.PLAYER) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armPlayerPosition);
+        }
+
+        //L1
+        if(shortcut == ShortcutType.L1) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL1Position);
+        }
+
+        //L2
+        if(shortcut == ShortcutType.L2) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL2Position);
+        }
+        
+        //L3
+        if(shortcut == ShortcutType.L3) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL3Position);
+        }
+
+        //L4 
+        if(shortcut == ShortcutType.L4) {
+            armMotorSpeed = pidShortcutArm.calculate(armPosition, armL4Position);
+        }
+            
+        armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
+
+        System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
+
+        return armMotorSpeed;
     }
 
 
+    double LLGetY() {
+        return -1;
+    }
 }

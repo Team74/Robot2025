@@ -6,6 +6,8 @@ import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,24 +20,24 @@ public class limeLightTest {
     double currentTarget;
     PIDController PIDAngle = new PIDController(0.016667*2, 0, 0);
     PIDController PIDPush = new PIDController(0.016667*1.2, 0, 0);
-    private final PIDController rotationPID;
-    private final PIDController rangePID;
+    private final ProfiledPIDController rotationPID;
+    private final ProfiledPIDController rangePID;
     driveTrain driveTrain;
     limeLightTest(driveTrain _DriveTrain) {
         driveTrain = _DriveTrain;
         gyro = driveTrain.gyro;
 
         // Tune these PID values for your robot
-    //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
-    rotationPID = new PIDController(.05, 0.0, 0.001);
-    rangePID = new PIDController(0.3, 0.0, 0.01);
+        //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
+        rotationPID = new ProfiledPIDController(.05, 0.0, 0.0, new TrapezoidProfile.Constraints(5, 10));
+        rangePID = new ProfiledPIDController(0.3, 0.0, 0.0, new TrapezoidProfile.Constraints(5, 10));
 
-    // Set tolerance for both controllers
-    rotationPID.setTolerance(0.3); // 1 degree tolerance
-    rangePID.setTolerance(0.01); // 5cm tolerance
-    
-    rotationPID.enableContinuousInput(-180.0, 180.0);
-    rangePID.enableContinuousInput(-180.0, 180.0);
+        // Set tolerance for both controllers
+        rotationPID.setTolerance(0.3); // 1 degree tolerance
+        rangePID.setTolerance(0.01); // 5cm tolerance
+        
+        rotationPID.enableContinuousInput(-180.0, 180.0);
+        rangePID.enableContinuousInput(-180.0, 180.0);
     }
 
     public double LimeTest () {
@@ -144,7 +146,7 @@ public class limeLightTest {
     }
 
     // simple proportional ranging control with Limelight's "ty" value
-    // this works best if your Limelight's mount height and target mount height are different.
+    // this works best if your Limelight's mount height and target mount height are different.  
     // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
     public double limelight_range_proportional(double kMaxSpeed)
     {    
@@ -156,31 +158,29 @@ public class limeLightTest {
     }
 
     void LimeTarget(double getPeriod){
-    double ty = LimelightHelpers.getTY("limelight");
-    
+        double rotationOutput = LLGetRotation();
+        double rangeOutput = LLGetRangeOutput();
+        driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+    }
+
+    double LLGetRangeOutput() {
+        var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+        double dist = tag.getTranslation().getNorm();
         
-    // Get distance from target using 3D pose data
-    double currentRange = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getZ();
-    var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
-    var bla = LimelightHelpers.getBotPose2d("limelight");
-    double dist = tag.getTranslation().getNorm();
+        // Calculate control outputs
+        double rangeOutput = rangePID.calculate(dist, 0.2);
+        rangeOutput *= 4;
     
-      
-   
+        rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
+        
+        return rangeOutput;
+    }
 
-    // Calculate control outputs
-    double rotationOutput = rotationPID.calculate(ty, 0.0);
-    double rangeOutput = rangePID.calculate(dist, 0.2);
-    rangeOutput *= 4;
-    
+    double LLGetRotation() {
+        double ty = LimelightHelpers.getTY("limelight");
+        
+        double rotationOutput = rotationPID.calculate(ty, 0.0);
 
-    rangeOutput = MathUtil.applyDeadband(rangeOutput, 0.1);
-
-    // Apply control outputs to robot
-    // Forward/backward movement for range control
-    // Left/right movement is zero
-    // Rotation is for horizontal alignment
-    //driveTrain.driveLL(-rangeOutput, 0, -rotationOutput, true);
-    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+        return rotationOutput;
     }
 }
