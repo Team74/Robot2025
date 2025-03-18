@@ -235,7 +235,6 @@ public class Robot extends TimedRobot {
   }
 
   boolean hasPiece() {
-    intakeTime = 0;
     return !driveTrain.proxSensor.get();
   }
   @Override
@@ -483,8 +482,12 @@ public class Robot extends TimedRobot {
 
       if (hasPiece() == true && intakeTime < 100 ){
         outTakeSpeed = 0; 
-      
-        System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
+        intakeTime++;
+
+        System.out.println("Caught one!!!: intakeTime: " + intakeTime);
+      }
+      else {
+        intakeTime = 0;
       }
       driveTrain.outTakeSet(outTakeSpeed);
     }
