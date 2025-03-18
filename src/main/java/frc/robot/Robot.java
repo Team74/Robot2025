@@ -230,6 +230,8 @@ public class Robot extends TimedRobot {
     if (alliancecolor == bluecolor) {
       // does something
     }
+
+    desiredAngle = 0;
   }
 
   boolean hasPiece() {
@@ -247,49 +249,8 @@ public class Robot extends TimedRobot {
     //   ftNetworkTableEntry.setString(fCamera.getName());
     // }
     //auton climber feature
-    if (operatorController.getLeftBumperButton() && limelightcam != null && limelightcam.CanSee()) {
-
-      RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-      for (RawFiducial fiducial : fiducials) {
-        int id = fiducial.id;
-        double txnc = fiducial.txnc;
-        double tync = fiducial.tync;
-        double ta = fiducial.ta;
-        double distToCamera = fiducial.distToCamera;
-        double distToRobot = fiducial.distToRobot;
-        double ambiguity = fiducial.ambiguity;
-
-        double Rotation = limelightcam.calculaterotation(90.0);
-        // System.out.println("rot: " + Rotation);
-        if (id == 14 || id == 15 || id == 5 || id == 4) {
-          if (controller.getLeftY() != 0) {
-            driveTrain.drive(controller.getLeftX(), 0, Rotation, false, false);
-            
-          }
-        }
-      }
-    }
-
+    
     dashboard.updateDashboard();
-    double trackSide = 0;
-    double trackTurn = 0;
-    double trackPush = 0;
-    if (controller.getLeftTriggerAxis() > 0.1) {
-      RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-      for (RawFiducial fiducial : fiducials) {
-        int id = fiducial.id;
-        double txnc = fiducial.txnc;
-        double tync = fiducial.tync;
-        double ta = fiducial.ta;
-        double distToCamera = fiducial.distToCamera;
-        double distToRobot = fiducial.distToRobot;
-        double ambiguity = fiducial.ambiguity;
-        //System.out.println("Tag: " + id);
-      }
-    }
-    /*trackSide = limelightcam.LimeTest();
-    trackTurn = limelightcam.ReefCenter();
-    trackPush = limelightcam.ReefPush();*/
 
     if (zeroMode) {
       System.out.println(
@@ -325,16 +286,16 @@ public class Robot extends TimedRobot {
     }
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
       limelightcam.LimeTarget(getPeriod());
-
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton(), controller.getLeftBumperButton());
     }
 
     var potval = driveTrain.potLift.get();
-
+    var potArmVal = driveTrain.potArm.get();
+    
     if(operatorController.getLeftBumperButton()) {
-      //System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition());
+      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
     }
 
 
@@ -525,18 +486,36 @@ public class Robot extends TimedRobot {
       
         System.out.println("Caught one!!!: " + (outTakeSpeed*0.1));
       }
-    driveTrain.outTakeSet(outTakeSpeed);
+      driveTrain.outTakeSet(outTakeSpeed);
     }
 
     m_field.setRobotPose(driveTrain.odometry.getEstimatedPosition());
 
     dashboard.updatefielddata (m_field);
   if(controller.getAButton()){
-    driveTrain.turny(-90.0);
-   // System.out.println("TargetAngle" + 90 + "GyroAngle" + driveTrain.gyro.getAngle());
+    if(desiredAngle == 0) {
+      desiredAngle = 90;
+    }
+    if(desiredAngle == 90) {
+      desiredAngle = 120;
+    }
+    if(desiredAngle == 120) {
+      desiredAngle = 180;
+    }
+    if(desiredAngle == 180) {
+      desiredAngle = -90;
+    }
+    if(desiredAngle == -90) {
+      desiredAngle = 0;
+    }
+
+    driveTrain.turnBotToAngle(desiredAngle);
   }
   intakeTime++;
 }
+
+int desiredAngle = 0;
+
 buttonStates enableIntakeControls = buttonStates.NotPressed;
 
 enum buttonStates {
