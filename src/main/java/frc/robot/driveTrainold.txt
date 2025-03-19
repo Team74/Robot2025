@@ -89,7 +89,7 @@ public class driveTrain {
             armMotor.getEncoder().setPosition(625);
       
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
-            outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
+           // outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
 
             climbMotor = new SparkMax(12, MotorType.kBrushless);
             climbMotor.getEncoder().setPosition(0.0);
@@ -262,7 +262,7 @@ public class driveTrain {
 
     void outTakeSet(double speed) {
         outTakeMotorOuter.set(speed);
-        outTakeMotorInner.set(-speed);
+       // outTakeMotorInner.set(-speed);
     }
 
     void armSet(int targetAngle) {
