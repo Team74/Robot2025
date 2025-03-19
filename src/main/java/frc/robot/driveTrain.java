@@ -96,6 +96,7 @@ public class driveTrain {
     ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.015, 0, 0, new TrapezoidProfile.Constraints(20, 50));
     ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0,new TrapezoidProfile.Constraints(20, 50));
 
+    
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
         dashboard = dash;

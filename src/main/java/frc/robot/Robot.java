@@ -25,6 +25,9 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -64,6 +67,9 @@ public class Robot extends TimedRobot {
   limeLightTest limelightcam;
   driveTrain driveTrain;
   LimelightHelpers LimeHelp;
+
+  BotLED lights = new BotLED(3);
+  boolean isRainbow = false;
 
   StartToReef startToReef;
   driveForwardAuton driveForward;
@@ -118,13 +124,13 @@ public class Robot extends TimedRobot {
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
-    left_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    left_2p = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
     gotoPose = new GotoPose(driveTrain);
     limelightcam = new limeLightTest(driveTrain);
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
-    m_chooser.addOption("Middle_1P", auto_AutonMiddle_basic);
+    m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
@@ -132,6 +138,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    
     
   }
 
@@ -181,7 +188,7 @@ public class Robot extends TimedRobot {
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
-    left_2p = new AutonLeft_2P(driveTrain, limelightcam);
+    left_2p = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
 
     autoState = new Object[] { "Starting", 0 };
@@ -211,7 +218,7 @@ public class Robot extends TimedRobot {
       break;
       case auto_AutonLeft_2P:
         
-        autoState = left_2p.Run_2P(autoState);
+        autoState = left_2p.Run_2P(autoState, kDefaultPeriod);
       break;
       case auto_DriveTowardDriver:
         
@@ -232,6 +239,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
+   
+
     DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
     DriverStation.Alliance redcolor = Alliance.Red;
     DriverStation.Alliance bluecolor = Alliance.Blue;
@@ -250,6 +260,7 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
+
     //camera switching for driver's view
     // if (controller.getAButton()){
     //   System.out.println("Setting rearcamera");
@@ -532,6 +543,22 @@ public class Robot extends TimedRobot {
     // if(desiredAngle == -90) {
     //   desiredAngle = 0;
     // }
+
+
+    //LED controls???
+    if(controller.getYButton()){
+          isRainbow = !isRainbow;
+        }
+
+    if (!isRainbow) {
+      if (hasPiece() == true) {// green
+        lights.setColor(0, 255, 0);
+        System.out.println("piece in");
+      } 
+    } else {
+      lights.rainbow();
+    }
+  
 
     driveTrain.turnBotToAngle(desiredAngle);
   }
