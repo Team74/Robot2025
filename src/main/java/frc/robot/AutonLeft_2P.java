@@ -12,18 +12,24 @@ public class AutonLeft_2P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
+    boolean hasPeice;
     
-    public AutonLeft_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
+    public AutonLeft_2P(driveTrain _driveTrain, limeLightTest _limelightcam, boolean _hasPeice){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
+        hasPeice = _hasPeice;
 
     }
 
-    Object[] Run_2P(Object[] autoState) {
+    Object[] Run_2P(Object[] autoState, double getPeriod) {
         
         String currentState = autoState[0].toString();
-        
-        System.out.println("current state: " + currentState);
+        var rangeOutput = limelightcam.LLGetRangeOutput();
+        var rotationOutput = limelightcam.LLGetRotation();
+        var currentTargetId = LimelightHelpers.getFiducialID("limelight");
+
+        double armMotorSpeed = 0;
+        double liftMotorSpeed = 0;
 
         switch(currentState){
             
@@ -34,25 +40,16 @@ public class AutonLeft_2P {
             break;
 
             case "Move'nToReef":
-            var April_22 = driveTrain.GetAprilTagTelemotry(22);
-            var armPosition = 0;//driveTrain.armMotor.getEncoder().getPosition();
-            double armMotorSpeed = 0;
-            var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
-            double liftMotorSpeed = 0;
-
-            if(time > 0 && time <= 290&& April_22 !=null) {
-                //???Could this work???
-                //driveTrain.ShortCut(ShortcutType.L4);
-                                
-                if(armPosition >= 0 && armPosition <  540.9) {
-                    armMotorSpeed = 1;
-                }
+            
+            if(time > 0 && time <= 150) {
+                driveTrain.ShortCutArm(ShortcutType.L1);
+                driveTrain.ShortCutLift(ShortcutType.L1);
                 driveTrain.armMotor.set(armMotorSpeed);
-
-                if(liftMotorPosition >= 0 && liftMotorPosition < 15) {
-                    liftMotorSpeed = 1;
-                }
-                driveTrain.liftMotor.set(liftMotorSpeed);
+                driveTrain.liftMotor.set(liftMotorSpeed);  
+            }
+            if (time > 150 && time < 151){
+                driveTrain.armMotor.set(0);
+                driveTrain.liftMotor.set(0);
             }
 
             if(time > 10 && time <= 75) {
@@ -66,77 +63,147 @@ public class AutonLeft_2P {
             }
             if (time > 135 && time <= 290) {
                 driveTrain.drive(0, 0, 0, false, false);
-                driveTrain.armMotor.set(0);
-           }
-           if (time > 290) {
-                driveTrain.armMotor.set(0);
-                driveTrain.liftMotor.set(0);
-
                 time = 0;
-                currentState = "Score";    
-            }
+                currentState = "adjust";
+           }
+           
+                   
              break;
+                
+            case "adjust": 
+                var April_22 = driveTrain.GetAprilTagTelemotry(22);
+                var April_9 = driveTrain.GetAprilTagTelemotry(9);
 
-            case "Score": 
-
-                liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
-
-                if (time > 10 && time <= 30) {
-                    driveTrain.outTakeSet(-0.3);
-                } 
-                if(time > 30) {
-                    driveTrain.outTakeSet(0);
-
-                    time = 0;
-                    currentState = "Adjust'n111111111";    
+            if (April_22 != null){
+                
+                if (currentTargetId == 22){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){
+                        driveTrain.outTakeMotorInner.set(-.5);
+                        if (time > 150){
+                            driveTrain.outTakeMotorInner.set(0);
+                            time = 0;
+                            currentState = "ToPlayerStation";
+                        }
+                        
+                    }
                 }
-            break;
-
-
-            case "Adjust'n":
-            if (time > 10) {
-                driveTrain.drive(0.3, 0, 0, false, false);
+                
             }
-            if (time > 15) {
-                driveTrain.drive(0, 0, 0, false, false);
+
+            if (April_9 != null){
+                
+                if (currentTargetId == 9){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){
+                        driveTrain.outTakeMotorInner.set(-.5);
+                        if (time > 150){
+                            driveTrain.outTakeMotorInner.set(0);
+                            time = 0;
+                            currentState = "Score";
+                        }
+                        
+                    }
+                }
+                
             }
-            time = 0;
-            /*currentState - "ToPlayerStation" */
             break;
             
-            case "ToPlayerStation":
-            if (time > 10) {
+            case "Score":
+            if (time > 10 && time < 35) {
                 driveTrain.drive(-0.3, 0, 0, false, false);
             }
-            if (time > 35) {
+            if (time > 35 && time < 45) {
                 driveTrain.drive(-0.3, 0 , -0.5 , false, false);
             }
-            if (time > 45) {
+            if (time > 45 && time < 90) {
                 driveTrain.drive(0 , -.5, 0 , false, false);
             }  
             if (time > 90) {
                 driveTrain.drive(0, 0, 0, false, false);
+                time = 0;
+                currentState = "Adjust2"; 
             }
-            time = 0;
-            currentState = "ToReef2"; 
+            
             break;
             
-            case "ToReef2":
-            if (time > 10) {
-                driveTrain.drive(0.3, 0, 0, false, false);
-            }
-            if (time > 25) {
-                driveTrain.drive(0.3, 0, -0.35, false, false);
-            }
-            if (time > 50) {
-                driveTrain.drive(0.5 , 0, 0 , false, false);
-            }
-            if (time > 85) {
-                driveTrain.drive(0, 0, 0, false, false);
+            case "Adjust2":
+            April_22 = driveTrain.GetAprilTagTelemotry(22);
+            April_9 = driveTrain.GetAprilTagTelemotry(9);
+
+            if (April_22 != null){
+                
+                if (currentTargetId == 22){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){
+                        time = 0;
+                        currentState = "ToPlayerStation";
+                    }
+                }
+                
             }
 
-            time = 0;
+            if (April_9 != null){
+                
+                if (currentTargetId == 9){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){
+                        time = 0;
+                        currentState = "ToPlayerStation";
+                    }
+                }
+                
+            }
             break;
+
+            case "ToPlayerStation":
+
+            var April_2 = driveTrain.GetAprilTagTelemotry(22);
+            var April_12 = driveTrain.GetAprilTagTelemotry(9);
+
+            if (time > 0 && time > 20){
+                driveTrain.drive(0, 0, 0.4, false, false);
+            }
+
+            
+            if (April_2 != null){
+                
+                if (currentTargetId == 2){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){ 
+                        time = 0;
+                        currentState = "intake";  
+                    }
+                }
+                
+            }
+
+            if (April_12 != null){
+                
+                if (currentTargetId == 12){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){
+                        time = 0;
+                        currentState = "intake";        
+                    }
+                }
+                
+            }
+            break;
+
+            case "intake":
+
+                if (time > 0 && time < 150){
+                    driveTrain.outTakeMotorInner.set(-0.5);
+                } else if (hasPeice == true){
+                    driveTrain.outTakeMotorInner.set(0);
+                } else if (time > 200){
+                    driveTrain.outTakeMotorInner.set(0);
+                    time = 0;
+                }
+            
+
+
             
              
             

@@ -65,13 +65,20 @@ public class AutonMiddle_Basic {
 
             case "Drive'nForward":
 
-                var April_21 = driveTrain.GetAprilTagTelemotry(21);
-                var April_10 = driveTrain.GetAprilTagTelemotry(10);
+                //var April_21 = driveTrain.GetAprilTagTelemotry(21);
+                //var April_10 = driveTrain.GetAprilTagTelemotry(10);
 
-                var rangeOutput = limelightcam.LLGetRangeOutput();
-                var rotationOutput = limelightcam.LLGetRotation();
+                //var rangeOutput = limelightcam.LLGetRangeOutput();
+                //var rotationOutput = limelightcam.LLGetRotation();
 
-                if (April_10 != null && currentTargetId == 10){
+                if (time > 0 && time < 150){
+                    driveTrain.drive(-0.3, 0, 0, false, false);
+                }
+                if (time > 151){
+                    driveTrain.drive(0, 0, 0, false, false);
+                }
+
+                /*if (April_10 != null && currentTargetId == 10){
                     if (time > 0 && time < 150){
                         driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
                     }
@@ -81,7 +88,7 @@ public class AutonMiddle_Basic {
                     if (time > 0 && time < 150){
                         driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
                     }
-                }
+                }*/
             
             break;
 
