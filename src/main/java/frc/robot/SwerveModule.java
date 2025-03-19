@@ -1,6 +1,8 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -42,6 +44,11 @@ public static final int kEncoderCPR = 42;
 public static final double kGearRatio = 8.1;
 public static final double kEncoderDistanceConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(kGearRatio));
 public static final double kEncoderVelocityConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(60*kGearRatio));
+public static final double METERSperWHEEL_REVOLUTION = Math.PI*kWheelDiameterMeters;
+public static final double DRIVE_MOTOR_TICKSperREVOLUTION = kGearRatio*kEncoderCPR;
+private final RelativeEncoder m_driveEncoder;
+private final RelativeEncoder m_angleEncoder;
+//private final DutyCycleEncoder m_absoluteEncoder;
 
 double turningFactor = kTurningEncoderPositionFactor;
 
@@ -75,6 +82,10 @@ double turningFactor = kTurningEncoderPositionFactor;
         turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
 
+        m_driveEncoder = driveMotor.getEncoder();
+        m_angleEncoder = turningMotor.getEncoder();
+        //m_absoluteEncoder = new DutyCycleEncoder(initialEncoderPort,360.0,initialEncoderOffset);
+        
         SparkMaxConfig drivingConfig = new SparkMaxConfig();
         SparkMaxConfig turningConfig = new SparkMaxConfig();
 
@@ -82,17 +93,17 @@ double turningFactor = kTurningEncoderPositionFactor;
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(kDrivingMotorCurrentLimit);
         
-        drivingConfig.encoder
-                .positionConversionFactor(kEncoderDistanceConversionFactor) // meters
-                .velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
+        // drivingConfig.encoder
+        //         .positionConversionFactor(kEncoderDistanceConversionFactor) // meters
+        //         .velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
         
         turningConfig
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(kTurningMotorCurrentLimit);
         
-        turningConfig.absoluteEncoder
-                .positionConversionFactor(turningFactor) // radians
-                .velocityConversionFactor(turningFactor / 60.0); //q radians per second
+        // turningConfig.absoluteEncoder
+        //         .positionConversionFactor(turningFactor) // radians
+        //         .velocityConversionFactor(turningFactor / 60.0); //q radians per second
 
         driveMotor.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -140,10 +151,12 @@ double turningFactor = kTurningEncoderPositionFactor;
         targetSpeed = MathUtil.clamp(targetSpeed, -0.75, 0.75);
         turningMotor.set(targetSpeed);
     }
+    
     void movey(double targetSpeed){
         targetSpeed = MathUtil.clamp(targetSpeed, -1.0, 1.0);
         driveMotor.set(targetSpeed*-1);
     }
+    
     void driveMotors (
         SwerveModule rightFrontMot, double rightFrontSpd,
         SwerveModule leftFrontMot, double leftFrontSpd, 
@@ -168,6 +181,15 @@ double turningFactor = kTurningEncoderPositionFactor;
         }
         
     }
+double distanceTraveled = 0.0;
+    public SwerveModulePosition getOdometryPosition() {
+        distanceTraveled += (driveMotor.getEncoder().getPosition()*METERSperWHEEL_REVOLUTION)/kEncoderCPR;
+       // System.out.println("dt: " + distanceTraveled);
+        // System.err.println("vel: " + driveMotor.getEncoder().getVelocity() + " mpr: " + METERSperWHEEL_REVOLUTION + " cpr: " + kEncoderCPR);
+        return new SwerveModulePosition( 
+            (driveMotor.getEncoder().getPosition()*METERSperWHEEL_REVOLUTION)/kEncoderCPR, new Rotation2d(Math.toRadians(encoder.get())));
+    }
+
 
     // public void setDesiredState(SwerveModuleState desiredState) {
     //     var encoderRotation = new Rotation2d(getRotation());

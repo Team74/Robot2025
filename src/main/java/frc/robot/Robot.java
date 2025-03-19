@@ -74,10 +74,10 @@ public class Robot extends TimedRobot {
   AutonMiddle_Basic auton_Basic;
   AutonDriveForward autonDriveForward;
 
-  // UsbCamera fCamera;
-  // UsbCamera rCamera;
+  UsbCamera fCamera;
+  UsbCamera rCamera;
   // //Joystick joy1Joystick = new Joystick(0);
-  //NetworkTableEntry ftNetworkTableEntry;
+  NetworkTableEntry ftNetworkTableEntry;
 
   reeftoplayertoprocessor willsClass;
 
@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
   private static final String auCenter_2P = "Center_2_Piece";
   private static final String auCenter_3P = "Center_3_Piece";*/
 
-  DriverStation.Alliance alliancecolor = DriverStation.getAlliance().get();
+  DriverStation.Alliance alliancecolor;
   private static final String auto_AutonMiddle_basic = "Middle_Basic";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
@@ -110,9 +110,13 @@ public class Robot extends TimedRobot {
 
 
   public Robot() {
-    // fCamera = CameraServer.startAutomaticCapture(0);
-    // // rCamera = CameraServer.startAutomaticCapture(2);
-    // ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
+
+    //alliancecolor = DriverStation.getAlliance().get();
+
+
+    fCamera = CameraServer.startAutomaticCapture(0);
+   // rCamera = CameraServer.startAutomaticCapture(1);
+    ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     driveTrain = new driveTrain(dashboard, alliancecolor);
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
@@ -132,7 +136,6 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    
   }
 
   public void robotInit() {
@@ -150,7 +153,7 @@ public class Robot extends TimedRobot {
     dashboard.updatefielddata (m_field); 
 
     m_field.getObject("traj").setTrajectory(m_trajectory);
-    CameraServer.startAutomaticCapture(); 
+    //CameraServer.startAutomaticCapture(); 
     // CameraServer.startAutomaticCapture(); 
     time = 0;
 
@@ -250,6 +253,12 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
+    var table = NetworkTableInstance.getDefault().getTable("limelight");
+    var ledMode = table.getEntry("ledMode"); // limelight's LED state (0-3).
+    var camMode = table.getEntry("camMode"); // limelight's operation mode (0-1).
+
+
+    System.out.println("ledMode: " + ledMode + " camMode: " + camMode);
     //camera switching for driver's view
     // if (controller.getAButton()){
     //   System.out.println("Setting rearcamera");
@@ -292,7 +301,7 @@ public class Robot extends TimedRobot {
       limelightcam.LimeTarget(getPeriod());
     } else {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
-          controller.getRightBumperButton(), controller.getLeftBumperButton());
+          controller.getRightBumperButton(), controller.getLeftTriggerAxis() > 0);
     }
 
     var potval = driveTrain.potLift.get();
@@ -477,19 +486,21 @@ public class Robot extends TimedRobot {
         }
 
       }
-      currentAngle = driveTrain.potArm.get();
-            if (currentAngle > 0 && currentAngle < 25) {
-              if (operatorController.getRightTriggerAxis() > 0)
-                outTakeSpeed = 0;  
-            } 
-                
-            
-            
-            Timer.delay(0.02);  //
+      currentAngle = driveTrain.armMotor.getPosition().getValueAsDouble();
 
-      //System.out.println("enableIntakeControls: " + enableIntakeControls);
-
-      
+      //currentAngle = driveTrain.potArm.get();
+      // if (currentAngle > -10 && currentAngle < 0) {
+      //   if (operatorController.getLeftTriggerAxis() > 0) {
+      //     outTakeSpeed = 0;  
+      //   }
+      // } 
+      // if (currentAngle > -90) {
+      //   if (operatorController.getRightTriggerAxis() > 0)
+      //     outTakeSpeed = 0;  
+      // } 
+          
+            
+       
       
 
       //Prox sensor lol
@@ -559,7 +570,10 @@ enum buttonStates {
 
   @Override
   public void testPeriodic() {
-
+    var potval = driveTrain.potLift.get();
+    var potArmVal = driveTrain.potArm.get();
+    
+    System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
   }
 
   @Override

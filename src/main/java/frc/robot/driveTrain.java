@@ -66,7 +66,7 @@ public class driveTrain {
     SparkMax liftMotor = null;
     TalonFX armMotor = null;
     SparkMax outTakeMotorOuter = null;
-    SparkMax outTakeMotorInner = null;
+    //SparkMax outTakeMotorInner = null;
     SparkMax climbMotor = null;
     PIDController pid;
     PIDController pidArm;
@@ -82,7 +82,7 @@ public class driveTrain {
     Calendar calendar = Calendar.getInstance();
     //DigitalInput limitSensorTop = new DigitalInput(7);
     DigitalInput limitSensorBottom = new DigitalInput(5);
-    AnalogPotentiometer potLift = new AnalogPotentiometer(0,90, 0);
+    AnalogPotentiometer potLift = new AnalogPotentiometer(3,90, 0);
     AnalogPotentiometer potArm = new AnalogPotentiometer(1,90, 0);
 
     double powerMulti = 0.6;
@@ -93,14 +93,15 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.06, 0, 0, new TrapezoidProfile.Constraints(40, 70));
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(40, 70));
     ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(40, 70));
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
         dashboard = dash;
         alliancecolor = _alliancecolor;
-
+//20.2
+//36.9
         if (!oldDriveBase) {
             // competition base CAN IDs
             //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
@@ -136,9 +137,9 @@ public class driveTrain {
             //armMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       
             outTakeMotorOuter = new SparkMax(47, MotorType.kBrushed);
-            outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
+            //outTakeMotorInner = new SparkMax(45, MotorType.kBrushed);
             outTakeMotorOuter.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-            outTakeMotorInner.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            //outTakeMotorInner.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             
             climbMotor = new SparkMax(12, MotorType.kBrushless);
             climbMotor.getEncoder().setPosition(0.0);
@@ -341,7 +342,7 @@ public class driveTrain {
     void outTakeSet(double speed) {
         //System.out.println("outTakeSet: " + speed);
         outTakeMotorOuter.set(speed);
-        outTakeMotorInner.set(-speed);
+      //  outTakeMotorInner.set(-speed);
     }
     void turnBotToAngle(double targetAngle){
         double currentAngle = gyro.getAngle();
@@ -368,16 +369,16 @@ public class driveTrain {
     double armPlayerPosition = 0;
     double armL1Position = -10;
     double armL2Position = 0;
-    double armL3Position = -100;
+    double armL3Position = -87;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 34;
-    double liftL1Height = 34.3;
-    double liftL2Height = 60.8;
-    double liftL3Height = 11.5;
-    double liftL4Height = 66.4;
+    double liftPlayerHeight = 28;
+    double liftL1Height = 34;
+    double liftL2Height = 52.5;
+    double liftL3Height = 2.58;
+    double liftL4Height = 60.5;
 
-    double armClampSpeed = 0.3;
+    double armClampSpeed = 0.4;
     double liftClampSpeed = 0.7;
 
     double armMotorSpeed = 0;
@@ -421,7 +422,7 @@ public class driveTrain {
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
         }
             
-        if (!limitSensorBottom.get() && liftMotorSpeed > 0) {
+        if (!limitSensorBottom.get() && liftMotorSpeed < 0) {
             liftMotorSpeed = 0;
             liftMotor.getEncoder().setPosition(0.0);
         }
