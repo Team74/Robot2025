@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -51,7 +52,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean zeroMode = false;
   boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
   int time = 0;
   int intakeTime = 0;
 
+  double currentAngle;
   /*private static final String driveForwardAuton = "Default_Auton";
   private static final String auAmp_2P = "Amp_2_Piece";
   private static final String auSource_2P = "Source_2_Piece";
@@ -190,7 +191,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    if (zeroMode == true){
+    if (driveTrain.zeroMode == true){
       System.out.println("System disabled"); 
       return; 
     }
@@ -261,7 +262,7 @@ public class Robot extends TimedRobot {
     
     dashboard.updateDashboard();
 
-    if (zeroMode) {
+    if (driveTrain.zeroMode) {
       System.out.println(
           "RF:" + driveTrain.rightFront.getRotation()
               + ", LF:" + driveTrain.leftFront.getRotation()
@@ -281,12 +282,6 @@ public class Robot extends TimedRobot {
         driveTrain.armMotor.setPosition(0.0);
         driveTrain.climbMotor.getEncoder().setPosition(0.0);
       }
-  
-
-    //test controls
-    if (controller.getXButton()) {
-      //System.out.println(driveTrain.gyro.getAngle());
-    }
    
     //Shortcut to align to the Apriltags
     if(controller.getBButton()) {
@@ -482,6 +477,15 @@ public class Robot extends TimedRobot {
         }
 
       }
+      currentAngle = driveTrain.potArm.get();
+            if (currentAngle > 0 && currentAngle < 25) {
+              if (operatorController.getRightTriggerAxis() > 0)
+                outTakeSpeed = 0;  
+            } 
+                
+            
+            
+            Timer.delay(0.02);  //
 
       //System.out.println("enableIntakeControls: " + enableIntakeControls);
 
@@ -498,7 +502,7 @@ public class Robot extends TimedRobot {
           outTakeSpeed = 0; 
           intakeTime++;
         }
-        System.out.println("Caught one!!!: intakeTime: " + intakeTime);
+        //System.out.println("Caught one!!!: intakeTime: " + intakeTime);
       }
       else {
         intakeTime = 0;

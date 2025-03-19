@@ -106,7 +106,7 @@ public class driveTrain {
             //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
             leftFront = new SwerveModule(0,76.40100191002506, 6, 14, zeroMode,oldDriveBase);
             rightFront = new SwerveModule(2,45.88528614713215-180, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,-173.11333482783334-180-10, 10, 11, zeroMode,oldDriveBase);
+            rightBack = new SwerveModule(3,-173.11333482783334-180-17, 10, 11, zeroMode,oldDriveBase);
             leftBack = new SwerveModule(1,-96.41761441044036-180, 19, 16, zeroMode,oldDriveBase);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
@@ -468,7 +468,7 @@ public class driveTrain {
             
         armMotorSpeed = MathUtil.clamp(armMotorSpeed, -armClampSpeed, armClampSpeed);
 
-        System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
+        //System.out.println("armPosition: " + armPosition + " liftMotorPosition: " + liftMotorPosition + " liftMotorSpeed: " + liftMotorSpeed + " armMotorSpeed: " + armMotorSpeed);
 
         return armMotorSpeed;
     }
