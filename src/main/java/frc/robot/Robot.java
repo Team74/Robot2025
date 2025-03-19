@@ -179,8 +179,15 @@ public class Robot extends TimedRobot {
     autoState = new Object[] { "Starting", 0 };
 
     driveTrain.liftMotor.getEncoder().setPosition(0.0);
-    //driveTrain.armMotor.getEncoder().setPosition(0.0);
+    driveTrain.armMotor.setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
+
+    var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
+
+    if(armPosition != 5) {
+      driveTrain.pidArmToAngle(5.0);
+    }
+    driveTrain.armMotor.setPosition(0.0);
 
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);

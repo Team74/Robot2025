@@ -475,7 +475,11 @@ public class driveTrain {
         return armMotorSpeed;
     }
 
+    double pidArmToAngle(double targetAngle) {
+        armPosition = armMotor.getPosition().getValueAsDouble();
 
+        return armMotorSpeed = pidShortcutArm.calculate(armPosition, targetAngle);
+    }
     double LLGetY() {
         return -1;
     }
