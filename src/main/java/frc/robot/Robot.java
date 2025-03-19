@@ -265,7 +265,8 @@ public class Robot extends TimedRobot {
     var table = NetworkTableInstance.getDefault().getTable("limelight");
     var ledMode = table.getEntry("ledMode"); // limelight's LED state (0-3).
     var camMode = table.getEntry("camMode"); // limelight's operation mode (0-1).
-
+    ledMode.setNumber(1);
+    camMode.setNumber(1);
 
     System.out.println("ledMode: " + ledMode + " camMode: " + camMode);
     //camera switching for driver's view
