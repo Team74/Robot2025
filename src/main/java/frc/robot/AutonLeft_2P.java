@@ -79,9 +79,9 @@ public class AutonLeft_2P {
                 if (currentTargetId == 22){
                     driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
                     if(time < 100){
-                        driveTrain.outTakeMotorInner.set(-.5);
+                        driveTrain.outTakeMotorOuter.set(-.5);
                         if (time > 150){
-                            driveTrain.outTakeMotorInner.set(0);
+                            driveTrain.outTakeMotorOuter.set(0);
                             time = 0;
                             currentState = "ToPlayerStation";
                         }
@@ -96,9 +96,9 @@ public class AutonLeft_2P {
                 if (currentTargetId == 9){
                     driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
                     if(time < 100){
-                        driveTrain.outTakeMotorInner.set(-.5);
+                        driveTrain.outTakeMotorOuter.set(-.5);
                         if (time > 150){
-                            driveTrain.outTakeMotorInner.set(0);
+                            driveTrain.outTakeMotorOuter.set(0);
                             time = 0;
                             currentState = "Score";
                         }
@@ -194,11 +194,11 @@ public class AutonLeft_2P {
             case "intake":
 
                 if (time > 0 && time < 150){
-                    driveTrain.outTakeMotorInner.set(-0.5);
+                    driveTrain.outTakeMotorOuter.set(-0.5);
                 } else if (hasPeice == true){
-                    driveTrain.outTakeMotorInner.set(0);
+                    driveTrain.outTakeMotorOuter.set(0);
                 } else if (time > 200){
-                    driveTrain.outTakeMotorInner.set(0);
+                    driveTrain.outTakeMotorOuter.set(0);
                     time = 0;
                 }
             

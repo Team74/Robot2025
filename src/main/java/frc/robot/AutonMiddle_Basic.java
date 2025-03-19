@@ -38,27 +38,30 @@ public class AutonMiddle_Basic {
                     driveTrain.drive(0, 0, 0, false, false);
                     driveTrain.resetGyro();
                     time = 0;
-                    currentState = "Score";
+                    currentState = "ScoreMove";
                }
             break;
         
-            case "Score":
+            case "ScoreMove":
             
-            var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
-            var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
+            var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L2);
+            var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L2);
 
             if (time > 1 && time < 151){
-                driveTrain.ShortCutArm(ShortcutType.L1);
-                driveTrain.ShortCutLift(ShortcutType.L1);
+                driveTrain.drive(0, 0, 0, false, false);
+                driveTrain.ShortCutArm(ShortcutType.L2);
+                driveTrain.ShortCutLift(ShortcutType.L2);
                 driveTrain.armMotor.set(armMotorSpeed);
                 driveTrain.liftMotor.set(liftMotorSpeed);
             }
 
             if (time > 155){
+                driveTrain.drive(0, 0, 0, false, false);
                 driveTrain.outTakeSet(0);
                 driveTrain.armMotor.set(0);
                 driveTrain.liftMotor.set(0);
                 time = 0;
+                currentState = "Drive'nForward";
             }
              
             break;
@@ -71,11 +74,13 @@ public class AutonMiddle_Basic {
                 //var rangeOutput = limelightcam.LLGetRangeOutput();
                 //var rotationOutput = limelightcam.LLGetRotation();
 
-                if (time > 0 && time < 150){
+                if (time > 0 && time < 85){
                     driveTrain.drive(-0.3, 0, 0, false, false);
                 }
-                if (time > 151){
+                if (time > 86){
                     driveTrain.drive(0, 0, 0, false, false);
+                    time = 0;
+                    currentState = "Score";
                 }
 
                 /*if (April_10 != null && currentTargetId == 10){
@@ -91,6 +96,17 @@ public class AutonMiddle_Basic {
                 }*/
             
             break;
+
+            case "Score":
+
+            if (time > 0 && time < 20){
+                driveTrain.outTakeMotorOuter.set(0.8);
+            }
+            if (time > 21){
+                driveTrain.outTakeMotorOuter.set(0);
+                //time = 0;
+                //currentState = "1";
+            }
 
         }
         time++;
