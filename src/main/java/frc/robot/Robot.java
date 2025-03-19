@@ -74,10 +74,10 @@ public class Robot extends TimedRobot {
   AutonMiddle_Basic auton_Basic;
   AutonDriveForward autonDriveForward;
 
-  UsbCamera fCamera;
-  UsbCamera rCamera;
-  //Joystick joy1Joystick = new Joystick(0);
-  NetworkTableEntry ftNetworkTableEntry;
+  // UsbCamera fCamera;
+  // UsbCamera rCamera;
+  // //Joystick joy1Joystick = new Joystick(0);
+  //NetworkTableEntry ftNetworkTableEntry;
 
   reeftoplayertoprocessor willsClass;
 
@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     // fCamera = CameraServer.startAutomaticCapture(0);
-    // rCamera = CameraServer.startAutomaticCapture(2);
+    // // rCamera = CameraServer.startAutomaticCapture(2);
     // ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     driveTrain = new driveTrain(dashboard, alliancecolor);
     LimeHelp = new LimelightHelpers();
@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
     dashboard.updatefielddata (m_field); 
 
     m_field.getObject("traj").setTrajectory(m_trajectory);
-    // CameraServer.startAutomaticCapture(); 
+    CameraServer.startAutomaticCapture(); 
     // CameraServer.startAutomaticCapture(); 
     time = 0;
 

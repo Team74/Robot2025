@@ -35,11 +35,14 @@ public static final int kDrivingMotorCurrentLimit = 50; // amps
 public static final int kTurningMotorCurrentLimit = 20; // amps
 //From https://swervedrivespecialties.com/collections/kits/products/mk3-swerve-module
 // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 14 teeth on the bevel pinion
-public static final double kDrivingMotorReduction = (45.0 * 22) / (14 * 15);
 public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
 public static final double kTurningEncoderPositionFactor = (2 * Math.PI); // radians
 
-double drivingFactor = kWheelDiameterMeters * Math.PI / kDrivingMotorReduction;
+public static final int kEncoderCPR = 42;
+public static final double kGearRatio = 8.1;
+public static final double kEncoderDistanceConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(kGearRatio));
+public static final double kEncoderVelocityConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(60*kGearRatio));
+
 double turningFactor = kTurningEncoderPositionFactor;
 
     SwerveModule(int initialEncoderPort, 
@@ -80,8 +83,8 @@ double turningFactor = kTurningEncoderPositionFactor;
                 .smartCurrentLimit(kDrivingMotorCurrentLimit);
         
         drivingConfig.encoder
-                .positionConversionFactor(drivingFactor) // meters
-                .velocityConversionFactor(drivingFactor/60); // meters per second
+                .positionConversionFactor(kEncoderDistanceConversionFactor) // meters
+                .velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
         
         turningConfig
                 .idleMode(IdleMode.kBrake)
