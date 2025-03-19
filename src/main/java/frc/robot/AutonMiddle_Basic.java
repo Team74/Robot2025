@@ -74,10 +74,10 @@ public class AutonMiddle_Basic {
                 //var rangeOutput = limelightcam.LLGetRangeOutput();
                 //var rotationOutput = limelightcam.LLGetRotation();
 
-                if (time > 0 && time < 85){
+                if (time > 0 && time < 95){
                     driveTrain.drive(-0.3, 0, 0, false, false);
                 }
-                if (time > 86){
+                if (time > 96){
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
                     currentState = "Score";
@@ -99,10 +99,10 @@ public class AutonMiddle_Basic {
 
             case "Score":
 
-            if (time > 0 && time < 20){
+            if (time > 0 && time < 75){
                 driveTrain.outTakeMotorOuter.set(0.8);
             }
-            if (time > 21){
+            if (time > 76){
                 driveTrain.outTakeMotorOuter.set(0);
                 //time = 0;
                 //currentState = "1";

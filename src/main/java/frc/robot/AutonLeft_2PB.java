@@ -100,7 +100,7 @@ public class AutonLeft_2PB {
             case "Score":
 
                 if (time > 0 && time < 85){
-                    driveTrain.drive(-0.3, 0, 0.0, false, false);
+                    driveTrain.drive(-0.3, -0.3, 0.0, false, false);
                 }
                 if (time > 86){
                     driveTrain.drive(0, 0, 0, false, false);
