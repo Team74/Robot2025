@@ -57,7 +57,6 @@ public class AutonLeft_2PB {
 
             if (time > 155){
                 driveTrain.drive(0, 0, 0, false, false);
-                driveTrain.outTakeSet(0);
                 driveTrain.armMotor.set(0);
                 driveTrain.liftMotor.set(0);
                 time = 0;
@@ -75,7 +74,7 @@ public class AutonLeft_2PB {
                 //var rotationOutput = limelightcam.LLGetRotation();
 
                 if (time > 0 && time < 85){
-                    driveTrain.drive(-0.3, 0, 0.2, false, false);
+                    driveTrain.drive(-0.3, -.3, 0.2, false, false);
                 }
                 if (time > 86){
                     driveTrain.drive(0, 0, 0, false, false);
@@ -100,7 +99,7 @@ public class AutonLeft_2PB {
             case "Score":
 
                 if (time > 0 && time < 85){
-                    driveTrain.drive(-0.3, -0.3, 0.0, false, false);
+                    //driveTrain.drive(-0.3, -0.3, 0.0, false, false);
                 }
                 if (time > 86){
                     driveTrain.drive(0, 0, 0, false, false);
