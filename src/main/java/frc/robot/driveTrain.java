@@ -69,6 +69,7 @@ public class driveTrain {
     //SparkMax outTakeMotorInner = null;
     SparkMax climbMotor = null;
     PIDController pid;
+    ProfiledPIDController pidFastTurn;
     PIDController pidArm;
     double armSpeed;
     double currentAngleArm;
@@ -147,7 +148,10 @@ public class driveTrain {
       
             pid = new PIDController(0.0025+0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
-        
+
+            pidFastTurn = new ProfiledPIDController(0.03, 0, 0, new TrapezoidProfile.Constraints(300, 500));
+            pidFastTurn.enableContinuousInput(-180.0, 180.0);
+            
          //   liftMotor = new SparkMax(12, MotorType.kBrushed);
         } 
         else {
@@ -269,7 +273,7 @@ public class driveTrain {
         }
     }
     public void updateOdometry() {
-        updaterobotorientation1();
+       // updaterobotorientation1();
 
         var pose = odometry.update(
             Rotation2d.fromDegrees(gyro.getYaw()),
@@ -358,7 +362,7 @@ public class driveTrain {
     double getTurnBotToAngle(double targetAngle){
         double currentAngle = gyro.getYaw();
         
-        double rotationVal = pid.calculate(currentAngle,targetAngle);
+        double rotationVal = pidFastTurn.calculate(currentAngle,targetAngle);
 
         return rotationVal;
     }
@@ -374,6 +378,10 @@ public class driveTrain {
         throw new UnsupportedOperationException("Unimplemented method 'getEncoder'");
     }
 
+    boolean hasPiece() {
+        return !proxSensor.get();
+    }
+    
     enum ShortcutType {
         PLAYER, L1, L2, L3, L4
     }
@@ -384,14 +392,14 @@ public class driveTrain {
     double armL3Position = -87;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 29.5;
+    double liftPlayerHeight = 30;
     double liftL1Height = 34;
     double liftL2Height = 52.5;
     double liftL3Height = 2.58;
     double liftL4Height = 60.5;
 
-    double armClampSpeed = 0.4;
-    double liftClampSpeed = 0.7;
+    double armClampSpeed = 1;
+    double liftClampSpeed = 1;
 
     double armMotorSpeed = 0;
     double liftMotorSpeed = 0.0;
@@ -433,7 +441,7 @@ public class driveTrain {
         if(shortcut == ShortcutType.L4) {
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
         }
-            
+            System.out.println("lms: " + liftMotorSpeed);
         if (!limitSensorBottom.get() && liftMotorSpeed < 0) {
             liftMotorSpeed = 0;
             liftMotor.getEncoder().setPosition(0.0);

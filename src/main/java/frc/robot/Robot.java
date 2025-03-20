@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
 
   public void autonomousInit() {
     time = 0;
-    driveTrain.gyro.reset();
+    //driveTrain.gyro.reset();
     autoState = new Object[] { "Starting", 0 };
 
     driveTrain.liftMotor.getEncoder().setPosition(0.0);
@@ -314,7 +314,7 @@ public class Robot extends TimedRobot {
    
     //Shortcut to align to the Apriltags
     if(controller.getBButton()) {
-      System.out.println("odo X value: " + driveTrain.gyro.getAngle());
+      System.out.println("odo X value: " + driveTrain.gyro.getYaw());
     }
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
@@ -394,14 +394,16 @@ public class Robot extends TimedRobot {
         liftMotorSpeed = MathUtil.applyDeadband(operatorController.getLeftY(), 0.1) * liftClampSpeed * -1;
       }
 
+      var liftMotorPosition = driveTrain.potLift.get();
+
       //lower limit
-      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() < 10 && liftMotorSpeed < 0){
+      if (!operatorController.getBButton() && liftMotorPosition < 1 && liftMotorSpeed < 0){
         System.out.println("Logical Bottom Limit Hit");
 
         liftMotorSpeed = 0;
       }
       //Upper Limit
-      if (!operatorController.getBButton() && driveTrain.liftMotor.getEncoder().getPosition() > 325 && liftMotorSpeed > 0){
+      if (!operatorController.getBButton() && liftMotorPosition > 60.5 && liftMotorSpeed > 0){
         System.out.println("Logical Upper Limit Hit");
 
         liftMotorSpeed = 0;
@@ -553,10 +555,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    //System.out.println("testPeriodicn");
+    System.out.println("gryo: " + driveTrain.gyro.getYaw());
 
-    if(time < 100) {
-      driveTrain.getTurnBotToAngle(-125);
+    if(time < 300) {
+      var rot = driveTrain.getTurnBotToAngle(130);
+      driveTrain.drive(0, 0, rot, false, false);
     }else {
       driveTrain.drive(0, 0, 0, false, false);
 

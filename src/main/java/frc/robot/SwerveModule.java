@@ -42,12 +42,15 @@ public static final double kTurningEncoderPositionFactor = (2 * Math.PI); // rad
 
 public static final int kEncoderCPR = 42;
 public static final double kGearRatio = 1d/(8.14);
+public static final double kGearRatio2 = 8.14;
 public static final double kEncoderDistanceConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(kGearRatio));
 public static final double kEncoderVelocityConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(60*kGearRatio));
 
 double DRIVE_ENCODER_CONVERSION_METERS = (kGearRatio * Math.PI * kWheelDiameterMeters) * 0.59; //the 0.625 is a quick fix to correct the odometry
 double DRIVE_ENCODER_CONVERSION_METERS_PER_SECOND = DRIVE_ENCODER_CONVERSION_METERS / 60;
 double turningFactor = kTurningEncoderPositionFactor;
+
+double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearRatio2; // meters
 
     SwerveModule(int initialEncoderPort, 
                 double initialEncoderOffset, 
@@ -100,6 +103,8 @@ double turningFactor = kTurningEncoderPositionFactor;
 
         driveMotor.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        driveMotor.getEncoder().setPosition(0);
 
         if (oldDriveBase){
             pid = new PIDController(0.0023889, 0, 0);
@@ -176,19 +181,11 @@ double turningFactor = kTurningEncoderPositionFactor;
     }
 
     public double getDriveMotorPosition(){
-        return driveMotor.getEncoder().getPosition() / 2048d /2*Math.PI * DRIVE_ENCODER_CONVERSION_METERS;
+        return driveMotor.getEncoder().getPosition() * kDrivingEncoderPositionFactor;
     }
 
     public Rotation2d getEncoderRadians(){
         return new Rotation2d(encoder.get());
-    }
-
-    public double getDriveMotorVelocity(){
-        return driveMotor.getEncoder().getVelocity() / 2048d /2*Math.PI * DRIVE_ENCODER_CONVERSION_METERS;
-    }
-
-    public SwerveModuleState getState(){
-        return new SwerveModuleState(getDriveMotorVelocity(), getEncoderRadians());
     }
 
     public SwerveModulePosition getOdometryPosition() {
