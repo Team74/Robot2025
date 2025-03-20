@@ -274,10 +274,10 @@ public class driveTrain {
         var pose = odometry.update(
             gyro.getRotation2d(),
             new SwerveModulePosition[] {
-                rightFront.getPosition(),
-                leftFront.getPosition(),
-                rightBack.getPosition(),
-                leftBack.getPosition()
+                rightFront.getOdometryPosition(),
+                leftFront.getOdometryPosition(),
+                rightBack.getOdometryPosition(),
+                leftBack.getOdometryPosition()
         }); 
 
         dashboard.updatePose(
@@ -346,10 +346,21 @@ public class driveTrain {
       //  outTakeMotorInner.set(-speed);
     }
     void turnBotToAngle(double targetAngle){
-        double currentAngle = gyro.getAngle();
+        for(int i = 0; i < 10; i++) {
+            double rotationVal = getTurnBotToAngle(targetAngle);
+
+            rotationVal = MathUtil.clamp(rotationVal,-0.7, 0.7);
+    
+            drive(0, 0, rotationVal, false, false);
+        }
+        drive(0, 0, 0, false, false);
+    }
+    double getTurnBotToAngle(double targetAngle){
+        double currentAngle = gyro.getYaw();
+        
         double rotationVal = pid.calculate(currentAngle,targetAngle);
-        rotationVal = MathUtil.clamp(rotationVal,-0.3, 0.3);
-        drive(0, 0, rotationVal, false, false);
+
+        return rotationVal;
     }
     void armSet(int targetAngle) {
         //currentAngleArm = armMotor.getEncoder().getPosition();

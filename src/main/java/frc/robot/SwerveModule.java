@@ -41,15 +41,12 @@ public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
 public static final double kTurningEncoderPositionFactor = (2 * Math.PI); // radians
 
 public static final int kEncoderCPR = 42;
-public static final double kGearRatio = 8.1;
+public static final double kGearRatio = 1d/(8.14);
 public static final double kEncoderDistanceConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(kGearRatio));
 public static final double kEncoderVelocityConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(60*kGearRatio));
-public static final double METERSperWHEEL_REVOLUTION = Math.PI*kWheelDiameterMeters;
-public static final double DRIVE_MOTOR_TICKSperREVOLUTION = kGearRatio*kEncoderCPR;
-private final RelativeEncoder m_driveEncoder;
-private final RelativeEncoder m_angleEncoder;
-//private final DutyCycleEncoder m_absoluteEncoder;
 
+double DRIVE_ENCODER_CONVERSION_METERS = (kGearRatio * Math.PI * kWheelDiameterMeters) * 0.59; //the 0.625 is a quick fix to correct the odometry
+double DRIVE_ENCODER_CONVERSION_METERS_PER_SECOND = DRIVE_ENCODER_CONVERSION_METERS / 60;
 double turningFactor = kTurningEncoderPositionFactor;
 
     SwerveModule(int initialEncoderPort, 
@@ -81,11 +78,7 @@ double turningFactor = kTurningEncoderPositionFactor;
 
         turningMotor = new SparkMax(turningMotorID, MotorType.kBrushless);
         driveMotor = new SparkMax(driveMotorID, MotorType.kBrushless);
-
-        m_driveEncoder = driveMotor.getEncoder();
-        m_angleEncoder = turningMotor.getEncoder();
-        //m_absoluteEncoder = new DutyCycleEncoder(initialEncoderPort,360.0,initialEncoderOffset);
-        
+       
         SparkMaxConfig drivingConfig = new SparkMaxConfig();
         SparkMaxConfig turningConfig = new SparkMaxConfig();
 
@@ -181,13 +174,25 @@ double turningFactor = kTurningEncoderPositionFactor;
         }
         
     }
-double distanceTraveled = 0.0;
+
+    public double getDriveMotorPosition(){
+        return driveMotor.getEncoder().getPosition() / 2048d /2*Math.PI * DRIVE_ENCODER_CONVERSION_METERS;
+    }
+
+    public Rotation2d getEncoderRadians(){
+        return new Rotation2d(encoder.get());
+    }
+
+    public double getDriveMotorVelocity(){
+        return driveMotor.getEncoder().getVelocity() / 2048d /2*Math.PI * DRIVE_ENCODER_CONVERSION_METERS;
+    }
+
+    public SwerveModuleState getState(){
+        return new SwerveModuleState(getDriveMotorVelocity(), getEncoderRadians());
+    }
+
     public SwerveModulePosition getOdometryPosition() {
-        distanceTraveled += (driveMotor.getEncoder().getPosition()*METERSperWHEEL_REVOLUTION)/kEncoderCPR;
-       // System.out.println("dt: " + distanceTraveled);
-        // System.err.println("vel: " + driveMotor.getEncoder().getVelocity() + " mpr: " + METERSperWHEEL_REVOLUTION + " cpr: " + kEncoderCPR);
-        return new SwerveModulePosition( 
-            (driveMotor.getEncoder().getPosition()*METERSperWHEEL_REVOLUTION)/kEncoderCPR, new Rotation2d(Math.toRadians(encoder.get())));
+        return new SwerveModulePosition(getDriveMotorPosition(), getEncoderRadians());
     }
 
 
