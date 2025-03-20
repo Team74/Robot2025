@@ -608,15 +608,71 @@ enum buttonStates {
 
   @Override
   public void testInit() {
+    time = 0;
   }
 
   @Override
   public void testPeriodic() {
-    var potval = driveTrain.potLift.get();
-    var potArmVal = driveTrain.potArm.get();
-    
-    System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
-  }
+    var rangeOutput = limelightcam.LLGetRangeOutput();
+    var rotationOutput = limelightcam.LLGetRotation();
+    var currentTargetId = LimelightHelpers.getFiducialID("limelight");
+    var April_2 = driveTrain.GetAprilTagTelemotry(2);
+    double getPeriod = getPeriod();
+    var currentState = "";
+
+    rangeOutput = MathUtil.clamp(rangeOutput,-0.7, 0.7);
+    rotationOutput = MathUtil.clamp(rotationOutput,-0.7, 0.7);
+    var April_12 = driveTrain.GetAprilTagTelemotry(12);
+
+            //if (time > 0 && time > 20){
+            //    driveTrain.drive(0, 0, 0.4, false, false);
+            //}
+
+            
+            if (April_2 != null){
+                
+                if (currentTargetId == 2){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){ 
+                        time = 0;
+                        currentState = "intake";  
+                    }
+                }else {
+                  driveTrain.drive(0, 0, 0, false, false);
+
+                }
+                
+            }
+            else {
+              driveTrain.drive(0, 0, 0, false, false);
+
+            }
+
+            if (April_12 != null){
+                
+                if (currentTargetId == 12){
+                    driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+                    if(time < 100){
+                        time = 0;
+                        currentState = "intake";        
+                    }
+                }
+                else {
+                  driveTrain.drive(0, 0, 0, false, false);
+
+                }
+                
+            }
+            else {
+              driveTrain.drive(0, 0, 0, false, false);
+
+            }
+            if(time > 100) {
+              driveTrain.drive(0, 0, 0, false, false);
+            }
+
+  time++;
+}
 
   @Override
   public void simulationInit() {
