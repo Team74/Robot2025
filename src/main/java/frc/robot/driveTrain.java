@@ -373,7 +373,7 @@ public class driveTrain {
     double armL3Position = -87;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 28;
+    double liftPlayerHeight = 29.5;
     double liftL1Height = 34;
     double liftL2Height = 52.5;
     double liftL3Height = 2.58;
