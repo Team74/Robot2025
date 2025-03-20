@@ -72,9 +72,11 @@ public class AutonLeft_2PB {
 
                 //var rangeOutput = limelightcam.LLGetRangeOutput();
                 //var rotationOutput = limelightcam.LLGetRotation();
-
-                if (time > 0 && time < 85){
-                    driveTrain.drive(-0.3, -.3, 0.2, false, false);
+                if (time >0 && time < 25){
+                    driveTrain.drive(-0.5, 0, 0, false, false);
+                }
+                if (time > 25 && time < 105){
+                    driveTrain.drive(-0.2, 0.3, 0.15, false, false);
                 }
                 if (time > 86){
                     driveTrain.drive(0, 0, 0, false, false);

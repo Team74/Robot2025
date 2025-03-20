@@ -548,6 +548,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     time = 0;
+    time = 0;
   }
 
   @Override
