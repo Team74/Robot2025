@@ -187,12 +187,22 @@ public class Robot extends TimedRobot {
     driveTrain.armMotor.setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
 
-    var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
-
-    if(armPosition != 5) {
-      driveTrain.pidArmToAngle(5.0);
+    for(int i = 0; i < 10; i++) {
+      var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
+      armPosition = Math.rint(armPosition);
+  
+      if(armPosition > -4.8 && armPosition <= -5.1) {
+        System.out.println("Moving arm out" + armPosition);
+        var offset = driveTrain.pidArmToAngle(-5.0);
+  
+        driveTrain.armMotor.set(offset);
+      }
+      else {
+        driveTrain.armMotor.setPosition(0.0);
+        System.out.println("arm gtg. start auton");
+        break;
+      }
     }
-    driveTrain.armMotor.setPosition(0.0);
 
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
@@ -217,37 +227,41 @@ public class Robot extends TimedRobot {
       return; 
     }
 
-    switch (m_autoSelected) {
-      
-      case auto_AutonMiddle_basic:
-        
-        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
-      break;
-      case auto_AutonMiddle_2PB:
-        
-        autoState = autonLeft_2PB.Run_2P(autoState, kDefaultPeriod);
-      break;
-      case auto_Auton_1P_SetUp:
+   
 
-        autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
-      case auto_AutonMiddle_2P:
+      switch (m_autoSelected) {
         
-        autoState = middle_2P.Run_2P(autoState);
-      break;
-      case auto_AutonLeft_2P:
-        
-        autoState = left_2p.Run_2P(autoState, kDefaultPeriod);
-      break;
-      case auto_DriveTowardDriver:
-        
-        autoState = autonDriveForward.Run_2P(autoState);
-      break;
-      default:
-        
-        autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
-      break;
-    }
-
+        case auto_AutonMiddle_basic:
+          
+          autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
+        break;
+        case auto_AutonMiddle_2PB:
+          
+          autoState = autonLeft_2PB.Run_2P(autoState, kDefaultPeriod);
+        break;
+        case auto_Auton_1P_SetUp:
+  
+          autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
+        case auto_AutonMiddle_2P:
+          
+          autoState = middle_2P.Run_2P(autoState);
+        break;
+        case auto_AutonLeft_2P:
+          
+          autoState = left_2p.Run_2P(autoState, kDefaultPeriod);
+        break;
+        case auto_DriveTowardDriver:
+          
+          autoState = autonDriveForward.Run_2P(autoState);
+        break;
+        default:
+          
+          autoState = auton_Basic.Run_2P(autoState, kDefaultPeriod);
+        break;
+      }
+  
+    
+    
     // autoState = auton_2p.Run_2P(autoState);
     // //autoState = auton_2p.Run_2P1(autoState, getPeriod());
     // //autoState = middle_2P.Run_2P(autoState);
