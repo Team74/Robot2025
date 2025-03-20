@@ -167,7 +167,7 @@ public class driveTrain {
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
-        odometry = new SwerveDrivePoseEstimator (kinematics, gyro.getRotation2d(), 
+        odometry = new SwerveDrivePoseEstimator (kinematics, Rotation2d.fromDegrees(gyro.getYaw()), 
             new SwerveModulePosition[]{
                 rightFront.getPosition(),
                 leftFront.getPosition(),
@@ -272,7 +272,7 @@ public class driveTrain {
         updaterobotorientation1();
 
         var pose = odometry.update(
-            gyro.getRotation2d(),
+            Rotation2d.fromDegrees(gyro.getYaw()),
             new SwerveModulePosition[] {
                 rightFront.getOdometryPosition(),
                 leftFront.getOdometryPosition(),
