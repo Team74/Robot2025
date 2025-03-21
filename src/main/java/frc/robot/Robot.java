@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
   AutonLeft_2P left_2p;
   AutonMiddle_2P middle_2P;
   AutonMiddle_Basic auton_Basic;
+  AutonSide_Basic autonSide_Basic;
   AutonDriveForward autonDriveForward;
 
   UsbCamera fCamera;
@@ -108,6 +109,7 @@ public class Robot extends TimedRobot {
 
   DriverStation.Alliance alliancecolor;
   private static final String auto_AutonMiddle_basic = "Middle_Basic";
+  private static final String auto_AutonSide_basic = "Side_Basic";
   private static final String auto_AutonMiddle_2PB = "Middle_2Basic";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
@@ -140,6 +142,7 @@ public class Robot extends TimedRobot {
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
     m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
+    m_chooser.addOption("Side_basic", auto_AutonSide_basic);
     m_chooser.addOption("Left_2PB", auto_AutonMiddle_2PB);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
@@ -239,6 +242,10 @@ public class Robot extends TimedRobot {
           
           autoState = autonLeft_2PB.Run_2P(autoState, kDefaultPeriod);
         break;
+        case auto_AutonSide_basic:
+          
+        autoState = autonSide_Basic.Run_2P(autoState, kDefaultPeriod);
+      break;
         case auto_Auton_1P_SetUp:
   
           autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);

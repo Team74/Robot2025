@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.driveTrain.ShortcutType;
 
-public class AutonMiddle_Basic {
+public class AutonSide_Basic {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
@@ -14,7 +14,7 @@ public class AutonMiddle_Basic {
     }
     
 
-    public AutonMiddle_Basic(driveTrain _driveTrain, limeLightTest _limelightcam, LimelightHelpers _Limehelp){
+    public AutonSide_Basic(driveTrain _driveTrain, limeLightTest _limelightcam, LimelightHelpers _Limehelp){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
         Limehelp = _Limehelp;
@@ -26,8 +26,8 @@ public class AutonMiddle_Basic {
         // double trackPush = limelightcam.ReefPush();
         String currentState = autoState[0].toString();
      
-        var armPosition = 0;
         var liftMotorPosition = driveTrain.potLift.get();
+        var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
         var currentTargetId = LimelightHelpers.getFiducialID("limelight");
       
 
@@ -72,10 +72,10 @@ public class AutonMiddle_Basic {
                 //var rangeOutput = limelightcam.LLGetRangeOutput();
                 //var rotationOutput = limelightcam.LLGetRotation();
 
-                if (time > 0 && time < 95){
+                if (time > 0 && time < 140){
                     driveTrain.drive(-0.3, 0, 0, false, false);
                 }
-                if (time > 96){
+                if (time > 141){
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
                     currentState = "Score";
