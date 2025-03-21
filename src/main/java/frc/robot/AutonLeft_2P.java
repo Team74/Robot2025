@@ -8,13 +8,13 @@ import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.driveTrain.ShortcutType;
 import frc.robot.limeLightTest;
 
-public class AutonLeft1_2P {
+public class AutonLeft_2P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
     boolean hasPeice;
     
-    public AutonLeft1_2P(driveTrain _driveTrain, limeLightTest _limelightcam, boolean _hasPeice){
+    public AutonLeft_2P(driveTrain _driveTrain, limeLightTest _limelightcam, boolean _hasPeice){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
         hasPeice = _hasPeice;

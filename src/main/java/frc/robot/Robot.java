@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
 
   
   AutonLeft_2PB autonLeft_2PB;
+  AutonLeft_2P autonLeft_2P;
   Auton_1P_SetUp auton_SetUp;
   AutonRight_2P right_2p;
   AutonMiddle_2P middle_2P;
@@ -113,6 +114,7 @@ public class Robot extends TimedRobot {
   private static final String auto_AutonMiddle_2PB = "Middle_2Basic";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonRight_2P = "Right_2P";
+  private static final String auto_AutonLeft_2P = "Left_2P";
   private static final String auto_DriveTowardDriver = "DriveTowardDriver";
   private static final String auto_Auton_1P_SetUp = "Auton_1P_SetUp";
 
@@ -134,6 +136,7 @@ public class Robot extends TimedRobot {
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     autonLeft_2PB = new AutonLeft_2PB(driveTrain, limelightcam, LimeHelp);
+    autonLeft_2P = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     right_2p = new AutonRight_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
@@ -144,6 +147,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
     m_chooser.addOption("Side_basic", auto_AutonSide_basic);
     m_chooser.addOption("Left_2PB", auto_AutonMiddle_2PB);
+    m_chooser.addOption("Left_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Right_2P", auto_AutonRight_2P);
@@ -242,10 +246,14 @@ public class Robot extends TimedRobot {
           
           autoState = autonLeft_2PB.Run_2P(autoState, kDefaultPeriod);
         break;
+        case auto_AutonLeft_2P:
+          
+          autoState = autonLeft_2P.Run_2P(autoState, kDefaultPeriod);
+        break;
         case auto_AutonSide_basic:
           
         autoState = autonSide_Basic.Run_2P(autoState, kDefaultPeriod);
-      break;
+        break;
         case auto_Auton_1P_SetUp:
   
           autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
