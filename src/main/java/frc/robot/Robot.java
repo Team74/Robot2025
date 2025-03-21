@@ -147,7 +147,6 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("DriveTowardDriver", auto_DriveTowardDriver);
 
     SmartDashboard.putData("Auto choices", m_chooser);
-
   }
 
   public void robotInit() {
@@ -480,10 +479,10 @@ public class Robot extends TimedRobot {
           
       //Prox sensor lol
       if (hasPiece() == true) {
-        if(intakeTime < 10 ){
+        if(intakeTime < 3 ){
           intakeTime++;
         }
-        if(intakeTime >= 10 && intakeTime < 100 ){
+        if(intakeTime >= 3 && intakeTime < 100 ){
           outTakeSpeed = 0; 
           intakeTime++;
         }

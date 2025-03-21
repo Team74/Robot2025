@@ -112,7 +112,7 @@ public class AutonLeft_2PB {
             case "Score2":
 
             if (time > 0 && time < 20){
-                driveTrain.outTakeMotorOuter.set(0.8);
+                driveTrain.outTakeMotorOuter.set(0.45);
             }
             if (time > 21){
                 driveTrain.outTakeMotorOuter.set(0);

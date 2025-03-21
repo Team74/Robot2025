@@ -33,42 +33,29 @@ public class AutonLeft_2P {
         switch(currentState){
             
             case "Starting":
-                // if(time > 0 && time <= 150) {
-                //     driveTrain.ShortCutArm(ShortcutType.L2);
-                //     driveTrain.ShortCutLift(ShortcutType.L2);
-                //     driveTrain.armMotor.set(0);
-                //     driveTrain.liftMotor.set(0);  
-                // }
-                // if (time > 115 && time <= 155) {
-                //     driveTrain.drive( 0, 0, 0, false, false);
-                //     time = 0;
-                //     currentState = "Move'nToReef";
-                // }                   
-    
-                driveTrain.drive( 0, 0, 0, false, false);
+            if (time > 1 && time < 151){
+                driveTrain.drive(0, 0, 0, false, false);
+                driveTrain.armMotor.set(armMotorSpeed);
+                driveTrain.liftMotor.set(liftMotorSpeed);
+            }
+            if (time > 155){
+                driveTrain.drive(0, 0, 0, false, false);
+                driveTrain.outTakeSet(0);
+                driveTrain.armMotor.set(0);
+                driveTrain.liftMotor.set(0);
                 time = 0;
                 currentState = "Move'nToReef";
+            }
+    
             break;
 
             case "Move'nToReef":
-            
-            if(time > 0 && time <= 150) {
-                driveTrain.ShortCutArm(ShortcutType.L2);
-                driveTrain.ShortCutLift(ShortcutType.L2);
-                driveTrain.armMotor.set(0);
-                driveTrain.liftMotor.set(0);  
-            }
-            if (time > 150 && time < 151){
-                driveTrain.armMotor.set(0);
-                driveTrain.liftMotor.set(0);
-            }
-
             if(time > 0 && time <= 65) {
                 driveTrain.drive(-0.45, 0, 0, false, false);
             }
             if(time > 65 && time <= 115) {
                 //driveTrain.drive( 0, 0, 1, false, false);
-                System.out.println("gryo: " + driveTrain.gyro.getYaw());
+                //System.out.println("gryo: " + driveTrain.gyro.getYaw());
 
                 var rot = driveTrain.getTurnBotToAngle(50);
                 driveTrain.drive(0, 0, rot, false, false);
@@ -92,7 +79,7 @@ public class AutonLeft_2P {
                     }
                 }
                 if(time > 175 && time <= 200) {
-                    driveTrain.outTakeMotorOuter.set(0.5); 
+                    driveTrain.outTakeMotorOuter.set(0.35); 
                 }
                 if (time > 200){
                     driveTrain.outTakeMotorOuter.set(0);
@@ -102,7 +89,7 @@ public class AutonLeft_2P {
                 break;
 
             case "ToPlayerStation":
-            System.out.println("gryo: " + driveTrain.gyro.getYaw());
+           // System.out.println("gryo: " + driveTrain.gyro.getYaw());
 
             var rot = driveTrain.getTurnBotToAngle(130);
 
@@ -124,7 +111,7 @@ public class AutonLeft_2P {
             if (time > 305){
                 driveTrain.drive(0, 0, 0, false, false);
                 time =0;
-                currentState = "intake";
+                currentState = "intake1";
             }
             break;
 
