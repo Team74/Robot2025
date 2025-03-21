@@ -44,18 +44,16 @@ public class AutonMiddle_Basic {
         
             case "ScoreMove":
             
-            var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L2);
-            var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L2);
+            var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
+            var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
 
-            if (time > 1 && time < 151){
+            if (time > 1 && time < 137){
                 driveTrain.drive(0, 0, 0, false, false);
-                driveTrain.ShortCutArm(ShortcutType.L2);
-                driveTrain.ShortCutLift(ShortcutType.L2);
                 driveTrain.armMotor.set(armMotorSpeed);
                 driveTrain.liftMotor.set(liftMotorSpeed);
             }
 
-            if (time > 155){
+            if (time > 137){
                 driveTrain.drive(0, 0, 0, false, false);
                 driveTrain.outTakeSet(0);
                 driveTrain.armMotor.set(0);

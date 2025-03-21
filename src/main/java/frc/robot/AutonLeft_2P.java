@@ -78,10 +78,10 @@ public class AutonLeft_2P {
                         }
                     }
                 }
-                if(time > 175 && time <= 200) {
-                    driveTrain.outTakeMotorOuter.set(0.35); 
+                if(time > 175 && time <= 255) {
+                    driveTrain.outTakeMotorOuter.set(0.5); 
                 }
-                if (time > 200){
+                if (time > 255){
                     driveTrain.outTakeMotorOuter.set(0);
                     time = 0;
                     currentState = "ToPlayerStation";
