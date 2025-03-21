@@ -473,16 +473,16 @@ public class Robot extends TimedRobot {
 
       currentAngle = driveTrain.armMotor.getPosition().getValueAsDouble();
 
-      //currentAngle = driveTrain.potArm.get();
-      // if (currentAngle > -10 && currentAngle < 0) {
-      //   if (operatorController.getLeftTriggerAxis() > 0) {
-      //     outTakeSpeed = 0;  
-      //   }
-      // } 
-      // if (currentAngle > -90) {
-      //   if (operatorController.getRightTriggerAxis() > 0)
-      //     outTakeSpeed = 0;  
-      // } 
+      //current angle greater than -82 (0 is straight down)
+      //so if player, l1 or l2 and trying to eject... slow alot
+      if (currentAngle > driveTrain.armL2Position+10 && operatorController.getLeftTriggerAxis() > 0) {
+        outTakeSpeed = outTakeSpeed * 0.5;  
+      } 
+
+      //if current angle less than l3 and intake button pressed... slow alot
+      if (currentAngle < driveTrain.armL3Position-10 && operatorController.getRightTriggerAxis() > 0) {
+          outTakeSpeed = outTakeSpeed * 0.5;  
+      } 
           
       //Prox sensor lol
       if (hasPiece() == true) {

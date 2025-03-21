@@ -94,8 +94,8 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(40, 70));
-    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(40, 70));
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(80, 70));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(80, 70));
 
     
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
