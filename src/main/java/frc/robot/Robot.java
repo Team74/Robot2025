@@ -483,13 +483,18 @@ public class Robot extends TimedRobot {
 
       //current angle greater than -82 (0 is straight down)
       //so if player, l1 or l2 and trying to eject... slow alot
-      if (currentAngle > driveTrain.armL2Position+10 && operatorController.getLeftTriggerAxis() > 0) {
-        outTakeSpeed = outTakeSpeed * 0.5;  
+      
+      //System.out.println("ca: " + currentAngle);
+
+      if (currentAngle > driveTrain.armPlayerPosition - 11 && operatorController.getLeftTriggerAxis() > 0) {
+        outTakeSpeed = outTakeSpeed * 0.7;  
+        System.out.println("slowing outtake");
       } 
 
       //if current angle less than l3 and intake button pressed... slow alot
-      if (currentAngle < driveTrain.armL3Position-10 && operatorController.getRightTriggerAxis() > 0) {
-          outTakeSpeed = outTakeSpeed * 0.5;  
+      if (currentAngle < driveTrain.armL3Position+10 && operatorController.getRightTriggerAxis() > 0) {
+          outTakeSpeed = outTakeSpeed * 0.7;  
+          System.out.println("slowing int");
       } 
           
       //Prox sensor lol
