@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -94,14 +95,16 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(40, 80));
-    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(40, 80));
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.05, 0, 0, new TrapezoidProfile.Constraints(80, 80));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.07, 0, 0, new TrapezoidProfile.Constraints(85, 80));
 
-    
+
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
         gyro.reset();
         dashboard = dash;
         alliancecolor = _alliancecolor;
+        pidShortcutArm.disableContinuousInput();
+
 //20.2
 //36.9
         if (!oldDriveBase) {
@@ -130,7 +133,13 @@ public class driveTrain {
             m_currentLimits.StatorCurrentLimitEnable = true; // And enable it
 
             toConfigure.CurrentLimits = m_currentLimits;
-
+            // toConfigure.SoftwareLimitSwitch = new SoftwareLimitSwitchConfigs();
+            // toConfigure.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            // toConfigure.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            
+            // toConfigure.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -100;
+            // toConfigure.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -100;
+            
             armMotor.getConfigurator().apply(toConfigure);
             armMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -392,7 +401,7 @@ public class driveTrain {
     double armL3Position = -87;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 30;
+    double liftPlayerHeight = 28.35;
     double liftL1Height = 34;
     double liftL2Height = 52.5;
     double liftL3Height = 2.58;

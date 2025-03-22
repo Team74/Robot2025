@@ -89,9 +89,11 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(kDrivingMotorCurrentLimit);
         
-        // drivingConfig.encoder
-        //         .positionConversionFactor(kEncoderDistanceConversionFactor) // meters
-        //         .velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
+        var kEncoderDistanceConversionFactor = Math.PI * kWheelDiameterMeters / kEncoderCPR;
+
+        drivingConfig.encoder
+                .positionConversionFactor(kEncoderDistanceConversionFactor); // meters
+                //.velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
         
         turningConfig
                 .idleMode(IdleMode.kBrake)
@@ -100,7 +102,7 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
         // turningConfig.absoluteEncoder
         //         .positionConversionFactor(turningFactor) // radians
         //         .velocityConversionFactor(turningFactor / 60.0); //q radians per second
-
+    
         driveMotor.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

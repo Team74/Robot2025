@@ -135,6 +135,8 @@ public class Robot extends TimedRobot {
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
+    autonSide_Basic = new AutonSide_Basic(driveTrain, limelightcam, LimeHelp);
+    
     autonLeft_2PB = new AutonLeft_2PB(driveTrain, limelightcam, LimeHelp);
     autonLeft_2P = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
@@ -376,6 +378,14 @@ public class Robot extends TimedRobot {
       } 
       else {
         armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
+      }
+
+      var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
+
+      //the arm is too far rotated and the system is saying to keep rotating
+      if(armPosition < -100 && armMotorSpeed < 0) {
+        armMotorSpeed = 0.0;
+        System.out.println("Arm logical limit " + armPosition);
       }
       driveTrain.armMotor.set(armMotorSpeed);
     }
