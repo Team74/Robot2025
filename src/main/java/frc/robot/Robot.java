@@ -123,6 +123,9 @@ public class Robot extends TimedRobot {
 
 
   public Robot() {
+    fCamera = CameraServer.startAutomaticCapture(0);
+    rCamera = CameraServer.startAutomaticCapture(1);
+     ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
 
     //alliancecolor = DriverStation.getAlliance().get();
 
