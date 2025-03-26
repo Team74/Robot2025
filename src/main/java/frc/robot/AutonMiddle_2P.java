@@ -1,11 +1,13 @@
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class AutonMiddle_2P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
+    
 
     boolean hasPiece() {
         return !driveTrain.proxSensor.get();
@@ -17,16 +19,15 @@ public class AutonMiddle_2P {
         limelightcam  = _limelightcam;
     }
 
-    Object[] Run_2P(Object[] autoState) {
-        double trackSide = limelightcam.LimeTest();
-        double trackTurn = limelightcam.ReefCenter(); 
-        double trackPush = limelightcam.ReefPush();
+    Object[] Run_2P(Object[] autoState, double getPeriod) {
         String currentState = autoState[0].toString();
-        var April_21 = driveTrain.GetAprilTagTelemotry(21);
-        var April_12 = driveTrain.GetAprilTagTelemotry(12);
-        var armPosition = 0;//driveTrain.armMotor.getEncoder().getPosition();
+
+        var rangeOutput = limelightcam.LLGetRangeOutput();
+        double rotationOutput;
+        var April_22 = driveTrain.GetAprilTagTelemotry(22);
+        var April_10 = driveTrain.GetAprilTagTelemotry(10);
         double armMotorSpeed = 0;
-        var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
+        var liftMotorPosition = driveTrain.potLift.get();
         double liftMotorSpeed = 0;
 
         switch(currentState){
@@ -36,29 +37,65 @@ public class AutonMiddle_2P {
                     driveTrain.drive(0, 0, 0, false, false);
                     driveTrain.resetGyro();
                     time = 0;
-                    currentState = "Drive'nForward";
+                    currentState = "firstForward";
                }
             break;
 
+            case "firstForward":
+            if (time > 0 && time < 70){
+                driveTrain.drive(-0.3, 0, 0, false, false);
+            } else {
+                time = 0;
+                currentState = "rotat";
+            }
+            break;
+
+            case "rotat":
+                rotationOutput = driveTrain.getTurnBotToAngle(60);
+                driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
+
+                if (driveTrain.gyro.getYaw() >= 57 && driveTrain.gyro.getYaw() <= 63){
+                    time = 0;
+                    currentState = "Drive'nForward";
+                }
+            break;
+
+            case "lift":
+                
+
             case "Drive'nForward":
-
-                //var txnc_21 = April_21.txnc;
-                //var ta_21 = April_21.ta;
-
-               
-
-                if (time > 10 && time < 35){
-                    driveTrain.drive(-0.5, 0, 0, false, false);
-                } 
-                if (time > 40){
+                var currentTargetId = LimelightHelpers.getFiducialID("limelight");
+                
+                if (April_22 != null){
+                    rotationOutput = driveTrain.getTurnBotToAngle(60);
+                    if (time < 100){
+                        driveTrain.driveLL(rangeOutput, 0, rotationOutput, false, getPeriod);
+                    }
+                } else if (April_22 == null && time > 50){
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
-                    currentState = "Score";
+                    currentState = "adjust1";
                 }
-            
             break;
+
+            case "adjust1":
+                rotationOutput = driveTrain.getTurnBotToAngle(60);
+
+                if (time < 50){
+                    driveTrain.driveLL(-0.4, 0, rotationOutput, false, getPeriod);
+                } else {
+                    driveTrain.drive(0, 0, 0, false, false);
+                    time = 0;
+                    currentState = "PlayerStation";
+                }
+
+            break;
+
+            case "PlayerStation":
+
+                
         
-            case "Score":
+            /*case "Score":
                 
             if (time > 10){
                 if(liftMotorPosition >= 0 && liftMotorPosition < 15) {
@@ -140,6 +177,7 @@ public class AutonMiddle_2P {
                 //currentState = "DriveBack";
             }
            break;
+        */
         }
         time++;
         return new Object[]{currentState, time};
