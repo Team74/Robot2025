@@ -41,8 +41,8 @@ public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
 public static final double kTurningEncoderPositionFactor = (2 * Math.PI); // radians
 
 public static final int kEncoderCPR = 42;
-public static final double kGearRatio = 1d/(8.14);
-public static final double kGearRatio2 = 8.14;
+public static final double kGearRatio2 = 1d/(8.14);
+public static final double kGearRatio = 8.14;
 public static final double kEncoderDistanceConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(kGearRatio));
 public static final double kEncoderVelocityConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(60*kGearRatio));
 
@@ -89,9 +89,12 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(kDrivingMotorCurrentLimit);
         
-        // drivingConfig.encoder
-        //         .positionConversionFactor(kEncoderDistanceConversionFactor) // meters
-        //         .velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
+        var kEncoderDistanceConversionFactor1 = Units.inchesToMeters(12) / kEncoderCPR;
+
+        drivingConfig.encoder
+                 .positionConversionFactor(kEncoderDistanceConversionFactor1) // meters
+                 //.velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
+        ;
         
         turningConfig
                 .idleMode(IdleMode.kBrake)
