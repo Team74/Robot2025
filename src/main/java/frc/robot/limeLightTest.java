@@ -165,8 +165,10 @@ public class limeLightTest {
 
     double LLGetRangeOutput() {
         var tag = LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+        var tag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+
         double dist = tag.getTranslation().getNorm();
-        
+        System.out.println("tag rot: " + tag.getRotation().getAngle() + " tag1 rot: " + tag1.pose.getRotation());
         // Calculate control outputs
         double rangeOutput = rangePID.calculate(dist, 0.2);
         rangeOutput *= 4;

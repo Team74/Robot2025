@@ -95,8 +95,8 @@ public class driveTrain {
     private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
-    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.05, 0, 0, new TrapezoidProfile.Constraints(80, 80));
-    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.07, 0, 0, new TrapezoidProfile.Constraints(85, 80));
+    ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(120, 180));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.4, 0, 0, new TrapezoidProfile.Constraints(180, 240));
 
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
@@ -110,10 +110,10 @@ public class driveTrain {
         if (!oldDriveBase) {
             // competition base CAN IDs
             //RF:45.88528614713215, LF:76.40100191002506, RB:-159.65606199140154, LB:-96.41761441044036
-            leftFront = new SwerveModule(0,76.40100191002506-1, 6, 14, zeroMode,oldDriveBase);
-            rightFront = new SwerveModule(2,45.88528614713215-179, 33,4, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(3,-189.48328223708205+19, 10, 11, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(1,-96.41761441044036-179, 19, 16, zeroMode,oldDriveBase);
+            leftFront = new SwerveModule(0,76.40100191002506-1, 6, 14, zeroMode,oldDriveBase, false);
+            rightFront = new SwerveModule(2,45.88528614713215-179, 33,4, zeroMode,oldDriveBase, true);
+            rightBack = new SwerveModule(3,-189.48328223708205+19, 10, 11, zeroMode,oldDriveBase, false);
+            leftBack = new SwerveModule(1,-96.41761441044036-179, 19, 16, zeroMode,oldDriveBase, false);
 
             liftMotor = new SparkMax(46, MotorType.kBrushless);
             liftMotor.getEncoder().setPosition(0.0);
@@ -165,27 +165,27 @@ public class driveTrain {
         } 
         else {
             // old drive base CAN IDs
-            leftFront = new SwerveModule(0,348.0-90, 12,17, zeroMode,oldDriveBase);
-            rightFront = new SwerveModule(1,70.1-270, 20,2, zeroMode,oldDriveBase);
-            rightBack = new SwerveModule(2,2.31-180, 14,32, zeroMode,oldDriveBase);
-            leftBack = new SwerveModule(3,69.3-180, 29,15, zeroMode,oldDriveBase);
+            leftFront = new SwerveModule(0,348.0-90, 12,17, zeroMode,oldDriveBase, false);
+            rightFront = new SwerveModule(1,70.1-270, 20,2, zeroMode,oldDriveBase, false);
+            rightBack = new SwerveModule(2,2.31-180, 14,32, zeroMode,oldDriveBase, false);
+            leftBack = new SwerveModule(3,69.3-180, 29,15, zeroMode,oldDriveBase, false);
             pid = new PIDController(0.0523889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
         }
 
-        Translation2d frontRight = new Translation2d(0.33655, -0.33655); 
-        Translation2d frontLeft = new Translation2d(0.33655, 0.33655); 
-        Translation2d backRight = new Translation2d(-0.33655, -0.33655); 
-        Translation2d backLeft = new Translation2d(-0.33655, 0.33655);     
+        Translation2d frontRight = new Translation2d(0.381, -0.381); 
+        Translation2d frontLeft = new Translation2d(0.381, 0.381); 
+        Translation2d backRight = new Translation2d(-0.381, -0.381); 
+        Translation2d backLeft = new Translation2d(-0.381, 0.381);     
   
         kinematics = new SwerveDriveKinematics(frontRight, frontLeft, backRight, backLeft);
 
         odometry = new SwerveDrivePoseEstimator (kinematics, Rotation2d.fromDegrees(gyro.getYaw()), 
             new SwerveModulePosition[]{
-                rightFront.getPosition(),
-                leftFront.getPosition(),
-                rightBack.getPosition(),
-                leftBack.getPosition(),    
+                rightFront.getOdometryPosition(),
+                leftFront.getOdometryPosition(),
+                rightBack.getOdometryPosition(),
+                leftBack.getOdometryPosition(),    
             },Pose2d.kZero,
             stateStdDevs,
             visionMeasurementStdDevs);
@@ -282,10 +282,10 @@ public class driveTrain {
         }
     }
     public void updateOdometry() {
-       // updaterobotorientation1();
+       updaterobotorientation1();
 
         var pose = odometry.update(
-            Rotation2d.fromDegrees(gyro.getYaw()),
+            Rotation2d.fromDegrees(gyro.getYaw()*-1),
             new SwerveModulePosition[] {
                 rightFront.getOdometryPosition(),
                 leftFront.getOdometryPosition(),

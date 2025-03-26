@@ -46,19 +46,33 @@ public static final double kGearRatio = 8.14;
 public static final double kEncoderDistanceConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(kGearRatio));
 public static final double kEncoderVelocityConversionFactor = ((double) (Math.PI*kWheelDiameterMeters)/(60*kGearRatio));
 
-double DRIVE_ENCODER_CONVERSION_METERS = (kGearRatio * Math.PI * kWheelDiameterMeters) * 0.59; //the 0.625 is a quick fix to correct the odometry
+public static final double kDriveMotorGearRatio = 1.0 / 8.14; // 6.12:1 Drive
+public static final double kTurningMotorGearRatio = 1.0 / 12.8; // 12.8:1 Steering
+
+// Conversion factors (Drive Motor)
+public static final double kDriveEncoder_RotationToMeter = kDriveMotorGearRatio * kWheelDiameterMeters * 2 * Math.PI;
+public static final double kDriveEncoder_RPMToMeterPerSecond = kDriveEncoder_RotationToMeter / 60.0;
+
+public static final double kTurningEncoder_RotationToRadian = kTurningMotorGearRatio * 2.0 * Math.PI;
+public static final double kTurningEncoder_RPMToRadianPerSecond = kTurningEncoder_RotationToRadian / 60.0;
+
+double DRIVE_ENCODER_CONVERSION_METERS = (kGearRatio * Math.PI * kWheelDiameterMeters); //the 0.625 is a quick fix to correct the odometry
 double DRIVE_ENCODER_CONVERSION_METERS_PER_SECOND = DRIVE_ENCODER_CONVERSION_METERS / 60;
 double turningFactor = kTurningEncoderPositionFactor;
 
-double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearRatio2; // meters
+double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearRatio; // meters
+double kEncoderDistanceConversionFactor1 = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
+
+boolean invert = false;
 
     SwerveModule(int initialEncoderPort, 
                 double initialEncoderOffset, 
                 int initialTurningMotorID, 
                 int initialDriveMotorID,
                 boolean _zeroMode,
-                boolean initialoldDriveBase) {
-        
+                boolean initialoldDriveBase, boolean invert) {
+        this.invert = invert;
+
         encoderPort = initialEncoderPort;
         encoderOffset = initialEncoderOffset;
         turningMotorID = initialTurningMotorID;
@@ -71,6 +85,7 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
            initialEncoderOffset = 0.0;
         }
 
+        
         if (oldDriveBase){
             encoderA = new AnalogEncoder(initialEncoderPort,360.0,initialEncoderOffset);
         }
@@ -89,20 +104,19 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(kDrivingMotorCurrentLimit);
         
-        var kEncoderDistanceConversionFactor1 = Units.inchesToMeters(12) / kEncoderCPR;
 
-        drivingConfig.encoder
-                 .positionConversionFactor(kEncoderDistanceConversionFactor1) // meters
-                 //.velocityConversionFactor(kEncoderVelocityConversionFactor); // meters per second
-        ;
+        // drivingConfig.encoder 
+        //          .positionConversionFactor(0.7) // meters
+        //          .velocityConversionFactor(kDriveEncoder_RPMToMeterPerSecond); // meters per second
+        // ;
         
         turningConfig
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(kTurningMotorCurrentLimit);
         
-        // turningConfig.absoluteEncoder
-        //         .positionConversionFactor(turningFactor) // radians
-        //         .velocityConversionFactor(turningFactor / 60.0); //q radians per second
+        // turningConfig.encoder
+        //         .positionConversionFactor(kTurningEncoder_RotationToRadian) // radians
+        //         .velocityConversionFactor(kTurningEncoder_RPMToRadianPerSecond); //q radians per second
     
         driveMotor.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -124,7 +138,14 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
             // return encoderA.get() - 180 + encoderOffset;
             return encoderA.get();
         }
-        return encoder.get() - 180 + encoderOffset;
+        //return (encoder.get() - 180 + encoderOffset) % 360;
+
+        double factor = 0.0374;
+
+        if(invert) 
+            factor *=-1;
+
+        return driveMotor.getEncoder().getPosition() * factor;
     }
     
     double getRotation() {
@@ -184,11 +205,16 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
     }
 
     public double getDriveMotorPosition(){
-        return driveMotor.getEncoder().getPosition() * kDrivingEncoderPositionFactor;
+        double factor = 0.0374;
+
+        if(invert) 
+            factor *=-1;
+
+        return driveMotor.getEncoder().getPosition() * factor;
     }
 
     public Rotation2d getEncoderRadians(){
-        return new Rotation2d(encoder.get());
+        return new Rotation2d((encoder.get() - 180 + encoderOffset) % 360 );
     }
 
     public SwerveModulePosition getOdometryPosition() {

@@ -135,6 +135,9 @@ public class Robot extends TimedRobot {
     ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     
     driveTrain = new driveTrain(dashboard, alliancecolor);
+
+    limelightcam = new limeLightTest(driveTrain);
+
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
@@ -146,13 +149,12 @@ public class Robot extends TimedRobot {
     right_2p = new AutonRight_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
     gotoPose = new GotoPose(driveTrain);
-    limelightcam = new limeLightTest(driveTrain);
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
     m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
     m_chooser.addOption("Side_basic", auto_AutonSide_basic);
     m_chooser.addOption("Left_2PB", auto_AutonMiddle_2PB);
-    m_chooser.addOption("Left_2P", auto_AutonMiddle_2P);
+    m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Right_2P", auto_AutonRight_2P);
@@ -322,6 +324,10 @@ public class Robot extends TimedRobot {
     //Button to resent the gyro
     if (controller.getYButton()) {
       driveTrain.gyro.reset();
+      driveTrain.leftFront.driveMotor.getEncoder().setPosition(0);
+      driveTrain.rightFront.driveMotor.getEncoder().setPosition(0);
+      driveTrain.leftBack.driveMotor.getEncoder().setPosition(0);
+      driveTrain.rightBack.driveMotor.getEncoder().setPosition(0);
     }
 
     //Button to resent the gyro
@@ -334,6 +340,7 @@ public class Robot extends TimedRobot {
     //Shortcut to align to the Apriltags
     if(controller.getBButton()) {
       System.out.println("odo X value: " + driveTrain.gyro.getYaw());
+      System.out.println("pos: " + driveTrain.leftFront.driveMotor.getEncoder().getPosition());
     }
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
