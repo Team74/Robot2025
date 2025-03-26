@@ -266,7 +266,7 @@ public class Robot extends TimedRobot {
           autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
         case auto_AutonMiddle_2P:
           
-          autoState = middle_2P.Run_2P(autoState);
+          autoState = middle_2P.Run_2P(autoState, kDefaultPeriod);
         break;
         case auto_AutonRight_2P:
           

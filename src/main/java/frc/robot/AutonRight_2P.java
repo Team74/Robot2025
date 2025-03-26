@@ -27,22 +27,22 @@ public class AutonRight_2P {
         var rangeOutput = limelightcam.LLGetRangeOutput();
         var rotationOutput = limelightcam.LLGetRotation();
         var currentTargetId = LimelightHelpers.getFiducialID("limelight");
-        var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L2);
-        var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L2);
+        var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L4);
+        var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L4);
 
         switch(currentState){
             
             case "Starting":
             if (time > 1 && time < 151){
                 driveTrain.drive(0, 0, 0, false, false);
-                driveTrain.armMotor.set(armMotorSpeed);
-                driveTrain.liftMotor.set(liftMotorSpeed);
+                //driveTrain.armMotor.set(armMotorSpeed);
+                //driveTrain.liftMotor.set(liftMotorSpeed);
             }
             if (time > 155){
                 driveTrain.drive(0, 0, 0, false, false);
-                driveTrain.outTakeSet(0);
-                driveTrain.armMotor.set(0);
-                driveTrain.liftMotor.set(0);
+               // driveTrain.outTakeSet(0);
+               // driveTrain.armMotor.set(0);
+               // driveTrain.liftMotor.set(0);
                 time = 0;
                 currentState = "Move'nToReef";
             }
@@ -57,8 +57,8 @@ public class AutonRight_2P {
                 //driveTrain.drive( 0, 0, 1, false, false);
                 //System.out.println("gryo: " + driveTrain.gyro.getYaw());
 
-                var rot = driveTrain.getTurnBotToAngle(50);
-                driveTrain.drive(0, 0, rot, false, false);
+               // var rot = driveTrain.getTurnBotToAngle(50);
+                driveTrain.drive(0, 0, 0, false, false);
             }
             if (time > 115 && time <= 155) {
                 driveTrain.drive(0, 0, 0, false, false);
@@ -71,17 +71,27 @@ public class AutonRight_2P {
                 var April_22 = driveTrain.GetAprilTagTelemotry(22);
                 var April_9 = driveTrain.GetAprilTagTelemotry(9);
 
+
                 if(time > 0 && time <= 175) {
+                driveTrain.armMotor.set(armMotorSpeed);
+                driveTrain.liftMotor.set(liftMotorSpeed);
+                }
+
+                if(time > 175 && time <= 350) {
                     if (April_22 != null || April_9 != null){
                         if (currentTargetId == 22 || currentTargetId == 9){
                             driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
                         }
                     }
+                driveTrain.outTakeSet(0);
+                driveTrain.armMotor.set(0);
+                driveTrain.liftMotor.set(0); 
                 }
-                if(time > 175 && time <= 255) {
+
+                if(time > 350 && time <= 500) {
                     driveTrain.outTakeMotorOuter.set(0.5); 
                 }
-                if (time > 255){
+                if (time > 550){
                     driveTrain.outTakeMotorOuter.set(0);
                     time = 0;
                     currentState = "ToPlayerStation";

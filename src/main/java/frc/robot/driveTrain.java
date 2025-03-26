@@ -158,7 +158,7 @@ public class driveTrain {
             pid = new PIDController(0.0025+0.0023889, 0, 0);
             pid.enableContinuousInput(-180.0, 180.0);
 
-            pidFastTurn = new ProfiledPIDController(0.03, 0, 0, new TrapezoidProfile.Constraints(300, 500));
+            pidFastTurn = new ProfiledPIDController(0.06, 0, 0, new TrapezoidProfile.Constraints(300, 500));
             pidFastTurn.enableContinuousInput(-180.0, 180.0);
             
          //   liftMotor = new SparkMax(12, MotorType.kBrushed);
