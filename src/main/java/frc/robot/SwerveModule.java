@@ -103,7 +103,7 @@ double kDrivingEncoderPositionFactor = (kWheelDiameterMeters * Math.PI) / kGearR
         // turningConfig.absoluteEncoder
         //         .positionConversionFactor(turningFactor) // radians
         //         .velocityConversionFactor(turningFactor / 60.0); //q radians per second
-
+    
         driveMotor.configure(drivingConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

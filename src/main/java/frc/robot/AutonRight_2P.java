@@ -8,13 +8,13 @@ import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.driveTrain.ShortcutType;
 import frc.robot.limeLightTest;
 
-public class AutonLeft1_2P {
+public class AutonRight_2P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
     boolean hasPeice;
     
-    public AutonLeft1_2P(driveTrain _driveTrain, limeLightTest _limelightcam, boolean _hasPeice){
+    public AutonRight_2P(driveTrain _driveTrain, limeLightTest _limelightcam, boolean _hasPeice){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
         hasPeice = _hasPeice;
@@ -50,16 +50,16 @@ public class AutonLeft1_2P {
             break;
 
             case "Move'nToReef":
-            if(time > 0 && time <= 115) {
+            if(time > 0 && time <= 65) {
                 driveTrain.drive(-0.45, 0, 0, false, false);
             }
-           // if(time > 65 && time <= 115) {
+            if(time > 65 && time <= 115) {
                 //driveTrain.drive( 0, 0, 1, false, false);
                 //System.out.println("gryo: " + driveTrain.gyro.getYaw());
 
-           //     var rot = driveTrain.getTurnBotToAngle(50);
-           //     driveTrain.drive(0, 0, rot, false, false);
-          //  }
+                var rot = driveTrain.getTurnBotToAngle(50);
+                driveTrain.drive(0, 0, rot, false, false);
+            }
             if (time > 115 && time <= 155) {
                 driveTrain.drive(0, 0, 0, false, false);
                 time = 0;
@@ -68,12 +68,12 @@ public class AutonLeft1_2P {
              break;
                 
             case "adjust": 
-                var April_20 = driveTrain.GetAprilTagTelemotry(20);
-                var April_11 = driveTrain.GetAprilTagTelemotry(11);
+                var April_22 = driveTrain.GetAprilTagTelemotry(22);
+                var April_9 = driveTrain.GetAprilTagTelemotry(9);
 
                 if(time > 0 && time <= 175) {
-                    if (April_20 != null || April_11 != null){
-                        if (currentTargetId == 20 || currentTargetId == 11){
+                    if (April_22 != null || April_9 != null){
+                        if (currentTargetId == 22 || currentTargetId == 9){
                             driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
                         }
                     }

@@ -76,8 +76,9 @@ public class Robot extends TimedRobot {
 
   
   AutonLeft_2PB autonLeft_2PB;
+  AutonLeft_2P autonLeft_2P;
   Auton_1P_SetUp auton_SetUp;
-  AutonLeft_2P left_2p;
+  AutonRight_2P right_2p;
   AutonMiddle_2P middle_2P;
   AutonMiddle_Basic auton_Basic;
   AutonSide_Basic autonSide_Basic;
@@ -112,6 +113,7 @@ public class Robot extends TimedRobot {
   private static final String auto_AutonSide_basic = "Side_Basic";
   private static final String auto_AutonMiddle_2PB = "Middle_2Basic";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
+  private static final String auto_AutonRight_2P = "Right_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
   private static final String auto_DriveTowardDriver = "DriveTowardDriver";
   private static final String auto_Auton_1P_SetUp = "Auton_1P_SetUp";
@@ -121,6 +123,9 @@ public class Robot extends TimedRobot {
 
 
   public Robot() {
+    fCamera = CameraServer.startAutomaticCapture(0);
+    rCamera = CameraServer.startAutomaticCapture(1);
+     ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
 
     //alliancecolor = DriverStation.getAlliance().get();
 
@@ -133,9 +138,12 @@ public class Robot extends TimedRobot {
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
+    autonSide_Basic = new AutonSide_Basic(driveTrain, limelightcam, LimeHelp);
+    
     autonLeft_2PB = new AutonLeft_2PB(driveTrain, limelightcam, LimeHelp);
+    autonLeft_2P = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
-    left_2p = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
+    right_2p = new AutonRight_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
     gotoPose = new GotoPose(driveTrain);
     limelightcam = new limeLightTest(driveTrain);
@@ -144,9 +152,10 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
     m_chooser.addOption("Side_basic", auto_AutonSide_basic);
     m_chooser.addOption("Left_2PB", auto_AutonMiddle_2PB);
+    m_chooser.addOption("Left_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
-    m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
+    m_chooser.addOption("Right_2P", auto_AutonRight_2P);
     m_chooser.addOption("DriveTowardDriver", auto_DriveTowardDriver);
 
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -215,7 +224,7 @@ public class Robot extends TimedRobot {
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
-    left_2p = new AutonLeft_2P(driveTrain, limelightcam, hasPiece());
+    right_2p = new AutonRight_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
 
     autoState = new Object[] { "Starting", 0 };
@@ -242,10 +251,14 @@ public class Robot extends TimedRobot {
           
           autoState = autonLeft_2PB.Run_2P(autoState, kDefaultPeriod);
         break;
+        case auto_AutonLeft_2P:
+          
+          autoState = autonLeft_2P.Run_2P(autoState, kDefaultPeriod);
+        break;
         case auto_AutonSide_basic:
           
         autoState = autonSide_Basic.Run_2P(autoState, kDefaultPeriod);
-      break;
+        break;
         case auto_Auton_1P_SetUp:
   
           autoState = auton_SetUp.Run_2P(autoState, kDefaultPeriod);
@@ -253,9 +266,9 @@ public class Robot extends TimedRobot {
           
           autoState = middle_2P.Run_2P(autoState);
         break;
-        case auto_AutonLeft_2P:
+        case auto_AutonRight_2P:
           
-          autoState = left_2p.Run_2P(autoState, kDefaultPeriod);
+          autoState = right_2p.Run_2P(autoState, kDefaultPeriod);
         break;
         case auto_DriveTowardDriver:
           
@@ -369,6 +382,14 @@ public class Robot extends TimedRobot {
       else {
         armMotorSpeed = MathUtil.applyDeadband(operatorController.getRightY(), 0.1) * armClampSpeed * 1;
       }
+
+      var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
+
+      //the arm is too far rotated and the system is saying to keep rotating
+      if(armPosition < -100 && armMotorSpeed < 0) {
+        armMotorSpeed = 0.0;
+        System.out.println("Arm logical limit " + armPosition);
+      }
       driveTrain.armMotor.set(armMotorSpeed);
     }
   
@@ -473,16 +494,21 @@ public class Robot extends TimedRobot {
 
       currentAngle = driveTrain.armMotor.getPosition().getValueAsDouble();
 
-      //currentAngle = driveTrain.potArm.get();
-      // if (currentAngle > -10 && currentAngle < 0) {
-      //   if (operatorController.getLeftTriggerAxis() > 0) {
-      //     outTakeSpeed = 0;  
-      //   }
-      // } 
-      // if (currentAngle > -90) {
-      //   if (operatorController.getRightTriggerAxis() > 0)
-      //     outTakeSpeed = 0;  
-      // } 
+      //current angle greater than -82 (0 is straight down)
+      //so if player, l1 or l2 and trying to eject... slow alot
+      
+      //System.out.println("ca: " + currentAngle);
+
+      if (currentAngle > driveTrain.armPlayerPosition - 11 && operatorController.getLeftTriggerAxis() > 0) {
+        outTakeSpeed = outTakeSpeed * 0.7;  
+        System.out.println("slowing outtake");
+      } 
+
+      //if current angle less than l3 and intake button pressed... slow alot
+      if (currentAngle < driveTrain.armL3Position+10 && operatorController.getRightTriggerAxis() > 0) {
+          outTakeSpeed = outTakeSpeed * 0.7;  
+          System.out.println("slowing int");
+      } 
           
       //Prox sensor lol
       if (hasPiece() == true) {
