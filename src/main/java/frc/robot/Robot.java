@@ -46,7 +46,8 @@ import frc.robot.driveTrain.ShortcutType;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
-import com.ctre.phoenix6.hardware.TalonFX; 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle; 
 /**
  * The methods in this class are called automatically corresponding to each
  * mode, as described in
@@ -189,7 +190,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-
   }
 
   public void autonomousInit() {
@@ -594,24 +594,25 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    if (time > 0 && time < 75 ){
+    if(time > 0 && time < 574) {
+      //Wait for piece 
+      if(driveTrain.hasPiece()) { 
+        time = 574;
+      }
+      else {
+        driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
+      }
+    }
+
+    if(time > 574) {
       driveTrain.driveLL(0.5, 0, 0, false, getPeriod());
-    } else {
+    }
+
+    if (time > 594  ){
         driveTrain.drive(0, 0, 0, false, false);
   
       }
-
-
-    // System.out.println("gryo: " + driveTrain.gyro.getYaw());
-
-    // if(time < 300) {
-    //   var rot = driveTrain.getTurnBotToAngle(130);
-    //   driveTrain.drive(0, 0, rot, false, false);
-    // }else {
-    //   driveTrain.drive(0, 0, 0, false, false);
-
-    // }
-
+    
     time++;
     }
 
