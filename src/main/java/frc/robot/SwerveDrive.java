@@ -10,10 +10,10 @@ public class SwerveDrive {
     boolean zeroMode = false;
     boolean oldDriveBase = false;
     SwerveDriveKinematics driveLocation;
-        SwerveModule rightFront = new SwerveModule(1,48.6278,20,2,zeroMode,oldDriveBase);
-        SwerveModule leftFront = new SwerveModule(0,-112.6435,12,17,zeroMode,oldDriveBase);
-        SwerveModule rightBack = new SwerveModule(2,-105.9345,14,32,zeroMode,oldDriveBase);
-        SwerveModule leftBack = new SwerveModule(3,-91.9409,29,15,zeroMode,oldDriveBase);
+        SwerveModule rightFront = new SwerveModule(1,48.6278,20,2,zeroMode,oldDriveBase,false);
+        SwerveModule leftFront = new SwerveModule(0,-112.6435,12,17,zeroMode,oldDriveBase,false);
+        SwerveModule rightBack = new SwerveModule(2,-105.9345,14,32,zeroMode,oldDriveBase,false);
+        SwerveModule leftBack = new SwerveModule(3,-91.9409,29,15,zeroMode,oldDriveBase,false);
 
     public SwerveDrive() {
         
