@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -601,16 +602,18 @@ public class Robot extends TimedRobot {
       }
       else {
         driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
+        driveTrain.outTakeSet(0.5);
       }
     }
 
     if(time > 574) {
       driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
+      driveTrain.outTakeSet(0.0);
     }
 
     if (time > 594  ){
         driveTrain.drive(0, 0, 0, false, false);
-  
+        driveTrain.outTakeSet(0.0);
       }
     
     time++;
