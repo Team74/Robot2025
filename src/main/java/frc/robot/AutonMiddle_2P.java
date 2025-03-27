@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.driveTrain.ShortcutType;
 
 public class AutonMiddle_2P {
     int time;
@@ -22,13 +23,19 @@ public class AutonMiddle_2P {
     Object[] Run_2P(Object[] autoState, double getPeriod) {
         String currentState = autoState[0].toString();
 
+        var currentTargetId = LimelightHelpers.getFiducialID("limelight");
+
         var rangeOutput = limelightcam.LLGetRangeOutput();
         double rotationOutput;
+
         var April_22 = driveTrain.GetAprilTagTelemotry(22);
         var April_10 = driveTrain.GetAprilTagTelemotry(10);
-        double armMotorSpeed = 0;
+
         var liftMotorPosition = driveTrain.potLift.get();
-        double liftMotorSpeed = 0;
+        var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
+        var armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
+
+        System.out.println("cs: " + currentState);
 
         switch(currentState){
 
@@ -42,36 +49,53 @@ public class AutonMiddle_2P {
             break;
 
             case "firstForward":
-            if (time > 0 && time < 70){
-                driveTrain.drive(-0.3, 0, 0, false, false);
-            } else {
-                time = 0;
-                currentState = "rotat";
-            }
+                if (time > 0 && time < 70){
+                    driveTrain.driveLL(-0.5, 0, 0, false, getPeriod);
+                } else {
+                    driveTrain.drive(0, 0, 0, false, false);
+                    time = 0;
+                    currentState = "rotat";
+                }
             break;
 
             case "rotat":
-                rotationOutput = driveTrain.getTurnBotToAngle(60);
-                driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
-
-                if (driveTrain.gyro.getYaw() >= 57 && driveTrain.gyro.getYaw() <= 63){
+                if (driveTrain.gyro.getYaw() <= 57 || driveTrain.gyro.getYaw() >= 63){
+                    rotationOutput = driveTrain.getTurnBotToAngle(60);
+                    driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
+                } else if (driveTrain.gyro.getYaw() >= 57 && driveTrain.gyro.getYaw() <= 63){
                     time = 0;
                     currentState = "Drive'nForward";
                 }
             break;
 
             case "lift":
+             
+                liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
+                armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
+
+                if (time > 1 && time < 137){
+                    driveTrain.drive(0, 0, 0, false, false);
+                    driveTrain.armMotor.set(armMotorSpeed);
+                    driveTrain.liftMotor.set(liftMotorSpeed);
+                }
+                if (liftMotorPosition > 25){
+                    driveTrain.drive(0, 0, 0, false, false);
+                    driveTrain.outTakeSet(0);
+                    driveTrain.armMotor.set(0);
+                    driveTrain.liftMotor.set(0);
+                    currentState = "Drive'nForward"; 
+                    time = 0;
+                }
+            break;
                 
 
-            case "Drive'nForward":
-                var currentTargetId = LimelightHelpers.getFiducialID("limelight");
-                
+            case "Drive'nForward":                
                 if (April_22 != null){
                     rotationOutput = driveTrain.getTurnBotToAngle(60);
                     if (time < 100){
                         driveTrain.driveLL(rangeOutput, 0, rotationOutput, false, getPeriod);
                     }
-                } else if (April_22 == null && time > 50){
+                } else if (April_22 == null && time > 150){
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
                     currentState = "adjust1";
@@ -86,15 +110,70 @@ public class AutonMiddle_2P {
                 } else {
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
-                    currentState = "PlayerStation";
+                    currentState = "turnplayer";
                 }
 
             break;
 
-            case "PlayerStation":
-
+            case "score": 
+                if (time > 0 && time < 30){
+                    driveTrain.outTakeSet(0.7); 
+                } else if (hasPiece() == false) {
+                    driveTrain.outTakeSet(0); 
+                    time = 0;
+                    currentState = "turnplayer";
+                }
+            break;
+            
+            case "turnplayer":
+                if (time > 0 && time < 75 ){
+                    driveTrain.driveLL(0.5, 0, 0, false, getPeriod);
+                } 
+                if (time > 75){
+                    if (driveTrain.gyro.getYaw() <= -22 || driveTrain.gyro.getYaw() >= -18){
+                        rotationOutput = driveTrain.getTurnBotToAngle(-20);
+                        driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
+                    } else if (driveTrain.gyro.getYaw() >= -22 && driveTrain.gyro.getYaw() <= -18){
+                        time = 0;
+                        currentState = "PlayerStation";
+                    }  
+                }
                 
-        
+            break;
+
+            case "PlayerStation":
+                var April_12 = driveTrain.GetAprilTagTelemotry(12);
+                
+                if (April_12 != null){
+                    if (currentTargetId == 12){
+                        rotationOutput = driveTrain.getTurnBotToAngle(-50);
+                        driveTrain.driveLL(rangeOutput*.5, 0, rotationOutput, false, getPeriod);
+                    }
+                } else if (April_12 == null && time > 150){
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    time = 0;
+                    currentState = "adjust2";
+                }
+            break;
+
+            case "adjust2":
+                if (time > 0 && time < 70){
+                    driveTrain.driveLL(-0.3, 0, 0, false, getPeriod);
+                } else if (time > 75){
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    //time = 0;
+                    //currentState = "";
+                }
+            break;
+
+
+
+
+
+
+
+
+
             /*case "Score":
                 
             if (time > 10){
