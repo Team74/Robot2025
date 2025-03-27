@@ -158,9 +158,16 @@ public class limeLightTest {
     }
 
     void LimeTarget(double getPeriod){
+        LimeTargetWithRot(getPeriod, 0);
+    }
+    void LimeTargetWithRot(double getPeriod, double rot){
         double rotationOutput = LLGetRotation();
         double rangeOutput = LLGetRangeOutput();
-        driveTrain.driveLL(rangeOutput, 0, -rotationOutput, false, getPeriod);
+        
+        rotationOutput = MathUtil.clamp(rotationOutput, -1, 1);
+        rangeOutput = MathUtil.clamp(rangeOutput, -0.7, 0.7);
+
+        driveTrain.driveLL(rangeOutput, -rotationOutput, rot, false, getPeriod);
     }
 
     double LLGetRangeOutput() {
