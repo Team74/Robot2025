@@ -594,15 +594,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    System.out.println("gryo: " + driveTrain.gyro.getYaw());
+    if (time > 0 && time < 75 ){
+      driveTrain.driveLL(0.5, 0, 0, false, getPeriod());
+    } else {
+        driveTrain.drive(0, 0, 0, false, false);
+  
+      }
 
-    if(time < 300) {
-      var rot = driveTrain.getTurnBotToAngle(130);
-      driveTrain.drive(0, 0, rot, false, false);
-    }else {
-      driveTrain.drive(0, 0, 0, false, false);
 
-    }
+    // System.out.println("gryo: " + driveTrain.gyro.getYaw());
+
+    // if(time < 300) {
+    //   var rot = driveTrain.getTurnBotToAngle(130);
+    //   driveTrain.drive(0, 0, rot, false, false);
+    // }else {
+    //   driveTrain.drive(0, 0, 0, false, false);
+
+    // }
 
     time++;
     }

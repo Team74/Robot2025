@@ -247,10 +247,10 @@ public class driveTrain {
         rightBack.turny(moduleStates[2].angle.getDegrees());
         leftBack.turny(moduleStates[3].angle.getDegrees());
 
-        rightFront.movey(moduleStates[0].speedMetersPerSecond*0.25);
-        leftFront.movey(moduleStates[1].speedMetersPerSecond*0.25);
-        rightBack.movey(moduleStates[2].speedMetersPerSecond*0.25);
-        leftBack.movey(moduleStates[3].speedMetersPerSecond*0.25);
+        rightFront.movey(moduleStates[0].speedMetersPerSecond*0.5);
+        leftFront.movey(moduleStates[1].speedMetersPerSecond*0.5);
+        rightBack.movey(moduleStates[2].speedMetersPerSecond*0.5);
+        leftBack.movey(moduleStates[3].speedMetersPerSecond*0.5);
     }
 
     void resetGyro() {
@@ -450,7 +450,7 @@ public class driveTrain {
         if(shortcut == ShortcutType.L4) {
             liftMotorSpeed = pidShortcutLift.calculate(liftMotorPosition, liftL4Height);
         }
-            System.out.println("lms: " + liftMotorSpeed);
+            //System.out.println("lms: " + liftMotorSpeed);
         if (!limitSensorBottom.get() && liftMotorSpeed < 0) {
             liftMotorSpeed = 0;
             liftMotor.getEncoder().setPosition(0.0);
