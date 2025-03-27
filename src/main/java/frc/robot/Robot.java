@@ -605,7 +605,7 @@ public class Robot extends TimedRobot {
     }
 
     if(time > 574) {
-      driveTrain.driveLL(0.5, 0, 0, false, getPeriod());
+      driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
     }
 
     if (time > 594  ){
