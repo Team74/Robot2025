@@ -108,7 +108,7 @@ public class AutonMiddle_2P {
                 rotationOutput = driveTrain.getTurnBotToAngle(60);
 
                 if (time < 50){
-                    driveTrain.driveLL(-0.4, 0, rotationOutput, false, getPeriod);
+                    driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
                 } else {
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
@@ -143,7 +143,7 @@ public class AutonMiddle_2P {
                 var rot = driveTrain.getTurnBotToAngle(-21);
                 rot = MathUtil.clamp(rot, -0.6, 0.6);
 
-                System.out.println("rot: " + rot);
+                //System.out.println("rot: " + rot);
                 driveTrain.drive(0, 0, rot, false, false);
                 }
                 if(time > 100 && time < 200) {
@@ -154,21 +154,26 @@ public class AutonMiddle_2P {
             break;
 
             case "apriltoPS":
-                if(time > 0 && time < 300) {
-                    var April_12 = driveTrain.GetAprilTagTelemotry(12);
+                var April_12 = driveTrain.GetAprilTagTelemotry(12);
+                if(time > 0 && time < 150 && April_12 != null) {
+                    
                     var rot = driveTrain.getTurnBotToAngle(-21);
 
                     if(April_12 != null) {
-                        limelightcam.LimeTargetWithRot(getPeriod, rot);
+                        limelightcam.LimeTargetWithRot(getPeriod, 0);
                     }
-                    else {
-                        driveTrain.driveLL(-0.5, 0, rot, false, getPeriod);
-                    }
-                    if (time > 300){
-                        driveTrain.driveLL(0, 0, 0, false, getPeriod);
-                        time = 0;
-                        currentState = "turntoAp17";
-                    }
+                    // if (time > 125 ){
+                    //     driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    //     time = 0;
+                    //     currentState = "turntoAp171";
+                    // }
+                } else {
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);     
+                }
+                if (time > 150) {
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    time = 0;
+                    currentState = "turntoAp17";
                 }
             break;
 
@@ -203,7 +208,7 @@ public class AutonMiddle_2P {
             break;
 
             case "backupPS":
-                if(time > 0 && time < 50) {
+                if(time > 0 && time < 45) {
                     var April_17 = driveTrain.GetAprilTagTelemotry(17);
                     var rot = driveTrain.getTurnBotToAngle(135);
 
@@ -223,16 +228,14 @@ public class AutonMiddle_2P {
                         }
 
                     }
-                    else {
-                        //driveTrain.driveLL(0.5, 0, rot, false, getPeriod());
-                        time = 0;
-                        currentState = "";
-                    }
-
+                } else {
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    time = 0;
+                    currentState = "turnPS";
                 }
             break;
 
-            case "":
+            case "turnPS":
             if(time > 0 && time < 100) {
                 var rot = driveTrain.getTurnBotToAngle(135);
         
