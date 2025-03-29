@@ -268,8 +268,6 @@ public class AutonMiddle_2P {
                 }   
                    
             break; 
-            
-        
 
             case "liftpiece":
                 
@@ -326,6 +324,18 @@ public class AutonMiddle_2P {
         time++;
         return new Object[]{currentState, time};
     }
+
+
+
+
+
+
+
+
+
+
+
+    //DIFFERENT STUFF
 
     Object[] Run_2P_1(Object[] autoState, double getPeriod) {
         String currentState = autoState[0].toString();
@@ -536,10 +546,6 @@ public class AutonMiddle_2P {
                 if(time > 100) {
                     autonHelper.Stop();
                 }
-            break;
-
-            case "dcdcd":
-//wills code
             break;
 
             
