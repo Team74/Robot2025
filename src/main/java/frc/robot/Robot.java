@@ -509,7 +509,7 @@ double strafeSpeed = 0.0;
         if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
           outTakeSpeed = -1;
         } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-          outTakeSpeed = -0.5;
+          outTakeSpeed = -0.8;
         }
 
         if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
