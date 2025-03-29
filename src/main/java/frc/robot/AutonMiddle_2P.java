@@ -30,6 +30,7 @@ public class AutonMiddle_2P {
         var currentTargetId = LimelightHelpers.getFiducialID("limelight");
 
         var rangeOutput = limelightcam.LLGetRangeOutput();
+        
         double rotationOutput = 0.0;
 
         var April_22 = driveTrain.GetAprilTagTelemotry(22);
@@ -122,13 +123,13 @@ public class AutonMiddle_2P {
                 } else {
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
-                    currentState = "backupReef1";
+                    currentState = "backupReef";
                 }
 
             break;
 
             case "score":
-                if (time > 0 && time < 30){
+                if (time > 0 && time < 130){
                     driveTrain.outTakeSet(0.7);
                 } else if (hasPiece() == false) {
                     driveTrain.outTakeSet(0);
@@ -187,15 +188,24 @@ public class AutonMiddle_2P {
             break;
 
             case "turntoAp17":
+
                 if(time > 0 && time < 100) {
                     var rot = driveTrain.getTurnBotToAngle(135);
                     driveTrain.driveLL(0, 0, rot, false, getPeriod);
-                    }
-                    if(time > 100 && time < 150) {
+                } else {
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    time = 0;
+                    currentState = "driveto17"; 
+                }
+            break;
+
+            case "driveto17":
+             var April_17 = driveTrain.GetAprilTagTelemotry(17);
+
+                if(rangeOutput > -3.8 && April_17 != null) {
                     var rot = driveTrain.getTurnBotToAngle(135);
                     driveTrain.driveLL(0.5, 0, rot, false, getPeriod);
-                }
-                if (time > 150){
+                } else {
                     driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
                     currentState = "align17";
@@ -212,46 +222,46 @@ public class AutonMiddle_2P {
                 if (time > 100){
                     driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
-                    currentState = "backupPS";
+                    currentState = "turnPS";
                 }
             break;
 
-            case "backupPS":
-                if(time > 0 && time < 45) {
-                    var April_17 = driveTrain.GetAprilTagTelemotry(17);
-                    var rot = driveTrain.getTurnBotToAngle(135);
+            // case "backupPS":
+            //     if(time > 0 && time < 45) {
+            //         var April_17 = driveTrain.GetAprilTagTelemotry(17);
+            //         var rot = driveTrain.getTurnBotToAngle(135);
 
-                    if(April_17 != null) {
-                        rangeOutput = limelightcam.LLGetRangeOutput();
+            //         if(April_17 != null) {
+            //             rangeOutput = limelightcam.LLGetRangeOutput();
 
-                        rangeOutput = MathUtil.clamp(rangeOutput, -1, 1);
+            //             rangeOutput = MathUtil.clamp(rangeOutput, -1, 1);
 
-                        if(rangeOutput < -3.6) {
-                        rangeOutput = MathUtil.clamp(rangeOutput, -0.3, 0.3);
-                        }
+            //             if(rangeOutput < -3.6) {
+            //             rangeOutput = MathUtil.clamp(rangeOutput, -0.3, 0.3);
+            //             }
 
-                        driveTrain.driveLL(-rangeOutput, -0.5, rot, false, getPeriod);
+            //             driveTrain.driveLL(-rangeOutput, -0.5, rot, false, getPeriod);
 
-                        if(rangeOutput < -3.8) {
-                        time = 900;
-                        }
+            //             if(rangeOutput < -3.8) {
+            //             time = 900;
+            //             }
 
-                    }
-                } else {
-                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
-                    time = 0;
-                    currentState = "turnPS1";
-                }
-            break;
+            //         }
+            //     } else {
+            //         driveTrain.driveLL(0, 0, 0, false, getPeriod);
+            //         time = 0;
+            //         currentState = "turnPS1";
+            //     }
+            // break;
 
             case "turnPS":
-            if(time > 0 && time < 100) {
+            if(time > 0 && time < 50) {
                 var rot = driveTrain.getTurnBotToAngle(135);
         
-                driveTrain.driveLL(0, -0.5, rot, false, getPeriod);
+                driveTrain.driveLL(0, -0.2, rot, false, getPeriod);
                 }
         
-                if(time > 100) {
+                if(time > 50) {
                 driveTrain.drive(0, 0, 0, false, false);
             }
             break;
