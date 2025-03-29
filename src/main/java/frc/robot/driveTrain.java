@@ -455,7 +455,7 @@ public class driveTrain {
             //System.out.println("lms: " + liftMotorSpeed);
         if (!limitSensorBottom.get() && liftMotorSpeed < 0) {
             liftMotorSpeed = 0;
-            liftMotor.getEncoder().setPosition(0.0);
+            //liftMotor.setPosition(0.0);
         }
 
         liftMotorSpeed = MathUtil.clamp(liftMotorSpeed, -liftClampSpeed, liftClampSpeed);
