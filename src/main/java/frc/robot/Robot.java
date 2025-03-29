@@ -595,28 +595,29 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    if(time > 0 && time < 574) {
-      //Wait for piece 
-      if(driveTrain.hasPiece()) { 
-        time = 574;
-      }
-      else {
-        driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
-        driveTrain.outTakeSet(0.5);
-      }
-    }
+    System.out.println(getPeriod());
+    // if(time > 0 && time < 574) {
+    //   //Wait for piece 
+    //   if(driveTrain.hasPiece()) { 
+    //     time = 574;
+    //   }
+    //   else {
+    //     driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
+    //     driveTrain.outTakeSet(0.5);
+    //   }
+    // }
 
-    if(time > 574) {
-      driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
-      driveTrain.outTakeSet(0.0);
-    }
+    // if(time > 574) {
+    //   driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
+    //   driveTrain.outTakeSet(0.0);
+    // }
 
-    if (time > 594  ){
-        driveTrain.drive(0, 0, 0, false, false);
-        driveTrain.outTakeSet(0.0);
-      }
+    // if (time > 594  ){
+    //     driveTrain.drive(0, 0, 0, false, false);
+    //     driveTrain.outTakeSet(0.0);
+    //   }
     
-    time++;
+    // time++;
     }
 
   @Override

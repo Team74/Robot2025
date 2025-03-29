@@ -9,7 +9,7 @@ public class AutonMiddle_2P {
     int time;
     driveTrain driveTrain;
     limeLightTest limelightcam;
-
+    autonHelper autonHelper;
 
     boolean hasPiece() {
         return !driveTrain.proxSensor.get();
@@ -19,9 +19,10 @@ public class AutonMiddle_2P {
     public AutonMiddle_2P(driveTrain _driveTrain, limeLightTest _limelightcam){
         driveTrain = _driveTrain;
         limelightcam  = _limelightcam;
+        autonHelper = new autonHelper(_driveTrain, _limelightcam);
     }
 
-    Object[] Run_2P(Object[] autoState, double getPeriod) {
+    Object[] Run_2P_1(Object[] autoState, double getPeriod) {
         String currentState = autoState[0].toString();
 
         var currentTargetId = LimelightHelpers.getFiducialID("limelight");
@@ -218,7 +219,7 @@ public class AutonMiddle_2P {
                         rangeOutput = MathUtil.clamp(rangeOutput, -1, 1);
 
                         if(rangeOutput < -3.6) {
-                        rangeOutput = MathUtil.clamp(rangeOutput, -0.3, 0.3);
+                            rangeOutput = MathUtil.clamp(rangeOutput, -0.3, 0.3);
                         }
 
                         driveTrain.driveLL(-rangeOutput, -0.5, rot, false, getPeriod);
@@ -252,4 +253,218 @@ public class AutonMiddle_2P {
         return new Object[]{currentState, time};
     }
 
+    Object[] Run_2P(Object[] autoState, double getPeriod) {
+        String currentState = autoState[0].toString();
+
+        var rangeOutput = limelightcam.LLGetRangeOutput();
+        double rotationOutput;
+
+        var liftMotorPosition = driveTrain.potLift.get();
+        var currentHeading = driveTrain.gyro.getYaw();
+        var currentAprilTarget = limelightcam.CurrentTargetId();
+
+        System.out.println("cs: " + currentState);
+
+        switch(currentState){
+
+            case "Starting":
+               if (time > 0) {
+                    autonHelper.Stop();
+                    driveTrain.resetGyro();
+                    time = 0;
+                    currentState = "firstForward";
+               }
+            break;
+
+            case "firstForward":
+                if (time > 0 && time < 70){
+                    autonHelper.DriveForward(-0.5);
+                } else {
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "rotat";
+                }
+            break;
+
+            case "rotat":
+                if (autonHelper.between(57, currentHeading, 63)){
+                    autonHelper.RotateBot(60);
+                } 
+                else{
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "Drive'nForward";
+                }
+            break;
+
+            case "lift":
+                if (time > 1 && time < 137){
+                    autonHelper.Stop();
+                    autonHelper.MoveArmLiftToShortcut(ShortcutType.L1);
+                }
+                if (liftMotorPosition > 25){
+                    autonHelper.Stop();
+                    driveTrain.armMotor.set(0);
+                    driveTrain.liftMotor.set(0);
+                    currentState = "Drive'nForward";
+                    time = 0;
+                }
+            break;
+
+
+            case "Drive'nForward":
+                if (time < 50){
+                    autonHelper.AlignTargetAprilTag(false);
+                }
+                if (time > 50){
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "adjust1";
+                }
+            break;
+
+            case "adjust1":
+                if (time < 50){
+                    autonHelper.RotateBot(60);
+                } else {
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "backupReef";
+                }
+            break;
+
+            case "score":
+                if (time > 0 && time < 30){
+                    autonHelper.OutTake(0.7);
+                } 
+                if (hasPiece() == false || time > 90) {
+                    driveTrain.outTakeSet(0);
+                    time = 0;
+                    currentState = "backupReef";
+                }
+            break;
+
+            case "backupReef":
+                if(time < 20) {
+                    autonHelper.DriveBackward(0.5);
+                }
+                if(time > 20 && time < 100) {
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "turntoPS";
+                }
+            break;
+
+            case "turntoPS":
+                if(time > 0 && time < 100) {
+                    autonHelper.RotateBot(-21);
+                }
+                if(time > 100) {
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "apriltoPS";
+                }
+            break;
+
+            case "apriltoPS":
+                if(time > 0 && time < 150) {
+                    if(currentAprilTarget == 12) {
+                        autonHelper.AlignTargetAprilTag(false);
+                    }
+                    else {
+                        autonHelper.Stop();
+                    }
+                }
+                if (time > 150) {
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "turntoAp17";
+                }
+            break;
+
+            case "turntoAp17":
+                if(time > 0 && time < 100) {
+                    autonHelper.RotateBot(135);
+                }
+                if(time > 100 && time < 150) {
+                    // autonHelper.RotateBot(135);
+                    // autonHelper.DriveBackward(0.5);
+                    
+                    var rot = driveTrain.getTurnBotToAngle(135);
+                    driveTrain.driveLL(0.5, 0, rot, false, getPeriod);
+                }
+                if (time > 150){
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "align17";
+                }
+            break;
+
+            case "align17":
+                //Rotate Bot and Strafe to April Tag 17
+                if(time > 0 && time < 50) {
+                    var rot = driveTrain.getTurnBotToAngle(135);
+                    rotationOutput = limelightcam.LLGetRotation();
+
+                    driveTrain.driveLL(0, -rotationOutput, rot, false, getPeriod);
+                }
+                if (time > 50){
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "backupPS";
+                }
+            break;
+
+            case "backupPS":
+                if(time > 0 && time < 45) {
+                    var rot = driveTrain.getTurnBotToAngle(135);
+
+                    if(currentAprilTarget == 17) {
+                        rangeOutput = limelightcam.LLGetRangeOutput();
+
+                        rangeOutput = MathUtil.clamp(rangeOutput, -1, 1);
+
+                        if(rangeOutput < -3.6) {
+                            rangeOutput = MathUtil.clamp(rangeOutput, -0.3, 0.3);
+                        }
+
+                        driveTrain.driveLL(-rangeOutput, -0.5, rot, false, getPeriod);
+
+                        if(rangeOutput < -3.8) {
+                            time = 900;
+                        }
+                    }
+                    else {
+                        autonHelper.Stop();
+                    }
+                } 
+                
+                if(time > 45) {
+                    autonHelper.Stop();
+                    time = 0;
+                    currentState = "turnPS";
+                }
+            break;
+
+            case "turnPS":
+                if(time > 0 && time < 100) {
+                    // autonHelper.RotateBot(135);
+                    // autonHelper.DriveLeft(-0.5);
+
+                    var rot = driveTrain.getTurnBotToAngle(135);
+        
+                    driveTrain.driveLL(0, -0.5, rot, false, getPeriod);
+                }
+        
+                if(time > 100) {
+                    autonHelper.Stop();
+                }
+            break;
+        }
+
+        time++;
+        return new Object[]{currentState, time};
+    }
+
+    
 }

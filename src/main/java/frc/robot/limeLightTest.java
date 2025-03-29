@@ -192,4 +192,10 @@ public class limeLightTest {
 
         return rotationOutput;
     }
+
+    double CurrentTargetId() {
+        var tagId = LimelightHelpers.getFiducialID("limelight");
+
+        return tagId;
+    }
 }
