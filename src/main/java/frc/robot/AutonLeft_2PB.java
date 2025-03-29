@@ -25,6 +25,7 @@ public class AutonLeft_2PB {
         String currentState = autoState[0].toString();
 
         encodercount = driveTrain.leftFront.driveMotor.getEncoder().getPosition(); 
+        System.out.println(encodercount);
     if (time > 0 && time < 500 && encodercount < 24.42){
         driveTrain.drive (-0.3, 0, 0, false, false);
     }

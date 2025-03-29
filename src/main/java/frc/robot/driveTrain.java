@@ -46,7 +46,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = true;
+    boolean oldDriveBase = false;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -97,7 +97,7 @@ public class driveTrain {
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(10));
 
     ProfiledPIDController pidShortcutArm = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(120, 180));
-    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.4, 0, 0, new TrapezoidProfile.Constraints(180, 240));
+    ProfiledPIDController pidShortcutLift = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(180, 240));
 
 
     driveTrain(Dashboard dash, DriverStation.Alliance _alliancecolor) {
@@ -407,11 +407,11 @@ public class driveTrain {
     double armL3Position = -87;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 28.35;
+    double liftPlayerHeight = 30;
     double liftL1Height = 34;
     double liftL2Height = 52.5;
     double liftL3Height = 2.58;
-    double liftL4Height = 60.5;
+    double liftL4Height = 60;
 
     double armClampSpeed = 1.5;
     double liftClampSpeed = 1.5;
