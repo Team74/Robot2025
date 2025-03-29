@@ -243,7 +243,33 @@ public class AutonMiddle_2P {
             }
             break;
 
-            //PUT WILL'S CODE HERE
+            case "wait for auton":
+            if(time > 0 && time < 574) {
+                //Wait for piece 
+                if(driveTrain.hasPiece()) { 
+                  time = 574;
+                }
+                else {
+                  driveTrain.driveLL(0.0, 0, 0, false, getPeriod);
+                  driveTrain.outTakeSet(0.5);
+                }
+              }
+          
+              if(time > 574) {
+                driveTrain.driveLL(-0.5, 0, 0, false, getPeriod);
+                driveTrain.outTakeSet(0.0);
+              }
+          
+              if (time > 594){
+                  driveTrain.drive(0, 0, 0, false, false);
+                  driveTrain.outTakeSet(0.0);
+                  time = 0;
+                  currentState = "liftpiece";
+                }   
+                   
+            break; 
+            
+        
 
             case "liftpiece":
                 
