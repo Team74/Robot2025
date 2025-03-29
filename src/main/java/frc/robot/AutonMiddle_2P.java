@@ -171,7 +171,7 @@ public class AutonMiddle_2P {
 
             case "apriltoPS":
                 var April_12 = driveTrain.GetAprilTagTelemotry(12);
-                if(time > 0 && time < 150) {
+                if(time > 0 && time < 125) {
                     
                     var rot = driveTrain.getTurnBotToAngle(-21);
 
@@ -185,7 +185,7 @@ public class AutonMiddle_2P {
 
                     driveTrain.driveLL(persistRangeOutput, -persistRotationOutput, rot, false, getPeriod);
                 } 
-                if (time > 150) {
+                if (time > 125) {
                     driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
                     currentState = "turntoAp17";
