@@ -28,7 +28,7 @@ public class Auton_1P_SetUp {
 
         String currentState = autoState[0].toString();
 
-        var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
+        //var liftMotorPosition = driveTrain.liftMotor.getEncoder().getPosition();
         
         var rangeOutput = limelightcam.LLGetRangeOutput();
         var rotationOutput = limelightcam.LLGetRotation();

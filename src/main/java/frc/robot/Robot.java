@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
     //driveTrain.gyro.reset();
     autoState = new Object[] { "Starting", 0 };
 
-    driveTrain.liftMotor.getEncoder().setPosition(0.0);
+    //driveTrain.liftMotor.getEncoder().setPosition(0.0);
     driveTrain.armMotor.setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
 
@@ -326,7 +326,7 @@ public class Robot extends TimedRobot {
 
     //Button to resent the gyro
     if (operatorController.getRightBumperButton() && operatorController.getYButton()) {
-      driveTrain.liftMotor.getEncoder().setPosition(0.0);
+      //driveTrain.liftMotor.getEncoder().setPosition(0.0);
       driveTrain.armMotor.setPosition(0.0);
       driveTrain.climbMotor.getEncoder().setPosition(0.0);
     }
@@ -374,13 +374,13 @@ double strafeSpeed = 0.0;
       var potval = driveTrain.potLift.get();
       var potArmVal = driveTrain.potArm.get();
   
-      System.out.println("potval: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble() + " LM:" + driveTrain.liftMotor.getEncoder().getPosition() + " potArmVal: " + potArmVal);
+      System.out.println("liftPot: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble());
     }
 
     double armClampSpeed = 0.5;
     Double armMotorSpeed = 0.0;
     double liftMotorSpeed = 0;
-    double liftClampSpeed = 1;
+    double liftClampSpeed = 0.4;
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
@@ -465,7 +465,7 @@ double strafeSpeed = 0.0;
       //Check physical bottom limit switch
       if (!driveTrain.limitSensorBottom.get() && MathUtil.applyDeadband(operatorController.getLeftY(), 0.02) > 0) {
         liftMotorSpeed = 0;
-        driveTrain.liftMotor.getEncoder().setPosition(0.0);
+        // driveTrain.liftMotor.getEncoder().setPosition(0.0);
 
         System.out.println("Bottom Limit Hit");
       } 
