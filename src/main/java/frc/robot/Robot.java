@@ -378,7 +378,7 @@ double strafeSpeed = 0.0;
         strafeSpeed = 0.1;
         }
       }
-      driveTrain.driveLL(0.0, strafeSpeed, 0.0, false, getPeriod());
+      driveTrain.driveLL(strafeSpeed, 0.0, 0.0, false, getPeriod());
       strafeSpeed = 0;
     }
 
