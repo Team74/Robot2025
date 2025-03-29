@@ -29,8 +29,8 @@ public class limeLightTest {
 
         // Tune these PID values for your robot
         //rotationPID = new PIDController(0.0025+0.0023889, 0, 0);
-        rotationPID = new ProfiledPIDController(.05, 0.0, 0.0, new TrapezoidProfile.Constraints(5, 10));
-        rangePID = new ProfiledPIDController(0.3, 0.0, 0.0, new TrapezoidProfile.Constraints(5, 10));
+        rotationPID = new ProfiledPIDController(.04, 0.0, 0.0, new TrapezoidProfile.Constraints(300, 200));
+        rangePID = new ProfiledPIDController(0.3, 0.0, 0.0, new TrapezoidProfile.Constraints(50, 5));
 
         // Set tolerance for both controllers
         rotationPID.setTolerance(0.3); // 1 degree tolerance
@@ -175,7 +175,7 @@ public class limeLightTest {
         var tag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
         double dist = tag.getTranslation().getNorm();
-        System.out.println("tag rot: " + tag.getRotation().getAngle() + " tag1 rot: " + tag1.pose.getRotation());
+        System.out.println("tag rot: " + tag.getRotation().getAngle() + " tag1 rot: " + tag1.pose.getRotation() + " tag1 x: " + tag1.pose.getX() + " tag1 y: " + tag1.pose.getY());
         // Calculate control outputs
         double rangeOutput = rangePID.calculate(dist, 0.2);
         rangeOutput *= 4;
