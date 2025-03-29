@@ -55,7 +55,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean oldDriveBase = true;
+  boolean oldDriveBase = false;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -126,13 +126,13 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     fCamera = CameraServer.startAutomaticCapture(0);
-    rCamera = CameraServer.startAutomaticCapture(1);
-     ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
+    //rCamera = CameraServer.startAutomaticCapture(1);
+     //ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
 
     //alliancecolor = DriverStation.getAlliance().get();
 
 
-    fCamera = CameraServer.startAutomaticCapture(0);
+    //fCamera = CameraServer.startAutomaticCapture(0);
     //rCamera = CameraServer.startAutomaticCapture(1);
     ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     
@@ -352,7 +352,7 @@ public class Robot extends TimedRobot {
       // System.out.println("pos: " + driveTrain.leftFront.driveMotor.getEncoder().getPosition());
       
       double rangeOutput = limelightcam.LLGetRangeOutput();
-      System.out.println("range output: " + rangeOutput + " Lime Area: " + limearea);
+      System.out.println("range output: " + rangeOutput + "odo X value: " + driveTrain.gyro.getYaw());
 
     }
 double strafeSpeed = 0.0;
@@ -519,15 +519,15 @@ double strafeSpeed = 0.0;
 
       if (!operatorController.getLeftBumper()){
         if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-          outTakeSpeed = -1;
+          outTakeSpeed = 1;
         } else if (MathUtil.applyDeadband(operatorController.getLeftTriggerAxis(), 0.1) > 0){
-          outTakeSpeed = -0.8;
+          outTakeSpeed = 0.8;
         }
 
         if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0 && operatorController.getAButton()){
-          outTakeSpeed = 1;
+          outTakeSpeed = -1;
         } else if (MathUtil.applyDeadband(operatorController.getRightTriggerAxis(), 0.1) > 0){
-          outTakeSpeed = 0.5;
+          outTakeSpeed = -0.8;
         }
       }
 
@@ -551,10 +551,10 @@ double strafeSpeed = 0.0;
           
       //Prox sensor lol
       if (hasPiece() == true) {
-        if(intakeTime < 3 ){
+        if(intakeTime < 6 ){
           intakeTime++;
         }
-        if(intakeTime >= 3 && intakeTime < 100 ){
+        if(intakeTime >= 6 && intakeTime < 100 ){
           outTakeSpeed = 0; 
           intakeTime++;
         }
