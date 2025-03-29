@@ -55,7 +55,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-  boolean oldDriveBase = false;
+  boolean oldDriveBase = true;
 
   XboxController controller = new XboxController(0);
   XboxController operatorController = new XboxController(1);
@@ -199,6 +199,8 @@ public class Robot extends TimedRobot {
     driveTrain.armMotor.setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
 
+    driveTrain.leftFront.driveMotor.getEncoder().setPosition(0.0);
+    
     for(int i = 0; i < 10; i++) {
       var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
       armPosition = Math.rint(armPosition);
@@ -348,7 +350,9 @@ public class Robot extends TimedRobot {
 double strafeSpeed = 0.0;
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
       limelightcam.LimeTarget(getPeriod());
-    } else if (MathUtil.applyDeadband(controller.getLeftY() , 0.05) != 0 ) {
+    } else if (MathUtil.applyDeadband(controller.getLeftY() , 0.05) != 0 
+      || MathUtil.applyDeadband(controller.getLeftX() , 0.05) != 0 
+      || MathUtil.applyDeadband(controller.getRightX() , 0.05) != 0) {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton(), controller.getRightTriggerAxis() > 0);
     } else {

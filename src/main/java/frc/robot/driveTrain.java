@@ -46,7 +46,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class driveTrain {
     boolean zeroMode = false;
-    boolean oldDriveBase = false;
+    boolean oldDriveBase = true;
     
     public SwerveModule leftFront;
     public SwerveModule rightFront;
@@ -84,9 +84,10 @@ public class driveTrain {
     Calendar calendar = Calendar.getInstance();
     //DigitalInput limitSensorTop = new DigitalInput(7);
     DigitalInput limitSensorBottom = new DigitalInput(5);
-    AnalogPotentiometer potLift = new AnalogPotentiometer(3,90, 0);
-    AnalogPotentiometer potArm = new AnalogPotentiometer(1,90, 0);
-
+    AnalogPotentiometer potLift;
+    AnalogPotentiometer potArm;
+   
+    
     double powerMulti = 0.6;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, tol; //the PID loop doubles 
@@ -117,6 +118,9 @@ public class driveTrain {
 
             liftMotor = new TalonFX(46);
             //liftMotor.getPosition();
+            potLift= new AnalogPotentiometer(3,90, 0);
+            potArm = new AnalogPotentiometer(1,90, 0);
+          
             SparkBaseConfig zeroCoast = new SparkMaxConfig();
             //zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
             //liftMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

@@ -214,8 +214,12 @@ boolean invert = false;
     }
 
     public Rotation2d getEncoderRadians(){
-        return new Rotation2d((encoder.get() - 180 + encoderOffset) % 360 );
-    }
+        if (!oldDriveBase) {
+            return new Rotation2d((encoder.get() - 180 + encoderOffset) % 360 );
+        } else {
+            return new Rotation2d((encoderA.get() - 180 + encoderOffset) % 360 );
+        }
+           }
 
     public SwerveModulePosition getOdometryPosition() {
         return new SwerveModulePosition(getDriveMotorPosition(), getEncoderRadians());
