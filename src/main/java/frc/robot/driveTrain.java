@@ -64,7 +64,7 @@ public class driveTrain {
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
     Dashboard dashboard;
 
-    SparkMax liftMotor = null;
+    TalonFX liftMotor = null;
     TalonFX armMotor = null;
     SparkMax outTakeMotorOuter = null;
     //SparkMax outTakeMotorInner = null;
@@ -115,11 +115,11 @@ public class driveTrain {
             rightBack = new SwerveModule(3,-189.48328223708205+19, 10, 11, zeroMode,oldDriveBase, false);
             leftBack = new SwerveModule(1,-96.41761441044036-179, 19, 16, zeroMode,oldDriveBase, false);
 
-            liftMotor = new SparkMax(46, MotorType.kBrushless);
-            liftMotor.getEncoder().setPosition(0.0);
+            liftMotor = new TalonFX(46);
+            //liftMotor.getPosition();
             SparkBaseConfig zeroCoast = new SparkMaxConfig();
-            zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
-            liftMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            //zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
+            //liftMotor.configure(zeroCoast, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
       
             armMotor = new TalonFX(3);
@@ -142,6 +142,8 @@ public class driveTrain {
             
             armMotor.getConfigurator().apply(toConfigure);
             armMotor.setNeutralMode(NeutralModeValue.Brake);
+            liftMotor.getConfigurator().apply(toConfigure);
+            liftMotor.setNeutralMode(NeutralModeValue.Brake);
 
             //armMotor.getEncoder().setPosition(0.0);
             zeroCoast.idleMode(SparkBaseConfig.IdleMode.kBrake);
