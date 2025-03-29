@@ -199,6 +199,8 @@ public class Robot extends TimedRobot {
     driveTrain.armMotor.setPosition(0.0);
     driveTrain.climbMotor.getEncoder().setPosition(0.0);
 
+    driveTrain.leftFront.driveMotor.getEncoder().setPosition(0.0);
+    
     for(int i = 0; i < 10; i++) {
       var armPosition = driveTrain.armMotor.getPosition().getValueAsDouble();
       armPosition = Math.rint(armPosition);
