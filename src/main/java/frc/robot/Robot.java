@@ -333,12 +333,16 @@ public class Robot extends TimedRobot {
    
     //Shortcut to align to the Apriltags
     if(controller.getBButton()) {
+      NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+      NetworkTableEntry ta = table.getEntry("ta");
+      Double limearea = ta.getDouble(0.0);
+
       // System.out.println("odo X value: " + driveTrain.gyro.getYaw());
       
       // System.out.println("pos: " + driveTrain.leftFront.driveMotor.getEncoder().getPosition());
-
+      
       double rangeOutput = limelightcam.LLGetRangeOutput();
-      System.out.println("range output: " + rangeOutput);
+      System.out.println("range output: " + rangeOutput + " Lime Area: " + limearea);
 
     }
 double strafeSpeed = 0.0;
