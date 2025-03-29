@@ -403,13 +403,13 @@ public class driveTrain {
 
     double armPlayerPosition = 0;
     double armL1Position = -10;
-    double armL2Position = 0;
+    double armL2Position = -5.7;
     double armL3Position = -87;
     double armL4Position = -92.8;
 
-    double liftPlayerHeight = 30;
+    double liftPlayerHeight = 32;
     double liftL1Height = 34;
-    double liftL2Height = 52.5;
+    double liftL2Height = 49.5;
     double liftL3Height = 2.58;
     double liftL4Height = 60;
 
