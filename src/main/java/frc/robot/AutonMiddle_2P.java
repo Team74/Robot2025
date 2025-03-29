@@ -39,6 +39,7 @@ public class AutonMiddle_2P {
 
         var April_22 = driveTrain.GetAprilTagTelemotry(22);
         var April_10 = driveTrain.GetAprilTagTelemotry(10);
+        var April_17 = driveTrain.GetAprilTagTelemotry(17);
 
         var liftMotorPosition = driveTrain.potLift.get();
         var liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
@@ -132,7 +133,7 @@ public class AutonMiddle_2P {
 
             break;
 
-            case "score":
+            case "scorepreload":
                 if (time > 0 && time < 130){
                     driveTrain.outTakeSet(0.7);
                 } else if (hasPiece() == false) {
@@ -204,9 +205,7 @@ public class AutonMiddle_2P {
             break;
 
             case "driveto17":
-             var April_17 = driveTrain.GetAprilTagTelemotry(17);
-
-                if(rangeOutput > -3.8 && April_17 != null) {
+                if(rangeOutput > -3.8 && April_17 != null && time < 75) {
                     var rot = driveTrain.getTurnBotToAngle(135);
                     driveTrain.driveLL(0.5, 0, rot, false, getPeriod);
                 } else {
@@ -230,34 +229,6 @@ public class AutonMiddle_2P {
                 }
             break;
 
-            // case "backupPS":
-            //     if(time > 0 && time < 45) {
-            //         var April_17 = driveTrain.GetAprilTagTelemotry(17);
-            //         var rot = driveTrain.getTurnBotToAngle(135);
-
-            //         if(April_17 != null) {
-            //             rangeOutput = limelightcam.LLGetRangeOutput();
-
-            //             rangeOutput = MathUtil.clamp(rangeOutput, -1, 1);
-
-                        if(rangeOutput < -3.6) {
-                        rangeOutput = MathUtil.clamp(rangeOutput, -0.3, 0.3);
-                        }
-
-            //             driveTrain.driveLL(-rangeOutput, -0.5, rot, false, getPeriod);
-
-            //             if(rangeOutput < -3.8) {
-            //             time = 900;
-            //             }
-
-            //         }
-            //     } else {
-            //         driveTrain.driveLL(0, 0, 0, false, getPeriod);
-            //         time = 0;
-            //         currentState = "turnPS1";
-            //     }
-            // break;
-
             case "turnPS":
             if(time > 0 && time < 50) {
                 var rot = driveTrain.getTurnBotToAngle(135);
@@ -267,8 +238,63 @@ public class AutonMiddle_2P {
         
                 if(time > 50) {
                 driveTrain.drive(0, 0, 0, false, false);
+                time = 0;
+                currentState = "peiceToReef1"; //Chain break
             }
             break;
+
+            //PUT WILL'S CODE HERE
+
+            case "liftpiece":
+                
+                liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
+                armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
+
+                if (time > 1 && time < 137){
+                    driveTrain.drive(0, 0, 0, false, false);
+                    driveTrain.armMotor.set(armMotorSpeed);
+                    driveTrain.liftMotor.set(liftMotorSpeed);
+                }
+                if (liftMotorPosition > 25){
+                    driveTrain.drive(0, 0, 0, false, false);
+                    driveTrain.outTakeSet(0);
+                    driveTrain.armMotor.set(0);
+                    driveTrain.liftMotor.set(0);
+                    currentState = "peiceToReef";
+                    time = 0;
+                }
+            break;
+
+            case "peiceToReef":
+                if(time > 0 && time < 150) {
+
+                    if(April_17 != null) {
+                        persistRotationOutput = limelightcam.LLGetRotation();
+                        persistRangeOutput = limelightcam.LLGetRangeOutput();
+                        
+                        persistRotationOutput = MathUtil.clamp(persistRotationOutput, -1, 1);
+                        persistRangeOutput = MathUtil.clamp(persistRangeOutput, -0.5, 0.5);
+                    }
+
+                    driveTrain.driveLL(persistRangeOutput, -persistRotationOutput, 0, false, getPeriod);
+                } 
+                if (time > 150) {
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
+                    time = 0;
+                    currentState = "scorepiece1"; // chain break
+                }
+            break;
+
+            case "scorepiece":
+                if (time > 0 && time < 130){
+                    driveTrain.outTakeSet(0.7);
+                } else if (hasPiece() == false) {
+                    driveTrain.outTakeSet(0);
+                    time = 0;
+                    currentState = "backupReef";
+                }
+            break;
+
         }
 
         time++;
