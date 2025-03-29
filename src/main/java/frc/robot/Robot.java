@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,8 +46,7 @@ import frc.robot.driveTrain.ShortcutType;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle; 
+import com.ctre.phoenix6.hardware.TalonFX; 
 /**
  * The methods in this class are called automatically corresponding to each
  * mode, as described in
@@ -137,9 +135,6 @@ public class Robot extends TimedRobot {
     ftNetworkTableEntry = NetworkTableInstance.getDefault().getTable("").getEntry("frontCamera");
     
     driveTrain = new driveTrain(dashboard, alliancecolor);
-
-    limelightcam = new limeLightTest(driveTrain);
-
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
@@ -151,12 +146,13 @@ public class Robot extends TimedRobot {
     right_2p = new AutonRight_2P(driveTrain, limelightcam, hasPiece());
     autonDriveForward = new AutonDriveForward(driveTrain, limelightcam);
     gotoPose = new GotoPose(driveTrain);
+    limelightcam = new limeLightTest(driveTrain);
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
     m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
     m_chooser.addOption("Side_basic", auto_AutonSide_basic);
     m_chooser.addOption("Left_2PB", auto_AutonMiddle_2PB);
-    m_chooser.addOption("Left_2P", auto_AutonLeft_2P);
+    m_chooser.addOption("Left_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("auton_1P_SetUp", auto_Auton_1P_SetUp);
     m_chooser.addOption("Middle_2P", auto_AutonMiddle_2P);
     m_chooser.addOption("Right_2P", auto_AutonRight_2P);
@@ -191,6 +187,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+
   }
 
   public void autonomousInit() {
@@ -325,10 +322,6 @@ public class Robot extends TimedRobot {
     //Button to resent the gyro
     if (controller.getYButton()) {
       driveTrain.gyro.reset();
-      driveTrain.leftFront.driveMotor.getEncoder().setPosition(0);
-      driveTrain.rightFront.driveMotor.getEncoder().setPosition(0);
-      driveTrain.leftBack.driveMotor.getEncoder().setPosition(0);
-      driveTrain.rightBack.driveMotor.getEncoder().setPosition(0);
     }
 
     //Button to resent the gyro
@@ -348,12 +341,29 @@ public class Robot extends TimedRobot {
       System.out.println("range output: " + rangeOutput);
 
     }
-
+double strafeSpeed = 0.0;
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
       limelightcam.LimeTarget(getPeriod());
-    } else {
+    } else if (MathUtil.applyDeadband(controller.getLeftY() , 0.05) != 0 ) {
       driveTrain.drive(controller.getLeftY(), controller.getLeftX(), controller.getRightX(),
           controller.getRightBumperButton(), controller.getRightTriggerAxis() > 0);
+    } else {
+      if (controller.getPOV() == 90){
+        if (driveTrain.gyro.getYaw() > -90 && driveTrain.gyro.getYaw() < 90) {
+          strafeSpeed = 0.1;
+        } else {
+          strafeSpeed = -0.1;
+        }
+      }
+      if (controller.getPOV() == 270){
+        if (driveTrain.gyro.getYaw() > -90 && driveTrain.gyro.getYaw() < 90) {
+          strafeSpeed = -0.1;
+        } else {
+        strafeSpeed = 0.1;
+        }
+      }
+      driveTrain.driveLL(strafeSpeed, 0.0, 0.0, false, getPeriod());
+      strafeSpeed = 0;
     }
 
     if(operatorController.getLeftBumperButton()) {
@@ -600,34 +610,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+    System.out.println("gryo: " + driveTrain.gyro.getYaw());
 
-    if (time < 100){
-      driveTrain.driveLL(-0.5, 0, 0, isRainbow, kDefaultPeriod);
-    } else {
-      driveTrain.driveLL(0, 0, 0, isRainbow, kDefaultPeriod);
+    if(time < 300) {
+      var rot = driveTrain.getTurnBotToAngle(130);
+      driveTrain.drive(0, 0, rot, false, false);
+    }else {
+      driveTrain.drive(0, 0, 0, false, false);
+
     }
 
-    // if(time > 0 && time < 574) {
-    //   //Wait for piece 
-    //   if(driveTrain.hasPiece()) { 
-    //     time = 574;
-    //   }
-    //   else {
-    //     driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
-    //     driveTrain.outTakeSet(0.5);
-    //   }
-    // }
-
-    // if(time > 574) {
-    //   driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
-    //   driveTrain.outTakeSet(0.0);
-    // }
-
-    // if (time > 594  ){
-    //     driveTrain.drive(0, 0, 0, false, false);
-    //     driveTrain.outTakeSet(0.0);
-    //   }
-    
     time++;
     }
 
