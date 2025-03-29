@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
   
   AutonLeft_2PB autonLeft_2PB;
   AutonLeft_2P autonLeft_2P;
+  AutonMiddle_L4 middle_L4;
   Auton_1P_SetUp auton_SetUp;
   AutonRight_2P right_2p;
   AutonMiddle_2P middle_2P;
@@ -112,6 +113,7 @@ public class Robot extends TimedRobot {
   private static final String auto_AutonMiddle_basic = "Middle_Basic";
   private static final String auto_AutonSide_basic = "Side_Basic";
   private static final String auto_AutonMiddle_2PB = "Middle_2Basic";
+  private static final String auto_AutonMiddle_L4 = "Middle_L4";
   private static final String auto_AutonMiddle_2P = "Middle_2P";
   private static final String auto_AutonRight_2P = "Right_2P";
   private static final String auto_AutonLeft_2P = "Left_2P";
@@ -137,6 +139,7 @@ public class Robot extends TimedRobot {
     driveTrain = new driveTrain(dashboard, alliancecolor);
     LimeHelp = new LimelightHelpers();
     auton_SetUp = new Auton_1P_SetUp(driveTrain, limelightcam, LimeHelp);
+    middle_L4 = new AutonMiddle_L4(driveTrain, limelightcam, LimeHelp);
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
     autonSide_Basic = new AutonSide_Basic(driveTrain, limelightcam, LimeHelp);
     
@@ -150,6 +153,7 @@ public class Robot extends TimedRobot {
 
     m_chooser.setDefaultOption("Default Auto", auto_AutonMiddle_basic);
     m_chooser.addOption("Middle_basic", auto_AutonMiddle_basic);
+    m_chooser.addOption("Middle_L4", auto_AutonMiddle_L4);
     m_chooser.addOption("Side_basic", auto_AutonSide_basic);
     m_chooser.addOption("Left_2PB", auto_AutonMiddle_2PB);
     m_chooser.addOption("Left_2P", auto_AutonMiddle_2P);
@@ -256,6 +260,10 @@ public class Robot extends TimedRobot {
         case auto_AutonLeft_2P:
           
           autoState = autonLeft_2P.Run_2P(autoState, kDefaultPeriod);
+        break;
+        case auto_AutonMiddle_L4:
+          
+          autoState = middle_L4.Run_2P(autoState, kDefaultPeriod);
         break;
         case auto_AutonSide_basic:
           

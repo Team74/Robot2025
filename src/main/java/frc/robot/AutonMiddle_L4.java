@@ -21,9 +21,6 @@ public class AutonMiddle_L4 {
     }
 
     Object[] Run_2P(Object[] autoState, double getPeriod) {
-        // double trackSide = limelightcam.LimeTest();
-        // double trackTurn = limelightcam.ReefCenter(); 
-        // double trackPush = limelightcam.ReefPush();
         String currentState = autoState[0].toString();
      
         var armPosition = 0;
