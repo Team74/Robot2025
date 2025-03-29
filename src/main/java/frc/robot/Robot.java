@@ -614,16 +614,26 @@ double strafeSpeed = 0.0;
 
   @Override
   public void testPeriodic() {
-    System.out.println("gryo: " + driveTrain.gyro.getYaw());
-
-    if(time < 300) {
-      var rot = driveTrain.getTurnBotToAngle(130);
-      driveTrain.drive(0, 0, rot, false, false);
-    }else {
-      driveTrain.drive(0, 0, 0, false, false);
-
+    if(time > 0 && time < 574) {
+      //Wait for piece 
+      if(driveTrain.hasPiece()) { 
+        time = 574;
+      }
+      else {
+        driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
+        driveTrain.outTakeSet(0.5);
+      }
     }
 
+    if(time > 574) {
+      driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
+      driveTrain.outTakeSet(0.0);
+    }
+
+    if (time > 594  ){
+        driveTrain.drive(0, 0, 0, false, false);
+        driveTrain.outTakeSet(0.0);
+      }
     time++;
     }
 
