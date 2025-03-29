@@ -21,13 +21,16 @@ public class AutonMiddle_2P {
         limelightcam  = _limelightcam;
     }
 
+    double persistRotationOutput = 0.0;
+    double persistRangeOutput = 0.0;
+
     Object[] Run_2P(Object[] autoState, double getPeriod) {
         String currentState = autoState[0].toString();
 
         var currentTargetId = LimelightHelpers.getFiducialID("limelight");
 
         var rangeOutput = limelightcam.LLGetRangeOutput();
-        double rotationOutput;
+        double rotationOutput = 0.0;
 
         var April_22 = driveTrain.GetAprilTagTelemotry(22);
         var April_10 = driveTrain.GetAprilTagTelemotry(10);
@@ -50,7 +53,7 @@ public class AutonMiddle_2P {
             break;
 
             case "firstForward":
-                if (time > 0 && time < 70){
+                if (time > 0 && time < 75){
                     driveTrain.driveLL(-0.5, 0, 0, false, getPeriod);
                 } else {
                     driveTrain.drive(0, 0, 0, false, false);
@@ -91,13 +94,20 @@ public class AutonMiddle_2P {
 
 
             case "Drive'nForward":
-                if (April_22 != null){
+                if(time > 0 && time < 50) {
                     rotationOutput = driveTrain.getTurnBotToAngle(60);
-                    if (time < 50){
-                        limelightcam.LimeTargetWithRot(getPeriod, rotationOutput);
-                        //driveTrain.driveLL(rangeOutput, 0, rotationOutput, false, getPeriod);
+
+                    if(April_22 != null) {
+                        persistRotationOutput = limelightcam.LLGetRotation();
+                        persistRangeOutput = limelightcam.LLGetRangeOutput();
+                        
+                        persistRotationOutput = MathUtil.clamp(persistRotationOutput, -1, 1);
+                        persistRangeOutput = MathUtil.clamp(persistRangeOutput, -0.8, 0.8);
                     }
-                } else if (April_22 == null && time > 50){
+
+                    driveTrain.driveLL(persistRangeOutput, -persistRotationOutput, rotationOutput, false, getPeriod);
+                }
+                if (time > 50){
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
                     currentState = "adjust1";
@@ -107,12 +117,12 @@ public class AutonMiddle_2P {
             case "adjust1":
                 rotationOutput = driveTrain.getTurnBotToAngle(60);
 
-                if (time < 50){
-                    driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
+                if (time < 62){
+                    driveTrain.driveLL(-0.2, 0, rotationOutput, false, getPeriod);
                 } else {
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
-                    currentState = "backupReef";
+                    currentState = "backupReef1";
                 }
 
             break;
@@ -155,21 +165,20 @@ public class AutonMiddle_2P {
 
             case "apriltoPS":
                 var April_12 = driveTrain.GetAprilTagTelemotry(12);
-                if(time > 0 && time < 150 && April_12 != null) {
+                if(time > 0 && time < 150) {
                     
                     var rot = driveTrain.getTurnBotToAngle(-21);
 
                     if(April_12 != null) {
-                        limelightcam.LimeTargetWithRot(getPeriod, 0);
+                        persistRotationOutput = limelightcam.LLGetRotation();
+                        persistRangeOutput = limelightcam.LLGetRangeOutput();
+                        
+                        persistRotationOutput = MathUtil.clamp(persistRotationOutput, -1, 1);
+                        persistRangeOutput = MathUtil.clamp(persistRangeOutput, -0.7, 0.7);
                     }
-                    // if (time > 125 ){
-                    //     driveTrain.driveLL(0, 0, 0, false, getPeriod);
-                    //     time = 0;
-                    //     currentState = "turntoAp171";
-                    // }
-                } else {
-                    driveTrain.driveLL(0, 0, 0, false, getPeriod);     
-                }
+
+                    driveTrain.driveLL(persistRangeOutput, -persistRotationOutput, rot, false, getPeriod);
+                } 
                 if (time > 150) {
                     driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
@@ -194,13 +203,13 @@ public class AutonMiddle_2P {
             break;
 
             case "align17":
-                if(time > 0 && time < 50) {
+                if(time > 0 && time < 100) {
                     var rot = driveTrain.getTurnBotToAngle(135);
                     rotationOutput = limelightcam.LLGetRotation();
 
                     driveTrain.driveLL(0, -rotationOutput, rot, false, getPeriod);
                 }
-                if (time > 50){
+                if (time > 100){
                     driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
                     currentState = "backupPS";
@@ -231,7 +240,7 @@ public class AutonMiddle_2P {
                 } else {
                     driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
-                    currentState = "turnPS";
+                    currentState = "turnPS1";
                 }
             break;
 

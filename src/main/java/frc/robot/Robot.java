@@ -340,8 +340,13 @@ public class Robot extends TimedRobot {
    
     //Shortcut to align to the Apriltags
     if(controller.getBButton()) {
-      System.out.println("odo X value: " + driveTrain.gyro.getYaw());
-      System.out.println("pos: " + driveTrain.leftFront.driveMotor.getEncoder().getPosition());
+      // System.out.println("odo X value: " + driveTrain.gyro.getYaw());
+      
+      // System.out.println("pos: " + driveTrain.leftFront.driveMotor.getEncoder().getPosition());
+
+      double rangeOutput = limelightcam.LLGetRangeOutput();
+      System.out.println("range output: " + rangeOutput);
+
     }
 
     if (controller.getLeftTriggerAxis() > 0.1 && limelightcam != null) {
@@ -595,26 +600,33 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    if(time > 0 && time < 574) {
-      //Wait for piece 
-      if(driveTrain.hasPiece()) { 
-        time = 574;
-      }
-      else {
-        driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
-        driveTrain.outTakeSet(0.5);
-      }
+
+    if (time < 100){
+      driveTrain.driveLL(-0.5, 0, 0, isRainbow, kDefaultPeriod);
+    } else {
+      driveTrain.driveLL(0, 0, 0, isRainbow, kDefaultPeriod);
     }
 
-    if(time > 574) {
-      driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
-      driveTrain.outTakeSet(0.0);
-    }
+    // if(time > 0 && time < 574) {
+    //   //Wait for piece 
+    //   if(driveTrain.hasPiece()) { 
+    //     time = 574;
+    //   }
+    //   else {
+    //     driveTrain.driveLL(0.0, 0, 0, false, getPeriod());
+    //     driveTrain.outTakeSet(0.5);
+    //   }
+    // }
 
-    if (time > 594  ){
-        driveTrain.drive(0, 0, 0, false, false);
-        driveTrain.outTakeSet(0.0);
-      }
+    // if(time > 574) {
+    //   driveTrain.driveLL(-0.5, 0, 0, false, getPeriod());
+    //   driveTrain.outTakeSet(0.0);
+    // }
+
+    // if (time > 594  ){
+    //     driveTrain.drive(0, 0, 0, false, false);
+    //     driveTrain.outTakeSet(0.0);
+    //   }
     
     time++;
     }
