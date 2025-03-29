@@ -74,11 +74,11 @@ public class AutonMiddle_2P {
                     driveTrain.driveLL(0, 0, rotationOutput, false, getPeriod);
                 } else if (driveTrain.gyro.getYaw() >= 57 && driveTrain.gyro.getYaw() <= 63){
                     time = 0;
-                    currentState = "Drive'nForward";
+                    currentState = "Drive'nForward"; // chain jump
                 }
             break;
 
-            case "lift":
+            case "lift": //being skipped... intigrate when arm safe
 
                 liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
                 armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
@@ -128,12 +128,12 @@ public class AutonMiddle_2P {
                 } else {
                     driveTrain.drive(0, 0, 0, false, false);
                     time = 0;
-                    currentState = "backupReef";
+                    currentState = "backupReef"; //chain jump
                 }
 
             break;
 
-            case "scorepreload":
+            case "scorepreload": //being skipped... intigrate when arm safe
                 if (time > 0 && time < 130){
                     driveTrain.outTakeSet(0.7);
                 } else if (hasPiece() == false) {
@@ -239,11 +239,11 @@ public class AutonMiddle_2P {
                 if(time > 50) {
                 driveTrain.drive(0, 0, 0, false, false);
                 time = 0;
-                currentState = "peiceToReef1"; //Chain break
+                currentState = "piecewait"; 
             }
             break;
 
-            case "wait for auton":
+            case "piecewait":
             if(time > 0 && time < 574) {
                 //Wait for piece 
                 if(driveTrain.hasPiece()) { 
@@ -264,12 +264,12 @@ public class AutonMiddle_2P {
                   driveTrain.drive(0, 0, 0, false, false);
                   driveTrain.outTakeSet(0.0);
                   time = 0;
-                  currentState = "liftpiece";
+                  currentState = "peiceToReef"; //chain jump
                 }   
                    
             break; 
 
-            case "liftpiece":
+            case "liftpiece": //being skipped... intigrate when arm safe
                 
                 liftMotorSpeed = driveTrain.ShortCutLift(ShortcutType.L1);
                 armMotorSpeed = driveTrain.ShortCutArm(ShortcutType.L1);
@@ -309,7 +309,7 @@ public class AutonMiddle_2P {
                 }
             break;
 
-            case "scorepiece":
+            case "scorepiece": //being skipped... intigrate when arm safe
                 if (time > 0 && time < 130){
                     driveTrain.outTakeSet(0.7);
                 } else if (hasPiece() == false) {
