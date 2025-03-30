@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.driveTrain.ShortcutType;
 
@@ -26,6 +27,9 @@ public class AutonMiddle_L4 {
         var armPosition = 0;
         var liftMotorPosition = driveTrain.potLift.get();
         var currentTargetId = LimelightHelpers.getFiducialID("limelight");
+        var persistRotationOutput = limelightcam.LLGetRotation();
+        var persistRangeOutput = limelightcam.LLGetRangeOutput();
+        var rotationOutput = driveTrain.getTurnBotToAngle(0);
       
 
         switch(currentState){
@@ -63,15 +67,37 @@ public class AutonMiddle_L4 {
 
             case "Drive'nForward":
 
-                if (time > 0 && time < 95){
-                    driveTrain.drive(-0.3, 0, 0, false, false);
+                var April_21 = driveTrain.GetAprilTagTelemotry(22); //change tag id
+
+                if(time > 0 && time < 95) {
+                    if(April_21 != null) {
+                        rotationOutput = driveTrain.getTurnBotToAngle(0);
+                        persistRotationOutput = limelightcam.LLGetRotation();
+                        persistRangeOutput = limelightcam.LLGetRangeOutput();
+                        
+                        persistRotationOutput = MathUtil.clamp(persistRotationOutput, -1, 1);
+                        persistRangeOutput = MathUtil.clamp(persistRangeOutput, -0.8, 0.8);
+                        
+                    }
+
+                    driveTrain.driveLL(persistRangeOutput, -persistRotationOutput, rotationOutput, false, getPeriod);
                 }
-                if (time > 96){
+                if (time > 95 || April_21 == null){
                     driveTrain.drive(0, 0, 0, false, false);
+                    time = 0;
+                    currentState = "adjust";
+                }
+            
+            break;
+
+            case "adjust":
+                if (time > 0 && time < 23){
+                    driveTrain.driveLL(-0.25, 0.3, 0, false, getPeriod);
+                } else {
+                    driveTrain.driveLL(0, 0, 0, false, getPeriod);
                     time = 0;
                     currentState = "Score";
                 }
-            
             break;
 
             case "Score":
@@ -84,6 +110,7 @@ public class AutonMiddle_L4 {
                 //time = 0;
                 //currentState = "1";
             }
+            break;
 
         }
         time++;

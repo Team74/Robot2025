@@ -227,6 +227,7 @@ public class Robot extends TimedRobot {
     //System.out.println("Auto selected: " + m_autoSelected);
 
     auton_Basic = new AutonMiddle_Basic(driveTrain, limelightcam, LimeHelp);
+    middle_L4 = new AutonMiddle_L4(driveTrain, limelightcam, LimeHelp);
     middle_2P = new AutonMiddle_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
     //auton_2p = new AutonLeft_2P(driveTrain, limelightcam);
