@@ -413,8 +413,8 @@ public class driveTrain {
     double liftL3Height = 2.58;
     double liftL4Height = 60;
 
-    double armClampSpeed = 1.5;
-    double liftClampSpeed = 1.5;
+    double armClampSpeed = 0.3;
+    double liftClampSpeed = 0.3;
 
     double armMotorSpeed = 0;
     double liftMotorSpeed = 0.0;
