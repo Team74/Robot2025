@@ -170,12 +170,12 @@ boolean invert = false;
         //if (turningMotorID == 12) {
         //    System.out.println("cp: " + currentPosition + "er: " + pid.getError() + "ta: "+ targetAngle);
         //}
-        targetSpeed = MathUtil.clamp(targetSpeed, -0.25, 0.25);
+        targetSpeed = MathUtil.clamp(targetSpeed, -1, 1);
         turningMotor.set(targetSpeed);
     }
     
     void movey(double targetSpeed){
-        targetSpeed = MathUtil.clamp(targetSpeed, -0.20, 0.20);
+        targetSpeed = MathUtil.clamp(targetSpeed, -1, 1);
         driveMotor.set(targetSpeed*-1);
     }
     

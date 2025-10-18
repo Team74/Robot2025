@@ -389,10 +389,10 @@ double strafeSpeed = 0.0;
       System.out.println("liftPot: "+ potval + " ap: " + driveTrain.armMotor.getPosition().getValueAsDouble());
     }
 
-    double armClampSpeed = 0.3;
+    double armClampSpeed = 1;
     Double armMotorSpeed = 0.0;
     double liftMotorSpeed = 0;
-    double liftClampSpeed = 0.3;
+    double liftClampSpeed = 1;
 
     //Controls for the Scoring Arm
     if (driveTrain.armMotor != null) {
