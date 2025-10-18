@@ -98,7 +98,7 @@ public class AutonMiddle_Basic {
             case "Score":
 
             if (time > 0 && time < 75){
-                driveTrain.outTakeMotorOuter.set(0.5);
+                driveTrain.outTakeMotorOuter.set(-0.5);
             }
             if (time > 76){
                 driveTrain.outTakeMotorOuter.set(0);
